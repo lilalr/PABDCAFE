@@ -32,19 +32,21 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.txtChoose = new System.Windows.Forms.TextBox();
+            this.txtNoTelp = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.dgvKafe = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtPhone = new System.Windows.Forms.TextBox();
+            this.txtPilihMeja = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtReservasi = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKafe)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(780, 102);
+            this.button1.Location = new System.Drawing.Point(686, 106);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(84, 29);
@@ -55,7 +57,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(780, 139);
+            this.button2.Location = new System.Drawing.Point(686, 143);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(84, 29);
@@ -66,7 +68,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(780, 175);
+            this.button3.Location = new System.Drawing.Point(686, 179);
             this.button3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(84, 29);
@@ -77,7 +79,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(780, 211);
+            this.button4.Location = new System.Drawing.Point(686, 215);
             this.button4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(84, 29);
@@ -86,83 +88,101 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.btnRefresh);
             // 
-            // txtChoose
+            // txtNoTelp
             // 
-            this.txtChoose.Location = new System.Drawing.Point(93, 104);
-            this.txtChoose.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtChoose.Name = "txtChoose";
-            this.txtChoose.Size = new System.Drawing.Size(624, 26);
-            this.txtChoose.TabIndex = 4;
-            this.txtChoose.TextChanged += new System.EventHandler(this.txtChoose_TextChanged);
+            this.txtNoTelp.Location = new System.Drawing.Point(252, 147);
+            this.txtNoTelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtNoTelp.Name = "txtNoTelp";
+            this.txtNoTelp.Size = new System.Drawing.Size(373, 26);
+            this.txtNoTelp.TabIndex = 4;
+            this.txtNoTelp.TextChanged += new System.EventHandler(this.txtChoose_TextChanged);
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(93, 178);
+            this.txtName.Location = new System.Drawing.Point(252, 99);
             this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(624, 26);
+            this.txtName.Size = new System.Drawing.Size(373, 26);
             this.txtName.TabIndex = 6;
             // 
             // dgvKafe
             // 
             this.dgvKafe.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvKafe.Location = new System.Drawing.Point(97, 336);
+            this.dgvKafe.Location = new System.Drawing.Point(117, 388);
             this.dgvKafe.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dgvKafe.Name = "dgvKafe";
             this.dgvKafe.RowHeadersWidth = 51;
             this.dgvKafe.RowTemplate.Height = 24;
-            this.dgvKafe.Size = new System.Drawing.Size(624, 144);
+            this.dgvKafe.Size = new System.Drawing.Size(653, 152);
             this.dgvKafe.TabIndex = 7;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(93, 76);
+            this.label1.Location = new System.Drawing.Point(113, 100);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 20);
+            this.label1.Size = new System.Drawing.Size(51, 20);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Waktu Kedatangan:";
+            this.label1.Text = "Nama";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(93, 143);
+            this.label3.Location = new System.Drawing.Point(113, 150);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 20);
+            this.label3.Size = new System.Drawing.Size(63, 20);
             this.label3.TabIndex = 10;
-            this.label3.Text = "Nama:";
+            this.label3.Text = "No Telp";
             // 
-            // txtPhone
+            // txtPilihMeja
             // 
-            this.txtPhone.Location = new System.Drawing.Point(93, 255);
-            this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtPhone.Name = "txtPhone";
-            this.txtPhone.Size = new System.Drawing.Size(620, 26);
-            this.txtPhone.TabIndex = 11;
-            this.txtPhone.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.txtPilihMeja.Location = new System.Drawing.Point(252, 194);
+            this.txtPilihMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPilihMeja.Name = "txtPilihMeja";
+            this.txtPilihMeja.Size = new System.Drawing.Size(373, 26);
+            this.txtPilihMeja.TabIndex = 11;
+            this.txtPilihMeja.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(93, 220);
+            this.label4.Location = new System.Drawing.Point(113, 197);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 20);
+            this.label4.Size = new System.Drawing.Size(75, 20);
             this.label4.TabIndex = 12;
-            this.label4.Text = "No Telp:";
+            this.label4.Text = "Pilih Meja";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(113, 247);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(129, 20);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Waktu Reservasi";
+            // 
+            // txtReservasi
+            // 
+            this.txtReservasi.Location = new System.Drawing.Point(252, 241);
+            this.txtReservasi.Name = "txtReservasi";
+            this.txtReservasi.Size = new System.Drawing.Size(373, 26);
+            this.txtReservasi.TabIndex = 14;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(889, 521);
+            this.ClientSize = new System.Drawing.Size(912, 625);
+            this.Controls.Add(this.txtReservasi);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtPhone);
+            this.Controls.Add(this.txtPilihMeja);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dgvKafe);
             this.Controls.Add(this.txtName);
-            this.Controls.Add(this.txtChoose);
+            this.Controls.Add(this.txtNoTelp);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -183,13 +203,15 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.TextBox txtChoose;
+        private System.Windows.Forms.TextBox txtNoTelp;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.DataGridView dgvKafe;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtPhone;
+        private System.Windows.Forms.TextBox txtPilihMeja;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtReservasi;
     }
 }
 

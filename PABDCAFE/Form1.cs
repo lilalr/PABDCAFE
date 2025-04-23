@@ -28,9 +28,9 @@ namespace PABDCAFE
 
         private void ClearForm()
         {
-            txtChoose.Clear();
+            txtNoTelp.Clear();
             txtName.Clear();
-            txtPhone.Clear();
+            txtPilihMeja.Clear();
 
             txtName.Focus();
         }
@@ -43,7 +43,7 @@ namespace PABDCAFE
                 try
                 {
                     conn.Open();
-                    string query = "SELECT ID_Reservasi, Waktu_Reservasi, Nama_Customer, No_telp, Number_Table FROM Reservasi";
+                    string query = "SELECT Nama_Customer, No_telp, Number_Table, Waktu_Reservasi FROM Reservasi";
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -80,14 +80,14 @@ namespace PABDCAFE
                         try
                         {
                             // Ambil ID dari baris yang dipilih
-                            int idReservasi = Convert.ToInt32(dgvKafe.SelectedRows[0].Cells["ID_Reservasi"].Value);
+                            int nama_customer = Convert.ToInt32(dgvKafe.SelectedRows[0].Cells["Nama_Customer"].Value);
                             conn.Open();
 
-                            string query = "DELETE FROM Reservasi WHERE ID_Reservasi = @ID_Reservasi";
+                            string query = "DELETE FROM Reservasi WHERE Nama_Customer = @Nama_Customer";
 
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
+                                cmd.Parameters.AddWithValue("@Nama_Customer", nama_customer);
                                 int rowsAffected = cmd.ExecuteNonQuery();
 
                                 if (rowsAffected > 0)
@@ -115,11 +115,58 @@ namespace PABDCAFE
             }
         }
 
-
         private void btnEdit(object sender, EventArgs e)
         {
+            if (dgvKafe.SelectedRows.Count > 0)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        int nama_customer = Convert.ToInt32(dgvKafe.SelectedRows[0].Cells["Nama_Customer"].Value);
 
+                        if (txtNoTelp.Text == "" || txtName.Text == "" || txtPilihMeja.Text == "" || txtReservasi.Text == "")
+                        {
+                            MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
+                        conn.Open();
+                        string query = "UPDATE Reservasi SET Waktu_Reservasi = @Waktu_Reservasi, Nama_Customer = @Nama_Customer, " +
+                                       "No_telp = @No_telp, Number_Table = @Number_Table WHERE ID_Reservasi = @ID_Reservasi";
+
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtReservasi.Text.Trim());
+                            cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
+                            cmd.Parameters.AddWithValue("@No_telp", DateTime.Parse(txtNoTelp.Text));
+                            cmd.Parameters.AddWithValue("@Number_Table", txtPilihMeja.Text.Trim());
+
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                MessageBox.Show("Data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                LoadData();
+                                ClearForm();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Data tidak ditemukan atau gagal diperbarui!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Pilih data yang akan diedit!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
+
 
         private void btnTambah(object sender, EventArgs e)
         {
@@ -127,7 +174,7 @@ namespace PABDCAFE
             {
                 try
                 {
-                    if (txtChoose.Text == "" || txtName.Text == "" || txtPhone.Text == "")
+                    if (txtNoTelp.Text == "" || txtName.Text == "" || txtPilihMeja.Text == "")
                     {
                         MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -138,9 +185,9 @@ namespace PABDCAFE
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         
-                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtChoose.Text)); // Harus DateTime
+                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtNoTelp.Text)); // Harus DateTime
                         cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
-                        cmd.Parameters.AddWithValue("@No_telp", txtPhone.Text.Trim());
+                        cmd.Parameters.AddWithValue("@No_telp", txtPilihMeja.Text.Trim());
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                         if (rowsAffected > 0)
