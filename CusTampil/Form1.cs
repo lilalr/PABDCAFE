@@ -71,9 +71,32 @@ namespace CusTampil
             LoadData();
         }
 
-        private void btnEdit(object sender, EventArgs e)
+        private void btnHapus(object sender, EventArgs e)
         {
-            // Kosong, bisa diisi nanti jika butuh fitur edit
+            // Pastikan ada baris yang dipilih
+            if (dgvCus.CurrentRow == null)
+            {
+                MessageBox.Show("Pilih satu baris terlebih dahulu!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Tanyakan konfirmasi penghapusan
+            var result = MessageBox.Show(
+                "Apakah Anda yakin ingin menghapus data ini?",
+                "Konfirmasi Hapus",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                // Hapus baris terpilih dari DataTable
+                int idx = dgvCus.CurrentRow.Index;
+                customerTable.Rows.RemoveAt(idx);
+
+                MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+            }
         }
     }
 }
