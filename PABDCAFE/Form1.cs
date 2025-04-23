@@ -79,20 +79,22 @@ namespace PABDCAFE
                     {
                         try
                         {
-                            string nim = dgvKafe.SelectedRows[0].Cells["Nama_Customer"].Value.ToString();
+                            // Ambil ID dari baris yang dipilih
+                            int idReservasi = Convert.ToInt32(dgvKafe.SelectedRows[0].Cells["ID_Reservasi"].Value);
                             conn.Open();
-                            string query = "DELETE FROM Reservasi WHERE Nama_Customer = @Nama_Customer";
+
+                            string query = "DELETE FROM Reservasi WHERE ID_Reservasi = @ID_Reservasi";
 
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("Nama_Customer", );
+                                cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
                                 int rowsAffected = cmd.ExecuteNonQuery();
 
                                 if (rowsAffected > 0)
                                 {
                                     MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     LoadData();
-                                    ClearForm(); // Auto Clear setelah hapus data
+                                    ClearForm();
                                 }
                                 else
                                 {
@@ -112,6 +114,7 @@ namespace PABDCAFE
                 MessageBox.Show("Pilih data yang akan dihapus!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
 
         private void btnEdit(object sender, EventArgs e)
         {
