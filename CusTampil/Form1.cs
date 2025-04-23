@@ -32,9 +32,9 @@ namespace CusTampil
         {
             customerTable = new DataTable();
             customerTable.Columns.Add("Nama");
-            customerTable.Columns.Add("Email");
-            customerTable.Columns.Add("Telepon");
-            customerTable.Columns.Add("Alamat");
+            customerTable.Columns.Add("No Telp");
+            customerTable.Columns.Add("Pilih Meja");
+            customerTable.Columns.Add("Waktu Reservasi");
         }
 
 

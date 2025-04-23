@@ -97,7 +97,7 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(93, 249);
+            this.txtName.Location = new System.Drawing.Point(93, 178);
             this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(624, 26);
@@ -106,7 +106,7 @@
             // dgvKafe
             // 
             this.dgvKafe.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvKafe.Location = new System.Drawing.Point(93, 404);
+            this.dgvKafe.Location = new System.Drawing.Point(97, 336);
             this.dgvKafe.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dgvKafe.Name = "dgvKafe";
             this.dgvKafe.RowHeadersWidth = 51;
@@ -119,23 +119,23 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(93, 76);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 20);
+            this.label1.Size = new System.Drawing.Size(150, 20);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Choose Your Time Of Arrival :";
+            this.label1.Text = "Waktu Kedatangan:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(97, 221);
+            this.label3.Location = new System.Drawing.Point(93, 143);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(140, 20);
+            this.label3.Size = new System.Drawing.Size(55, 20);
             this.label3.TabIndex = 10;
-            this.label3.Text = "Enter Your Name :";
+            this.label3.Text = "Nama:";
             // 
             // txtPhone
             // 
-            this.txtPhone.Location = new System.Drawing.Point(97, 324);
+            this.txtPhone.Location = new System.Drawing.Point(93, 255);
             this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPhone.Name = "txtPhone";
             this.txtPhone.Size = new System.Drawing.Size(620, 26);
@@ -145,17 +145,17 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(97, 300);
+            this.label4.Location = new System.Drawing.Point(93, 220);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(233, 20);
+            this.label4.Size = new System.Drawing.Size(67, 20);
             this.label4.TabIndex = 12;
-            this.label4.Text = "Enter Your Telephone Number :";
+            this.label4.Text = "No Telp:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 562);
+            this.ClientSize = new System.Drawing.Size(889, 521);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtPhone);
             this.Controls.Add(this.label3);
