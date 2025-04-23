@@ -34,7 +34,6 @@ namespace LoginPage
                 return;
             }
 
-            // Dummy login logika:
             if (username == "admin" && password == "admin123")
             {
                 // Buka halaman admin
