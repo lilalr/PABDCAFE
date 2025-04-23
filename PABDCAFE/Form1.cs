@@ -1,62 +1,42 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PABDCAFE
 {
     public partial class Form1 : Form
     {
-        private string connectionString =
-            @"Data Source=IDEAPAD5PRO\LILA;
-              Initial Catalog=ReservasiCafe;
-              Integrated Security=True";
+        private DataTable dtReservasi = new DataTable();
 
         public Form1()
         {
             InitializeComponent();
+            SetupTable();
+            dgvKafe.SelectionChanged += dgvKafe_SelectionChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadComboBoxMeja();
-            LoadData();
-        }
-
-        private void LoadComboBoxMeja()
-        {
-            cmbMeja.Items.Clear();
-            using var conn = new SqlConnection(connectionString);
-            using var cmd = new SqlCommand(
-                "SELECT Number_Table FROM Meja WHERE Status_Meja = 'Tersedia'",
-                conn);
-            conn.Open();
-            using var rdr = cmd.ExecuteReader();
-            while (rdr.Read())
-                cmbMeja.Items.Add(rdr.GetString(0));
-
-            // Pastikan hanya bisa pilih daftar
-            cmbMeja.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbMeja.SelectedIndex = -1;
-        }
-
-        private void LoadData()
-        {
-            using var conn = new SqlConnection(connectionString);
-            using var da = new SqlDataAdapter(
-                "SELECT ID_Reservasi, Nama_Customer, No_telp, Number_Table, Waktu_Reservasi FROM Reservasi",
-                conn);
-            var dt = new DataTable();
-            da.Fill(dt);
-            dgvKafe.DataSource = dt;
-
+            dgvKafe.DataSource = dtReservasi;
             ClearForm();
+        }
+
+        private void SetupTable()
+        {
+            dtReservasi.Columns.Add("ID", typeof(int));
+            dtReservasi.Columns.Add("Nama");
+            dtReservasi.Columns.Add("NoTelp");
+            dtReservasi.Columns.Add("Meja");
+            dtReservasi.Columns.Add("Waktu", typeof(DateTime));
         }
 
         private void ClearForm()
         {
             txtName.Clear();
             txtNoTelp.Clear();
+            cmbMeja.Items.Clear();
+            cmbMeja.Items.AddRange(new object[] { "01", "02", "03", "04", "05" });
             cmbMeja.SelectedIndex = -1;
             dtpReservasii.Value = DateTime.Now;
             txtName.Focus();
@@ -64,39 +44,39 @@ namespace PABDCAFE
 
         private void btnTambah(object sender, EventArgs e)
         {
-            // Validasi
+            // Validasi sederhana
             if (string.IsNullOrWhiteSpace(txtName.Text) ||
-                string.IsNullOrWhiteSpace(txtNoTelp.Text))
+                string.IsNullOrWhiteSpace(txtNoTelp.Text) ||
+                cmbMeja.SelectedIndex < 0)
             {
-                MessageBox.Show("Harap isi Nama dan No Telp!", "Peringatan",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (cmbMeja.SelectedIndex < 0)
-            {
-                MessageBox.Show("Harap pilih meja!", "Peringatan",
+                MessageBox.Show("Lengkapi semua field!", "Peringatan",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // INSERT ke DB
-            using var conn = new SqlConnection(connectionString);
-            using var cmd = new SqlCommand(@"
-                INSERT INTO Reservasi
-                   (Nama_Customer, No_telp, Waktu_Reservasi, Number_Table)
-                VALUES
-                   (@Nama, @Telp, @Waktu, @Meja)", conn);
-            cmd.Parameters.AddWithValue("@Nama", txtName.Text.Trim());
-            cmd.Parameters.AddWithValue("@Telp", txtNoTelp.Text.Trim());
-            cmd.Parameters.AddWithValue("@Waktu", dtpReservasii.Value);
-            cmd.Parameters.AddWithValue("@Meja", cmbMeja.SelectedItem.ToString());
-            conn.Open();
-            cmd.ExecuteNonQuery();
+            // Cek unik meja
+            var mejaDipilih = cmbMeja.SelectedItem.ToString();
+            bool sudahDipakai = dtReservasi.AsEnumerable()
+                .Any(r => r.Field<string>("Meja") == mejaDipilih);
+            if (sudahDipakai)
+            {
+                MessageBox.Show($"Meja {mejaDipilih} sudah dipakai!", "Peringatan",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            // Tambah
+            int id = dtReservasi.Rows.Count + 1;
+            dtReservasi.Rows.Add(
+                id,
+                txtName.Text.Trim(),
+                txtNoTelp.Text.Trim(),
+                mejaDipilih,
+                dtpReservasii.Value
+            );
             MessageBox.Show("Data berhasil ditambahkan!", "Sukses",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            LoadData();
+            ClearForm();
         }
 
         private void btnEdit(object sender, EventArgs e)
@@ -108,78 +88,80 @@ namespace PABDCAFE
                 return;
             }
 
-            int id = (int)dgvKafe.CurrentRow.Cells["ID_Reservasi"].Value;
+            string mejaDipilih = cmbMeja.SelectedItem.ToString();
+            int idx = dgvKafe.CurrentRow.Index;
 
-            // Validasi sama seperti tambah
-            if (string.IsNullOrWhiteSpace(txtName.Text) ||
-                string.IsNullOrWhiteSpace(txtNoTelp.Text) ||
-                cmbMeja.SelectedIndex < 0)
+            // Cek unik meja: boleh sama dengan baris sendiri, tapi tidak sama dengan baris lain
+            bool sudahDipakai = dtReservasi.AsEnumerable()
+                .Where((r, i) => i != idx)
+                .Any(r => r.Field<string>("Meja") == mejaDipilih);
+            if (sudahDipakai)
             {
-                MessageBox.Show("Harap lengkapi data!", "Peringatan",
+                MessageBox.Show($"Meja {mejaDipilih} sudah dipakai!", "Peringatan",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // UPDATE DB
-            using var conn = new SqlConnection(connectionString);
-            using var cmd = new SqlCommand(@"
-                UPDATE Reservasi
-                SET
-                  Nama_Customer   = @Nama,
-                  No_telp         = @Telp,
-                  Waktu_Reservasi = @Waktu,
-                  Number_Table    = @Meja
-                WHERE ID_Reservasi = @ID", conn);
-            cmd.Parameters.AddWithValue("@Nama", txtName.Text.Trim());
-            cmd.Parameters.AddWithValue("@Telp", txtNoTelp.Text.Trim());
-            cmd.Parameters.AddWithValue("@Waktu", dtpReservasii.Value);
-            cmd.Parameters.AddWithValue("@Meja", cmbMeja.SelectedItem.ToString());
-            cmd.Parameters.AddWithValue("@ID", id);
-            conn.Open();
-            cmd.ExecuteNonQuery();
+            // Perbarui
+            dtReservasi.Rows[idx]["Nama"] = txtName.Text.Trim();
+            dtReservasi.Rows[idx]["NoTelp"] = txtNoTelp.Text.Trim();
+            dtReservasi.Rows[idx]["Meja"] = mejaDipilih;
+            dtReservasi.Rows[idx]["Waktu"] = dtpReservasii.Value;
 
             MessageBox.Show("Data berhasil diperbarui!", "Sukses",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ClearForm();
+        }
 
-            LoadData();
+
+        
+
+        private void dgvKafe_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvKafe.CurrentRow == null) return;
+            txtName.Text = dgvKafe.CurrentRow.Cells["Nama"].Value?.ToString();
+            txtNoTelp.Text = dgvKafe.CurrentRow.Cells["NoTelp"].Value?.ToString();
+            cmbMeja.SelectedItem = dgvKafe.CurrentRow.Cells["Meja"].Value;
+            dtpReservasii.Value = (DateTime)dgvKafe.CurrentRow.Cells["Waktu"].Value;
         }
 
         private void btnHapus(object sender, EventArgs e)
         {
-            if (dgvKafe.CurrentRow == null)
-            {
-                MessageBox.Show("Pilih baris untuk dihapus!", "Peringatan",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (dgvKafe.CurrentRow == null) return;
 
-            var resp = MessageBox.Show(
-                "Yakin ingin menghapus data?",
-                "Konfirmasi",
+            var res = MessageBox.Show(
+                "Yakin menghapus data ini?",
+                "Konfirmasi Hapus",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            if (resp != DialogResult.Yes) return;
 
-            int id = (int)dgvKafe.CurrentRow.Cells["ID_Reservasi"].Value;
-            using var conn = new SqlConnection(connectionString);
-            using var cmd = new SqlCommand(
-                "DELETE FROM Reservasi WHERE ID_Reservasi = @ID", conn);
-            cmd.Parameters.AddWithValue("@ID", id);
-            conn.Open();
-            cmd.ExecuteNonQuery();
-
-            MessageBox.Show("Data berhasil dihapus!", "Sukses",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            LoadData();
+            if (res == DialogResult.Yes)
+            {
+                dtReservasi.Rows.RemoveAt(dgvKafe.CurrentRow.Index);
+                MessageBox.Show("Data berhasil dihapus!", "Sukses",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearForm();
+            }
         }
 
         private void btnRefresh(object sender, EventArgs e)
         {
-            LoadData();
-            MessageBox.Show(
-                $"Baris: {dgvKafe.RowCount}, Kolom: {dgvKafe.ColumnCount}",
-                "Info Grid", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            dgvKafe.Refresh();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtChoose_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
