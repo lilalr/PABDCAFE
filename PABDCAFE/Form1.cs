@@ -139,7 +139,7 @@ namespace PABDCAFE
                         {
                             cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtReservasi.Text.Trim());
                             cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
-                            cmd.Parameters.AddWithValue("@No_telp", DateTime.Parse(txtNoTelp.Text));
+                            cmd.Parameters.AddWithValue("@No_telp", txtNoTelp.Text.Trim());
                             cmd.Parameters.AddWithValue("@Number_Table", txtPilihMeja.Text.Trim());
 
                             int rowsAffected = cmd.ExecuteNonQuery();
@@ -168,13 +168,15 @@ namespace PABDCAFE
         }
 
 
+
+
         private void btnTambah(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
-                    if (txtNoTelp.Text == "" || txtName.Text == "" || txtPilihMeja.Text == "")
+                    if (txtReservasi.Text == "" || txtName.Text == "" || txtNoTelp.Text == "" || txtPilihMeja.Text == "")
                     {
                         MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -185,9 +187,10 @@ namespace PABDCAFE
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         
-                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtNoTelp.Text)); // Harus DateTime
+                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtReservasi.Text.Trim());
                         cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
                         cmd.Parameters.AddWithValue("@No_telp", txtPilihMeja.Text.Trim());
+                        cmd.Parameters.AddWithValue("@Number_Table", txtPilihMeja.Text.Trim());
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                         if (rowsAffected > 0)
