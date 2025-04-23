@@ -75,9 +75,5 @@ namespace CusTampil
         {
             // Kosong, bisa diisi nanti jika butuh fitur edit
         }
-
-
     }
 }
-
-

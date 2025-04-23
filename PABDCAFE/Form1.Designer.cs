@@ -37,10 +37,10 @@
             this.dgvKafe = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtPilihMeja = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtReservasi = new System.Windows.Forms.TextBox();
+            this.dtpReservasii = new System.Windows.Forms.DateTimePicker();
+            this.cmbMeja = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKafe)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,7 +90,7 @@
             // 
             // txtNoTelp
             // 
-            this.txtNoTelp.Location = new System.Drawing.Point(252, 147);
+            this.txtNoTelp.Location = new System.Drawing.Point(252, 144);
             this.txtNoTelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNoTelp.Name = "txtNoTelp";
             this.txtNoTelp.Size = new System.Drawing.Size(373, 26);
@@ -135,15 +135,6 @@
             this.label3.TabIndex = 10;
             this.label3.Text = "No Telp";
             // 
-            // txtPilihMeja
-            // 
-            this.txtPilihMeja.Location = new System.Drawing.Point(252, 194);
-            this.txtPilihMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtPilihMeja.Name = "txtPilihMeja";
-            this.txtPilihMeja.Size = new System.Drawing.Size(373, 26);
-            this.txtPilihMeja.TabIndex = 11;
-            this.txtPilihMeja.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -162,22 +153,31 @@
             this.label2.TabIndex = 13;
             this.label2.Text = "Waktu Reservasi";
             // 
-            // txtReservasi
+            // dtpReservasii
             // 
-            this.txtReservasi.Location = new System.Drawing.Point(252, 241);
-            this.txtReservasi.Name = "txtReservasi";
-            this.txtReservasi.Size = new System.Drawing.Size(373, 26);
-            this.txtReservasi.TabIndex = 14;
+            this.dtpReservasii.Location = new System.Drawing.Point(252, 241);
+            this.dtpReservasii.Name = "dtpReservasii";
+            this.dtpReservasii.Size = new System.Drawing.Size(373, 26);
+            this.dtpReservasii.TabIndex = 14;
+            this.dtpReservasii.Tag = "dtpReservasi";
+            // 
+            // cmbMeja
+            // 
+            this.cmbMeja.FormattingEnabled = true;
+            this.cmbMeja.Location = new System.Drawing.Point(252, 197);
+            this.cmbMeja.Name = "cmbMeja";
+            this.cmbMeja.Size = new System.Drawing.Size(373, 28);
+            this.cmbMeja.TabIndex = 15;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(912, 625);
-            this.Controls.Add(this.txtReservasi);
+            this.Controls.Add(this.cmbMeja);
+            this.Controls.Add(this.dtpReservasii);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtPilihMeja);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dgvKafe);
@@ -208,10 +208,12 @@
         private System.Windows.Forms.DataGridView dgvKafe;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtPilihMeja;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtReservasi;
+        private System.Windows.Forms.ComboBox cmbPilihMeja;
+        private System.Windows.Forms.DateTimePicker dtpReservasii;
+        private System.Windows.Forms.ComboBox cmbMeja;
+
     }
 }
 

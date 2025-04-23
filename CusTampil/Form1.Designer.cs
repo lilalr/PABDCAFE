@@ -33,12 +33,12 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.txtCus1 = new System.Windows.Forms.TextBox();
             this.txtCus2 = new System.Windows.Forms.TextBox();
             this.txtCus4 = new System.Windows.Forms.TextBox();
             this.txtCus3 = new System.Windows.Forms.TextBox();
             this.dgvCus = new System.Windows.Forms.DataGridView();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCus)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,23 +80,13 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(588, 144);
+            this.button1.Location = new System.Drawing.Point(628, 147);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 26);
+            this.button1.Size = new System.Drawing.Size(75, 43);
             this.button1.TabIndex = 4;
             this.button1.Text = "Submit";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnSubmit);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(588, 190);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 26);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Edit";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.btnEdit);
             // 
             // txtCus1
             // 
@@ -129,24 +119,34 @@
             // dgvCus
             // 
             this.dgvCus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCus.Location = new System.Drawing.Point(66, 396);
+            this.dgvCus.Location = new System.Drawing.Point(66, 319);
             this.dgvCus.Name = "dgvCus";
             this.dgvCus.RowHeadersWidth = 62;
             this.dgvCus.RowTemplate.Height = 28;
             this.dgvCus.Size = new System.Drawing.Size(597, 180);
             this.dgvCus.TabIndex = 11;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(628, 209);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 42);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "Hapus";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.btnHapus);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 633);
+            this.ClientSize = new System.Drawing.Size(752, 633);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.dgvCus);
             this.Controls.Add(this.txtCus3);
             this.Controls.Add(this.txtCus4);
             this.Controls.Add(this.txtCus2);
             this.Controls.Add(this.txtCus1);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -168,12 +168,12 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox txtCus1;
         private System.Windows.Forms.TextBox txtCus2;
         private System.Windows.Forms.TextBox txtCus4;
         private System.Windows.Forms.TextBox txtCus3;
         private System.Windows.Forms.DataGridView dgvCus;
+        private System.Windows.Forms.Button button2;
     }
 }
 
