@@ -43,7 +43,7 @@ namespace PABDCAFE
                 try
                 {
                     conn.Open();
-                    string query = "SELECT Waktu_Reservasi, Nama_Customer, No_telp FROM Reservasi";
+                    string query = "SELECT ID_Reservasi, Waktu_Reservasi, Nama_Customer, No_telp, Number_Table FROM Reservasi";
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -85,7 +85,7 @@ namespace PABDCAFE
 
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("Nama_Customer", nim);
+                                cmd.Parameters.AddWithValue("Nama_Customer", );
                                 int rowsAffected = cmd.ExecuteNonQuery();
 
                                 if (rowsAffected > 0)
@@ -131,10 +131,11 @@ namespace PABDCAFE
                     }
 
                     conn.Open();
-                    string query = "INSERT INTO Reservasi (Waktu_Reservasi, Nama_Customer, No_telp) VALUES (@Waktu_Reservasi, @Nama_Customer, @No_Telp)";
+                    string query = "INSERT INTO Reservasi (Waktu_Reservasi, Nama_Customer, No_telp, Number_Table)";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtChoose.Text.Trim());
+                        
+                        cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtChoose.Text)); // Harus DateTime
                         cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
                         cmd.Parameters.AddWithValue("@No_telp", txtPhone.Text.Trim());
 
