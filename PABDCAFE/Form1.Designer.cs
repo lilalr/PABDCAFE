@@ -33,11 +33,9 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.txtChoose = new System.Windows.Forms.TextBox();
-            this.txtDate = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.dgvKafe = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtPhone = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -95,14 +93,7 @@
             this.txtChoose.Name = "txtChoose";
             this.txtChoose.Size = new System.Drawing.Size(624, 26);
             this.txtChoose.TabIndex = 4;
-            // 
-            // txtDate
-            // 
-            this.txtDate.Location = new System.Drawing.Point(93, 175);
-            this.txtDate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtDate.Name = "txtDate";
-            this.txtDate.Size = new System.Drawing.Size(624, 26);
-            this.txtDate.TabIndex = 5;
+            this.txtChoose.TextChanged += new System.EventHandler(this.txtChoose_TextChanged);
             // 
             // txtName
             // 
@@ -131,15 +122,7 @@
             this.label1.Size = new System.Drawing.Size(216, 20);
             this.label1.TabIndex = 8;
             this.label1.Text = "Choose Your Time Of Arrival :";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(93, 148);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(139, 20);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Select Your Date :";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label3
             // 
@@ -176,11 +159,9 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtPhone);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dgvKafe);
             this.Controls.Add(this.txtName);
-            this.Controls.Add(this.txtDate);
             this.Controls.Add(this.txtChoose);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -203,11 +184,9 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox txtChoose;
-        private System.Windows.Forms.TextBox txtDate;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.DataGridView dgvKafe;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtPhone;
         private System.Windows.Forms.Label label4;

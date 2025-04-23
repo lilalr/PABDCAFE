@@ -14,7 +14,7 @@ namespace CusTampil
 {
     public partial class Form1 : Form
     {
-        private string connectionString = "Data Source=PARA44ISS\\ANANPRDGM;Initial Catalog=ReservasiCafe";
+        private string connectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe";
         private DataTable customerTable;
 
         public Form1()

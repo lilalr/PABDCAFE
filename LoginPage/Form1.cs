@@ -16,7 +16,7 @@ namespace LoginPage
 {
     public partial class Form1: Form
     {
-        private string connectionString = "Data Source=PARA44ISS\\ANANPRDGM;Initial Catalog=ReservasiCafe";
+        private string connectionString = "IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe";
 
         public Form1()
         {
@@ -38,7 +38,7 @@ namespace LoginPage
             if (username == "admin" && password == "admin123")
             {
                 // Buka halaman admin
-                PABDCAFE.FormAdmin adminForm = new PABDCAFE.FormAdmin();
+                PABDCAFE.Form1 adminForm = new PABDCAFE.Form1();
                 adminForm.Show();
                 this.Hide();
             }

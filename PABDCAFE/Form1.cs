@@ -14,7 +14,7 @@ namespace PABDCAFE
     public partial class Form1: Form
     {
 
-        private string connectionString = "Data Source=PARA44ISS\\ANANPRDGM;Initial Catalog=ReservasiCafe;Integrated Security=True";
+        private string connectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;Integrated Security=True";
 
         public Form1()
         {
@@ -29,7 +29,6 @@ namespace PABDCAFE
         private void ClearForm()
         {
             txtChoose.Clear();
-            txtDate.Clear();
             txtName.Clear();
             txtPhone.Clear();
 
@@ -44,7 +43,7 @@ namespace PABDCAFE
                 try
                 {
                     conn.Open();
-                    string query = "SELECT Waktu_Reservasi, Tanggal, Nama_Customer, No_telp FROM Reservasi";
+                    string query = "SELECT Waktu_Reservasi, Nama_Customer, No_telp FROM Reservasi";
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -86,7 +85,7 @@ namespace PABDCAFE
 
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("@NIM", nim);
+                                cmd.Parameters.AddWithValue("Nama_Customer", nim);
                                 int rowsAffected = cmd.ExecuteNonQuery();
 
                                 if (rowsAffected > 0)
@@ -125,18 +124,17 @@ namespace PABDCAFE
             {
                 try
                 {
-                    if (txtChoose.Text == "" || txtDate.Text == "" || txtName.Text == "" || txtPhone.Text == "")
+                    if (txtChoose.Text == "" || txtName.Text == "" || txtPhone.Text == "")
                     {
                         MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
                     conn.Open();
-                    string query = "INSERT INTO Reservasi (Waktu_Reservasi, Tanggal, Nama_Customer, No_telp) VALUES (@Waktu_Reservasi, @Tanggal, @Nama_Customer, @No_Telp)";
+                    string query = "INSERT INTO Reservasi (Waktu_Reservasi, Nama_Customer, No_telp) VALUES (@Waktu_Reservasi, @Nama_Customer, @No_Telp)";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtChoose.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Tanggal", txtDate.Text.Trim());
                         cmd.Parameters.AddWithValue("@Nama_Customer", txtName.Text.Trim());
                         cmd.Parameters.AddWithValue("@No_telp", txtPhone.Text.Trim());
 
@@ -162,6 +160,16 @@ namespace PABDCAFE
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtChoose_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }
