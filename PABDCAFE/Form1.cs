@@ -144,6 +144,14 @@ namespace PABDCAFE
             }
         }
 
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.Hide(); // 
+            Form1 formUtama = new Form1(); // 
+            formUtama.Show(); 
+        }
+
+
         private void btnRefresh(object sender, EventArgs e)
         {
             dgvKafe.Refresh();
@@ -163,5 +171,10 @@ namespace PABDCAFE
         {
 
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+        }
     }
-}
