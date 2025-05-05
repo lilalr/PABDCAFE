@@ -16,11 +16,13 @@ namespace LoginPage
 {
     public partial class Form1: Form
     {
-        private string connectionString = "IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe";
+        private string connectionString = "IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe; Integrated Security = True";
 
         public Form1()
         {
+
             InitializeComponent();
+
         }
 
         private void Masukk_Click(object sender, EventArgs e)
@@ -37,14 +39,14 @@ namespace LoginPage
             if (username == "admin" && password == "admin123")
             {
                 // Buka halaman admin
-                PABDCAFE.Form1 adminForm = new PABDCAFE.Form1();
+                LoginPage.Form1 adminForm = new LoginPage.Form1();
                 adminForm.Show();
                 this.Hide();
             }
             else if (username == "customer" && password == "cust123")
             {
                 // Buka halaman customer
-                CusTampil.Form1 customerForm = new CusTampil.Form1();
+                LoginPage.Form1 customerForm = new LoginPage.Form1();
                 customerForm.Show();
                 this.Hide();
             }

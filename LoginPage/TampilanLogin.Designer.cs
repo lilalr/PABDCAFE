@@ -48,8 +48,10 @@
             this.InPass.Location = new System.Drawing.Point(224, 301);
             this.InPass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.InPass.Name = "InPass";
+            this.InPass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.InPass.Size = new System.Drawing.Size(430, 26);
             this.InPass.TabIndex = 1;
+            this.InPass.UseSystemPasswordChar = true;
             // 
             // Masukk
             // 
