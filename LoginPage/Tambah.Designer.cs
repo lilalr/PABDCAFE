@@ -35,11 +35,13 @@
             this.ArNama = new System.Windows.Forms.Label();
             this.ArNoTelp = new System.Windows.Forms.Label();
             this.ArWaktu = new System.Windows.Forms.Label();
+            this.dataGridViewTr = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).BeginInit();
             this.SuspendLayout();
             // 
             // txtTrNama
             // 
-            this.txtTrNama.Location = new System.Drawing.Point(134, 69);
+            this.txtTrNama.Location = new System.Drawing.Point(183, 22);
             this.txtTrNama.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtTrNama.Name = "txtTrNama";
             this.txtTrNama.Size = new System.Drawing.Size(273, 22);
@@ -48,7 +50,7 @@
             // 
             // btnCustAdd
             // 
-            this.btnCustAdd.Location = new System.Drawing.Point(430, 69);
+            this.btnCustAdd.Location = new System.Drawing.Point(593, 42);
             this.btnCustAdd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustAdd.Name = "btnCustAdd";
             this.btnCustAdd.Size = new System.Drawing.Size(69, 29);
@@ -58,14 +60,14 @@
             // 
             // txtTrNoTelp
             // 
-            this.txtTrNoTelp.Location = new System.Drawing.Point(134, 112);
+            this.txtTrNoTelp.Location = new System.Drawing.Point(183, 49);
             this.txtTrNoTelp.Name = "txtTrNoTelp";
             this.txtTrNoTelp.Size = new System.Drawing.Size(273, 22);
             this.txtTrNoTelp.TabIndex = 2;
             // 
             // txtTrWaktu
             // 
-            this.txtTrWaktu.Location = new System.Drawing.Point(134, 152);
+            this.txtTrWaktu.Location = new System.Drawing.Point(183, 77);
             this.txtTrWaktu.Name = "txtTrWaktu";
             this.txtTrWaktu.Size = new System.Drawing.Size(273, 22);
             this.txtTrWaktu.TabIndex = 3;
@@ -74,7 +76,7 @@
             // ArNama
             // 
             this.ArNama.AutoSize = true;
-            this.ArNama.Location = new System.Drawing.Point(12, 75);
+            this.ArNama.Location = new System.Drawing.Point(62, 28);
             this.ArNama.Name = "ArNama";
             this.ArNama.Size = new System.Drawing.Size(104, 16);
             this.ArNama.TabIndex = 4;
@@ -84,7 +86,7 @@
             // ArNoTelp
             // 
             this.ArNoTelp.AutoSize = true;
-            this.ArNoTelp.Location = new System.Drawing.Point(15, 118);
+            this.ArNoTelp.Location = new System.Drawing.Point(64, 55);
             this.ArNoTelp.Name = "ArNoTelp";
             this.ArNoTelp.Size = new System.Drawing.Size(102, 16);
             this.ArNoTelp.TabIndex = 5;
@@ -93,17 +95,28 @@
             // ArWaktu
             // 
             this.ArWaktu.AutoSize = true;
-            this.ArWaktu.Location = new System.Drawing.Point(18, 158);
+            this.ArWaktu.Location = new System.Drawing.Point(64, 83);
             this.ArWaktu.Name = "ArWaktu";
             this.ArWaktu.Size = new System.Drawing.Size(110, 16);
             this.ArWaktu.TabIndex = 6;
             this.ArWaktu.Text = "Waktu Reservasi";
+            // 
+            // dataGridViewTr
+            // 
+            this.dataGridViewTr.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTr.Location = new System.Drawing.Point(47, 189);
+            this.dataGridViewTr.Name = "dataGridViewTr";
+            this.dataGridViewTr.RowHeadersWidth = 51;
+            this.dataGridViewTr.RowTemplate.Height = 24;
+            this.dataGridViewTr.Size = new System.Drawing.Size(569, 150);
+            this.dataGridViewTr.TabIndex = 7;
             // 
             // Tambah
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(711, 360);
+            this.Controls.Add(this.dataGridViewTr);
             this.Controls.Add(this.ArWaktu);
             this.Controls.Add(this.ArNoTelp);
             this.Controls.Add(this.ArNama);
@@ -114,6 +127,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Tambah";
             this.Text = "TambahReservasi";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -127,5 +141,6 @@
         private System.Windows.Forms.Label ArNoTelp;
         private System.Windows.Forms.Label ArWaktu;
         private System.Windows.Forms.TextBox txtTrNama;
+        private System.Windows.Forms.DataGridView dataGridViewTr;
     }
 }
