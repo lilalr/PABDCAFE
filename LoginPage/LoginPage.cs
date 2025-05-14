@@ -11,12 +11,12 @@ using System.Windows.Forms;
 
 namespace PABDCAFE
 {
-    public partial class LoginAdmin : Form
+    public partial class LoginPage : Form
     {
         // ganti "server" sesuai dengan SQL server anda
         private string baseconnectionString = "Data Source=IDEAPAD5PRO\\LILA; Initial Catalog=ReservasiCafe;";
 
-        public LoginAdmin()
+        public LoginPage()
         {
             InitializeComponent();
         }
@@ -31,38 +31,37 @@ namespace PABDCAFE
             string Username = txtUsername.Text;
             string Password = txtPassword.Text;
 
-            // Cek apakah username adalah "customer"
-            if (Username.ToLower() == "customer")
-            {
-                MessageBox.Show("Akun customer tidak boleh login sebagai admin!");
-                return;
-            }
-
             try
             {
                 string connectionString = baseconnectionString + $"User ID={Username};Password={Password}";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    conn.Open();
-
-                    // Misal cek apakah user adalah admin dari database atau hardcoded
-                    if (Username.ToLower() == "admin") // contoh hardcoded
+                 
+                    if (Username == "admin")
                     {
-                        MessageBox.Show("Login admin berhasil!");
+                        // Masuk ke halaman admin
+                        MessageBox.Show("Login berhasil sebagai admin.");
                         AdminPage admin = new AdminPage();
                         admin.Show();
+                    }
+                    else if (Username == "customer")
+                    {
+                        // Masuk ke halaman customer
+                        MessageBox.Show("Login berhasil sebagai customer.");
+                        CustomerPage customer = new CustomerPage();
+                        customer.Show();
                         this.Hide();
                     }
                     else
                     {
-                        MessageBox.Show("Akun ini bukan akun admin!");
+                        MessageBox.Show("Akun ini tidak dikenali.");
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Login admin gagal. Cek username dan password!");
+                MessageBox.Show("Login gagal. Periksa username dan password!");
             }
         }
     }

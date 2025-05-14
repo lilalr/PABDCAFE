@@ -1,6 +1,6 @@
 ﻿namespace PABDCAFE
 {
-    partial class LoginAdmin
+    partial class LoginPage
     {
         /// <summary>
         /// Required designer variable.
@@ -78,7 +78,7 @@
             this.btnPassword.TabIndex = 4;
             this.btnPassword.Text = "Password";
             // 
-            // LoginAdmin
+            // LoginPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -88,8 +88,8 @@
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.btnLogin);
-            this.Name = "LoginAdmin";
-            this.Text = "LoginAdmin";
+            this.Name = "LoginPage";
+            this.Text = "LoginPage";
             this.Load += new System.EventHandler(this.LoginAdmin_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

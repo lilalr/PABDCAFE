@@ -64,11 +64,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoginAdmin.cs">
+    <Compile Include="LoginPage.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoginAdmin.Designer.cs">
-      <DependentUpon>LoginAdmin.cs</DependentUpon>
+    <Compile Include="LoginPage.Designer.cs">
+      <DependentUpon>LoginPage.cs</DependentUpon>
     </Compile>
     <Compile Include="LoginCustomer.cs">
       <SubType>Form</SubType>
@@ -93,8 +93,8 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoginAdmin.resx">
-      <DependentUpon>LoginAdmin.cs</DependentUpon>
+    <EmbeddedResource Include="LoginPage.resx">
+      <DependentUpon>LoginPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginCustomer.resx">
       <DependentUpon>LoginCustomer.cs</DependentUpon>

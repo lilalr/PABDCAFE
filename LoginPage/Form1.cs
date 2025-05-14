@@ -22,6 +22,11 @@ namespace PABDCAFE
 
         }
 
-        
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            LoginPage lp = new LoginPage();
+            lp.Show();
+            this.Hide();
+        }
     }
 }
