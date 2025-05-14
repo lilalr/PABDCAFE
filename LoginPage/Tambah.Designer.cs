@@ -127,6 +127,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Tambah";
             this.Text = "TambahReservasi";
+            this.Load += new System.EventHandler(this.Tambah_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

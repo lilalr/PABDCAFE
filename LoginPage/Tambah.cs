@@ -31,5 +31,10 @@ namespace LoginPage
         {
 
         }
+
+        private void Tambah_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
