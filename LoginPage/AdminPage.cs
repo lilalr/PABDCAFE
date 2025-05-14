@@ -39,7 +39,7 @@ namespace PABDCAFE
             if (result == DialogResult.Yes)
             {
                 // Kembali ke LoginPage
-                LoginPageAdmin login = new LoginPageAdmin();
+                LoginPage login = new LoginPage();
                 login.Show();
                 this.Close();
             }
