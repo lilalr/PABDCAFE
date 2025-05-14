@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PABDCAFE;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -33,17 +34,17 @@ namespace PABDCAFE
 
             try
             {
-                string connectionString = baseconnectionString + $"User ID={Username};Password={Password}";
+                string connectionString = baseconnectionString + $"User ID={Username};Password={Password};";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                 
                     if (Username == "admin")
                     {
                         // Masuk ke halaman admin
                         MessageBox.Show("Login berhasil sebagai admin.");
                         AdminPage admin = new AdminPage();
                         admin.Show();
+                        this.Hide();
                     }
                     else if (Username == "customer")
                     {
