@@ -10,16 +10,11 @@ using System.Windows.Forms;
 
 namespace LoginPage
 {
-    public partial class LoginPage : Form
+    public partial class TambahReservasi : Form
     {
-        public LoginPage()
+        public TambahReservasi()
         {
             InitializeComponent();
-        }
-
-        private void LoginPage_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace PABDCAFE
 {
@@ -20,11 +22,6 @@ namespace PABDCAFE
 
         }
 
-        private void btnClick_Click(object sender, EventArgs e)
-        {
-            LoginPage lp = new LoginPage();
-            lp.Show();
-            this.Close();
-        }
+        
     }
 }

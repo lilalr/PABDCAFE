@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LoginPage
+namespace PABDCAFE
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace LoginPage
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginPage.TampilanLogin());
+            Application.Run(new Form1());
         }
     }
 }
