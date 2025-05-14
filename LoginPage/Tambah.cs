@@ -10,14 +10,24 @@ using System.Windows.Forms;
 
 namespace LoginPage
 {
-    public partial class TambahReservasi : Form
+    public partial class Tambah : Form
     {
-        public TambahReservasi()
+        public Tambah()
         {
             InitializeComponent();
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtWaktuReservasi_TextChanged(object sender, EventArgs e)
         {
 
         }
