@@ -1,6 +1,6 @@
 ﻿namespace PABDCAFE
 {
-    partial class TambahPage
+    partial class AdminReservasi
     {
         /// <summary>
         /// Required designer variable.
@@ -40,17 +40,16 @@
             this.ArMeja = new System.Windows.Forms.Label();
             this.btnArHapus = new System.Windows.Forms.Button();
             this.btnArEdit = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).BeginInit();
             this.SuspendLayout();
             // 
             // txtArNama
             // 
-            this.txtArNama.Location = new System.Drawing.Point(183, 22);
-            this.txtArNama.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtArNama.Location = new System.Drawing.Point(0, 0);
             this.txtArNama.Name = "txtArNama";
-            this.txtArNama.Size = new System.Drawing.Size(273, 22);
-            this.txtArNama.TabIndex = 0;
-            this.txtArNama.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.txtArNama.Size = new System.Drawing.Size(100, 22);
+            this.txtArNama.TabIndex = 14;
             // 
             // btnArAdd
             // 
@@ -72,21 +71,17 @@
             // 
             // txtArWaktu
             // 
-            this.txtArWaktu.Location = new System.Drawing.Point(183, 77);
+            this.txtArWaktu.Location = new System.Drawing.Point(0, 0);
             this.txtArWaktu.Name = "txtArWaktu";
-            this.txtArWaktu.Size = new System.Drawing.Size(273, 22);
-            this.txtArWaktu.TabIndex = 3;
-            this.txtArWaktu.TextChanged += new System.EventHandler(this.txtWaktuReservasi_TextChanged);
+            this.txtArWaktu.Size = new System.Drawing.Size(100, 22);
+            this.txtArWaktu.TabIndex = 13;
             // 
             // ArNama
             // 
-            this.ArNama.AutoSize = true;
-            this.ArNama.Location = new System.Drawing.Point(62, 28);
+            this.ArNama.Location = new System.Drawing.Point(0, 0);
             this.ArNama.Name = "ArNama";
-            this.ArNama.Size = new System.Drawing.Size(104, 16);
-            this.ArNama.TabIndex = 4;
-            this.ArNama.Text = "Nama Customer";
-            this.ArNama.Click += new System.EventHandler(this.label1_Click);
+            this.ArNama.Size = new System.Drawing.Size(100, 23);
+            this.ArNama.TabIndex = 12;
             // 
             // ArNoTelp
             // 
@@ -151,11 +146,22 @@
             this.btnArEdit.Text = "Edit Reservasi";
             this.btnArEdit.UseVisualStyleBackColor = true;
             // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(624, 313);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 26);
+            this.btnBack.TabIndex = 15;
+            this.btnBack.Text = "<back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
             // AdminReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(711, 360);
+            this.Controls.Add(this.btnBack);
             this.Controls.Add(this.btnArEdit);
             this.Controls.Add(this.btnArHapus);
             this.Controls.Add(this.ArMeja);
@@ -191,5 +197,6 @@
         private System.Windows.Forms.Label ArMeja;
         private System.Windows.Forms.Button btnArHapus;
         private System.Windows.Forms.Button btnArEdit;
+        private System.Windows.Forms.Button btnBack;
     }
 }

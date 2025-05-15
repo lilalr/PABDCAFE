@@ -24,12 +24,16 @@ namespace PABDCAFE
 
         private void btnReservasi_Click(object sender, EventArgs e)
         {
-
+            AdminReservasi ar = new AdminReservasi();
+            ar.Show();
+            this.Close();
         }
 
         private void btnMeja_Click(object sender, EventArgs e)
         {
-
+            AdminMeja am = new AdminMeja();
+            am.Show();
+            this.Close();
         }
 
         private void btnLogout_Click(object sender, EventArgs e)

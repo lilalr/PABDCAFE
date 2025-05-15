@@ -6,10 +6,10 @@ using System.Windows.Forms;
 
 namespace PABDCAFE
 {
-    public partial class TambahPage : Form
+    public partial class AdminReservasi : Form
     {
         SqlConnection conn = new SqlConnection("Data Source=LAPTOP-4FJGLBGI\\NANDA; Initial Catalog=ReservasiCafe; Integrated Security=True;");
-        public TambahPage()
+        public AdminReservasi()
         {
             InitializeComponent();
         }
@@ -85,7 +85,7 @@ namespace PABDCAFE
             }
         }
 
-        private void CustomerPage_Load(object sender, EventArgs e)
+        private void Tambah_Load(object sender, EventArgs e)
         {
             LoadReservasi();
         }
@@ -177,6 +177,10 @@ namespace PABDCAFE
         {
             // panggil fungsi utama
         }
+        private void btnArHapus_Click(object sender, EventArgs e)
+        {
+            // panggil fungsi utama
+        }
         private void dgvCutomer_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // isi textbox ketika klik row di datagrid (jika perlu)
@@ -187,6 +191,13 @@ namespace PABDCAFE
                 txtArWaktu.Text = dataGridViewTr.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
                 txtArMeja.Text = dataGridViewTr.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            AdminPage ap = new AdminPage();
+            ap.Show();
+            this.Close();
         }
     }
 }

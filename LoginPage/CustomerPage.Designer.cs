@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCustLihat = new System.Windows.Forms.Button();
             this.btnCustTambah = new System.Windows.Forms.Button();
             this.btnCustHapus = new System.Windows.Forms.Button();
             this.dgvCustomer = new System.Windows.Forms.DataGridView();
@@ -43,17 +42,6 @@
             this.CustMeja = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomer)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btnCustLihat
-            // 
-            this.btnCustLihat.Location = new System.Drawing.Point(679, 96);
-            this.btnCustLihat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnCustLihat.Name = "btnCustLihat";
-            this.btnCustLihat.Size = new System.Drawing.Size(138, 35);
-            this.btnCustLihat.TabIndex = 1;
-            this.btnCustLihat.Text = "Lihat Reservasi";
-            this.btnCustLihat.UseVisualStyleBackColor = true;
-            this.btnCustLihat.Click += new System.EventHandler(this.btnCustLihat_Click);
             // 
             // btnCustTambah
             // 
@@ -181,7 +169,6 @@
             this.Controls.Add(this.dgvCustomer);
             this.Controls.Add(this.btnCustHapus);
             this.Controls.Add(this.btnCustTambah);
-            this.Controls.Add(this.btnCustLihat);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "CustomerPage";
             this.Text = "CustomerPage";
@@ -193,7 +180,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCustLihat;
         private System.Windows.Forms.Button btnCustTambah;
         private System.Windows.Forms.Button btnCustHapus;
         private System.Windows.Forms.DataGridView dgvCustomer;

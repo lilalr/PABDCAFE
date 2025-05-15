@@ -47,6 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminMeja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminMeja.Designer.cs">
+      <DependentUpon>AdminMeja.cs</DependentUpon>
+    </Compile>
     <Compile Include="AdminPage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,12 +79,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tambah.cs">
+    <Compile Include="AdminReservasi.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Tambah.Designer.cs">
-      <DependentUpon>Tambah.cs</DependentUpon>
+    <Compile Include="AdminReservasi.Designer.cs">
+      <DependentUpon>AdminReservasi.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AdminMeja.resx">
+      <DependentUpon>AdminMeja.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminPage.resx">
       <DependentUpon>AdminPage.cs</DependentUpon>
     </EmbeddedResource>
@@ -100,8 +109,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Tambah.resx">
-      <DependentUpon>Tambah.cs</DependentUpon>
+    <EmbeddedResource Include="AdminReservasi.resx">
+      <DependentUpon>AdminReservasi.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

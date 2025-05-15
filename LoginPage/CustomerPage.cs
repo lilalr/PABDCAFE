@@ -173,10 +173,6 @@ namespace PABDCAFE
             }
         }
 
-        private void btnCustLihat_Click(object sender, EventArgs e)
-        {
-            // panggil fungsi utama
-        }
         private void dgvCutomer_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // isi textbox ketika klik row di datagrid (jika perlu)
