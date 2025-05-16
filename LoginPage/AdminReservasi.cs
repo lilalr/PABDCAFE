@@ -24,7 +24,7 @@ namespace PABDCAFE
             }
 
             // Validasi nomor telepon: hanya angka atau +62
-            string telp = txtArNoTelp.Text.Trim();
+            string telp = txtTelepon.Text.Trim();
             if (string.IsNullOrWhiteSpace(telp) ||
                 !(Regex.IsMatch(telp, @"^\+62\d{8,12}$") || Regex.IsMatch(telp, @"^\d{10,15}$")))
             {
@@ -45,7 +45,7 @@ namespace PABDCAFE
             }
 
             // Validasi nomor meja
-            if (string.IsNullOrWhiteSpace(txtArMeja.Text) || txtArMeja.Text.Length > 2)
+            if (string.IsNullOrWhiteSpace(txtMeja.Text) || txtMeja.Text.Length > 2)
             {
                 MessageBox.Show("Nomor meja tidak valid (maks 2 digit).");
                 return false;
@@ -65,9 +65,9 @@ namespace PABDCAFE
                     "INSERT INTO Reservasi (Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja) " +
                     "VALUES (@Nama, @Telp, @Waktu, @Meja)", conn);
                 cmd.Parameters.AddWithValue("@Nama", txtArNama.Text.Trim());
-                cmd.Parameters.AddWithValue("@Telp", txtArNoTelp.Text.Trim());
+                cmd.Parameters.AddWithValue("@Telp", txtTelepon.Text.Trim());
                 cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtArWaktu.Text.Trim()));
-                cmd.Parameters.AddWithValue("@Meja", txtArMeja.Text.Trim());
+                cmd.Parameters.AddWithValue("@Meja", txtMeja.Text.Trim());
 
                 int result = cmd.ExecuteNonQuery();
                 MessageBox.Show(result > 0 ? "Reservasi berhasil ditambahkan." : "Reservasi gagal ditambahkan.");
@@ -98,7 +98,7 @@ namespace PABDCAFE
                 SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Reservasi", conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
-                dataGridViewTr.DataSource = dt;
+                dgvAdminReservasi.DataSource = dt;
             }
             catch (Exception ex)
             {
@@ -151,9 +151,9 @@ namespace PABDCAFE
         private void ClearForm()
         {
             txtArNama.Text = "";
-            txtArNoTelp.Text = "";
+            txtTelepon.Text = "";
             txtArWaktu.Text = "";
-            txtArMeja.Text = "";
+            txtMeja.Text = "";
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
@@ -184,12 +184,12 @@ namespace PABDCAFE
         private void dgvCutomer_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // isi textbox ketika klik row di datagrid (jika perlu)
-            if (e.RowIndex >= 0 && dataGridViewTr.Rows.Count > e.RowIndex)
+            if (e.RowIndex >= 0 && dgvAdminReservasi.Rows.Count > e.RowIndex)
             {
-                txtArNama.Text = dataGridViewTr.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
-                txtArNoTelp.Text = dataGridViewTr.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
-                txtArWaktu.Text = dataGridViewTr.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
-                txtArMeja.Text = dataGridViewTr.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
+                txtArNama.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
+                txtTelepon.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
+                txtArWaktu.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
+                txtMeja.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
         }
 

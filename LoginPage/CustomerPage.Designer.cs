@@ -56,7 +56,7 @@
             // 
             // btnCustHapus
             // 
-            this.btnCustHapus.Location = new System.Drawing.Point(679, 141);
+            this.btnCustHapus.Location = new System.Drawing.Point(679, 93);
             this.btnCustHapus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustHapus.Name = "btnCustHapus";
             this.btnCustHapus.Size = new System.Drawing.Size(138, 37);
@@ -94,6 +94,7 @@
             this.txtCustNama.Name = "txtCustNama";
             this.txtCustNama.Size = new System.Drawing.Size(403, 22);
             this.txtCustNama.TabIndex = 6;
+            
             // 
             // txtCustNoTelp
             // 
@@ -124,6 +125,7 @@
             this.CustNama.Size = new System.Drawing.Size(104, 16);
             this.CustNama.TabIndex = 10;
             this.CustNama.Text = "Nama Customer";
+            
             // 
             // CustTelp
             // 

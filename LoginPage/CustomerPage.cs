@@ -184,5 +184,8 @@ namespace PABDCAFE
                 txtCustMeja.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
         }
+
+
+       
     }
 }

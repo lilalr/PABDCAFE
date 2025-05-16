@@ -29,19 +29,22 @@
         private void InitializeComponent()
         {
             this.txtArNama = new System.Windows.Forms.TextBox();
-            this.btnArAdd = new System.Windows.Forms.Button();
-            this.txtArNoTelp = new System.Windows.Forms.TextBox();
+            this.btnTambah = new System.Windows.Forms.Button();
+            this.txtTelepon = new System.Windows.Forms.TextBox();
             this.txtArWaktu = new System.Windows.Forms.TextBox();
             this.ArNama = new System.Windows.Forms.Label();
-            this.ArNoTelp = new System.Windows.Forms.Label();
-            this.ArWaktu = new System.Windows.Forms.Label();
-            this.dataGridViewTr = new System.Windows.Forms.DataGridView();
-            this.txtArMeja = new System.Windows.Forms.TextBox();
-            this.ArMeja = new System.Windows.Forms.Label();
-            this.btnArHapus = new System.Windows.Forms.Button();
-            this.btnArEdit = new System.Windows.Forms.Button();
+            this.lblTelepon = new System.Windows.Forms.Label();
+            this.lblWaktu = new System.Windows.Forms.Label();
+            this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
+            this.txtMeja = new System.Windows.Forms.TextBox();
+            this.lblMeja = new System.Windows.Forms.Label();
+            this.btnHapus = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).BeginInit();
+            this.lblNama = new System.Windows.Forms.Label();
+            this.txtWaktu = new System.Windows.Forms.TextBox();
+            this.txtNama = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).BeginInit();
             this.SuspendLayout();
             // 
             // txtArNama
@@ -51,23 +54,23 @@
             this.txtArNama.Size = new System.Drawing.Size(100, 22);
             this.txtArNama.TabIndex = 14;
             // 
-            // btnArAdd
+            // btnTambah
             // 
-            this.btnArAdd.Location = new System.Drawing.Point(547, 28);
-            this.btnArAdd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnArAdd.Name = "btnArAdd";
-            this.btnArAdd.Size = new System.Drawing.Size(135, 29);
-            this.btnArAdd.TabIndex = 1;
-            this.btnArAdd.Text = "Tambah Reservasi";
-            this.btnArAdd.UseVisualStyleBackColor = true;
-            this.btnArAdd.Click += new System.EventHandler(this.btnArAdd_Click);
+            this.btnTambah.Location = new System.Drawing.Point(547, 28);
+            this.btnTambah.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnTambah.Name = "btnTambah";
+            this.btnTambah.Size = new System.Drawing.Size(135, 29);
+            this.btnTambah.TabIndex = 1;
+            this.btnTambah.Text = "Tambah Reservasi";
+            this.btnTambah.UseVisualStyleBackColor = true;
+            this.btnTambah.Click += new System.EventHandler(this.btnArAdd_Click);
             // 
-            // txtArNoTelp
+            // txtTelepon
             // 
-            this.txtArNoTelp.Location = new System.Drawing.Point(183, 49);
-            this.txtArNoTelp.Name = "txtArNoTelp";
-            this.txtArNoTelp.Size = new System.Drawing.Size(273, 22);
-            this.txtArNoTelp.TabIndex = 2;
+            this.txtTelepon.Location = new System.Drawing.Point(183, 49);
+            this.txtTelepon.Name = "txtTelepon";
+            this.txtTelepon.Size = new System.Drawing.Size(273, 22);
+            this.txtTelepon.TabIndex = 2;
             // 
             // txtArWaktu
             // 
@@ -83,68 +86,68 @@
             this.ArNama.Size = new System.Drawing.Size(100, 23);
             this.ArNama.TabIndex = 12;
             // 
-            // ArNoTelp
+            // lblTelepon
             // 
-            this.ArNoTelp.AutoSize = true;
-            this.ArNoTelp.Location = new System.Drawing.Point(64, 55);
-            this.ArNoTelp.Name = "ArNoTelp";
-            this.ArNoTelp.Size = new System.Drawing.Size(102, 16);
-            this.ArNoTelp.TabIndex = 5;
-            this.ArNoTelp.Text = "Nomor Telepon";
+            this.lblTelepon.AutoSize = true;
+            this.lblTelepon.Location = new System.Drawing.Point(64, 55);
+            this.lblTelepon.Name = "lblTelepon";
+            this.lblTelepon.Size = new System.Drawing.Size(102, 16);
+            this.lblTelepon.TabIndex = 5;
+            this.lblTelepon.Text = "Nomor Telepon";
             // 
-            // ArWaktu
+            // lblWaktu
             // 
-            this.ArWaktu.AutoSize = true;
-            this.ArWaktu.Location = new System.Drawing.Point(64, 83);
-            this.ArWaktu.Name = "ArWaktu";
-            this.ArWaktu.Size = new System.Drawing.Size(110, 16);
-            this.ArWaktu.TabIndex = 6;
-            this.ArWaktu.Text = "Waktu Reservasi";
+            this.lblWaktu.AutoSize = true;
+            this.lblWaktu.Location = new System.Drawing.Point(64, 83);
+            this.lblWaktu.Name = "lblWaktu";
+            this.lblWaktu.Size = new System.Drawing.Size(110, 16);
+            this.lblWaktu.TabIndex = 6;
+            this.lblWaktu.Text = "Waktu Reservasi";
             // 
-            // dataGridViewTr
+            // dgvAdminReservasi
             // 
-            this.dataGridViewTr.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewTr.Location = new System.Drawing.Point(47, 189);
-            this.dataGridViewTr.Name = "dataGridViewTr";
-            this.dataGridViewTr.RowHeadersWidth = 51;
-            this.dataGridViewTr.RowTemplate.Height = 24;
-            this.dataGridViewTr.Size = new System.Drawing.Size(569, 150);
-            this.dataGridViewTr.TabIndex = 7;
+            this.dgvAdminReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvAdminReservasi.Location = new System.Drawing.Point(47, 189);
+            this.dgvAdminReservasi.Name = "dgvAdminReservasi";
+            this.dgvAdminReservasi.RowHeadersWidth = 51;
+            this.dgvAdminReservasi.RowTemplate.Height = 24;
+            this.dgvAdminReservasi.Size = new System.Drawing.Size(569, 150);
+            this.dgvAdminReservasi.TabIndex = 7;
             // 
-            // txtArMeja
+            // txtMeja
             // 
-            this.txtArMeja.Location = new System.Drawing.Point(183, 106);
-            this.txtArMeja.Name = "txtArMeja";
-            this.txtArMeja.Size = new System.Drawing.Size(273, 22);
-            this.txtArMeja.TabIndex = 8;
+            this.txtMeja.Location = new System.Drawing.Point(183, 106);
+            this.txtMeja.Name = "txtMeja";
+            this.txtMeja.Size = new System.Drawing.Size(273, 22);
+            this.txtMeja.TabIndex = 8;
             // 
-            // ArMeja
+            // lblMeja
             // 
-            this.ArMeja.AutoSize = true;
-            this.ArMeja.Location = new System.Drawing.Point(65, 111);
-            this.ArMeja.Name = "ArMeja";
-            this.ArMeja.Size = new System.Drawing.Size(81, 16);
-            this.ArMeja.TabIndex = 9;
-            this.ArMeja.Text = "Nomor Meja";
+            this.lblMeja.AutoSize = true;
+            this.lblMeja.Location = new System.Drawing.Point(65, 111);
+            this.lblMeja.Name = "lblMeja";
+            this.lblMeja.Size = new System.Drawing.Size(81, 16);
+            this.lblMeja.TabIndex = 9;
+            this.lblMeja.Text = "Nomor Meja";
             // 
-            // btnArHapus
+            // btnHapus
             // 
-            this.btnArHapus.Location = new System.Drawing.Point(547, 62);
-            this.btnArHapus.Name = "btnArHapus";
-            this.btnArHapus.Size = new System.Drawing.Size(135, 29);
-            this.btnArHapus.TabIndex = 10;
-            this.btnArHapus.Text = "Hapus Reservasi";
-            this.btnArHapus.UseVisualStyleBackColor = true;
-            this.btnArHapus.Click += new System.EventHandler(this.btnArHapus_Click);
+            this.btnHapus.Location = new System.Drawing.Point(547, 62);
+            this.btnHapus.Name = "btnHapus";
+            this.btnHapus.Size = new System.Drawing.Size(135, 29);
+            this.btnHapus.TabIndex = 10;
+            this.btnHapus.Text = "Hapus Reservasi";
+            this.btnHapus.UseVisualStyleBackColor = true;
+            this.btnHapus.Click += new System.EventHandler(this.btnArHapus_Click);
             // 
-            // btnArEdit
+            // btnEdit
             // 
-            this.btnArEdit.Location = new System.Drawing.Point(547, 97);
-            this.btnArEdit.Name = "btnArEdit";
-            this.btnArEdit.Size = new System.Drawing.Size(135, 29);
-            this.btnArEdit.TabIndex = 11;
-            this.btnArEdit.Text = "Edit Reservasi";
-            this.btnArEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Location = new System.Drawing.Point(547, 97);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(135, 29);
+            this.btnEdit.TabIndex = 11;
+            this.btnEdit.Text = "Edit Reservasi";
+            this.btnEdit.UseVisualStyleBackColor = true;
             // 
             // btnBack
             // 
@@ -156,47 +159,76 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
+            // lblNama
+            // 
+            this.lblNama.AutoSize = true;
+            this.lblNama.Location = new System.Drawing.Point(67, 27);
+            this.lblNama.Name = "lblNama";
+            this.lblNama.Size = new System.Drawing.Size(104, 16);
+            this.lblNama.TabIndex = 16;
+            this.lblNama.Text = "Nama Customer";
+            // 
+            // txtWaktu
+            // 
+            this.txtWaktu.Location = new System.Drawing.Point(183, 78);
+            this.txtWaktu.Name = "txtWaktu";
+            this.txtWaktu.Size = new System.Drawing.Size(273, 22);
+            this.txtWaktu.TabIndex = 17;
+            // 
+            // txtNama
+            // 
+            this.txtNama.Location = new System.Drawing.Point(183, 21);
+            this.txtNama.Name = "txtNama";
+            this.txtNama.Size = new System.Drawing.Size(273, 22);
+            this.txtNama.TabIndex = 18;
+            // 
             // AdminReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(711, 360);
+            this.Controls.Add(this.txtNama);
+            this.Controls.Add(this.txtWaktu);
+            this.Controls.Add(this.lblNama);
             this.Controls.Add(this.btnBack);
-            this.Controls.Add(this.btnArEdit);
-            this.Controls.Add(this.btnArHapus);
-            this.Controls.Add(this.ArMeja);
-            this.Controls.Add(this.txtArMeja);
-            this.Controls.Add(this.dataGridViewTr);
-            this.Controls.Add(this.ArWaktu);
-            this.Controls.Add(this.ArNoTelp);
+            this.Controls.Add(this.btnEdit);
+            this.Controls.Add(this.btnHapus);
+            this.Controls.Add(this.lblMeja);
+            this.Controls.Add(this.txtMeja);
+            this.Controls.Add(this.dgvAdminReservasi);
+            this.Controls.Add(this.lblWaktu);
+            this.Controls.Add(this.lblTelepon);
             this.Controls.Add(this.ArNama);
             this.Controls.Add(this.txtArWaktu);
-            this.Controls.Add(this.txtArNoTelp);
-            this.Controls.Add(this.btnArAdd);
+            this.Controls.Add(this.txtTelepon);
+            this.Controls.Add(this.btnTambah);
             this.Controls.Add(this.txtArNama);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "AdminReservasi";
             this.Text = "AdminReservasi";
             this.Load += new System.EventHandler(this.Tambah_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTr)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnArAdd;
-        private System.Windows.Forms.TextBox txtArNoTelp;
+        private System.Windows.Forms.Button btnTambah;
+        private System.Windows.Forms.TextBox txtTelepon;
         private System.Windows.Forms.TextBox txtArWaktu;
         private System.Windows.Forms.Label ArNama;
-        private System.Windows.Forms.Label ArNoTelp;
-        private System.Windows.Forms.Label ArWaktu;
+        private System.Windows.Forms.Label lblTelepon;
+        private System.Windows.Forms.Label lblWaktu;
         private System.Windows.Forms.TextBox txtArNama;
-        private System.Windows.Forms.DataGridView dataGridViewTr;
-        private System.Windows.Forms.TextBox txtArMeja;
-        private System.Windows.Forms.Label ArMeja;
-        private System.Windows.Forms.Button btnArHapus;
-        private System.Windows.Forms.Button btnArEdit;
+        private System.Windows.Forms.DataGridView dgvAdminReservasi;
+        private System.Windows.Forms.TextBox txtMeja;
+        private System.Windows.Forms.Label lblMeja;
+        private System.Windows.Forms.Button btnHapus;
+        private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Label lblNama;
+        private System.Windows.Forms.TextBox txtWaktu;
+        private System.Windows.Forms.TextBox txtNama;
     }
 }
