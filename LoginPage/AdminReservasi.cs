@@ -9,75 +9,92 @@ namespace PABDCAFE
     public partial class AdminReservasi : Form
     {
         SqlConnection conn = new SqlConnection("Data Source=LAPTOP-4FJGLBGI\\NANDA; Initial Catalog=ReservasiCafe; Integrated Security=True;");
+
         public AdminReservasi()
         {
             InitializeComponent();
+            LoadData();
         }
 
-        private bool ValidasiInput()
+        void LoadData()
         {
-            // Validasi nama
-            if (string.IsNullOrWhiteSpace(txtArNama.Text))
+            try
             {
-                MessageBox.Show("Nama tidak boleh kosong.");
-                return false;
+                using (SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Reservasi", conn))
+                {
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    dgvAdminReservasi.DataSource = dt;
+                }
             }
-
-            // Validasi nomor telepon: hanya angka atau +62
-            string telp = txtTelepon.Text.Trim();
-            if (string.IsNullOrWhiteSpace(telp) ||
-                !(Regex.IsMatch(telp, @"^\+62\d{8,12}$") || Regex.IsMatch(telp, @"^\d{10,15}$")))
+            catch (Exception ex)
             {
-                MessageBox.Show("Nomor telepon tidak valid. Gunakan format +62xxxxxxxxxx atau 08123456789.");
-                return false;
+                MessageBox.Show("Gagal memuat data: " + ex.Message);
             }
-
-            // Validasi waktu reservasi
-            if (!DateTime.TryParse(txtArWaktu.Text, out DateTime waktu))
-            {
-                MessageBox.Show("Format waktu tidak valid. Gunakan format yyyy-MM-dd HH:mm.");
-                return false;
-            }
-            if (waktu.Year != 2025)
-            {
-                MessageBox.Show("Reservasi hanya untuk tahun 2025.");
-                return false;
-            }
-
-            // Validasi nomor meja
-            if (string.IsNullOrWhiteSpace(txtMeja.Text) || txtMeja.Text.Length > 2)
-            {
-                MessageBox.Show("Nomor meja tidak valid (maks 2 digit).");
-                return false;
-            }
-
-            return true;
         }
 
-        private void btnArAdd_Click(object sender, EventArgs e)
+        void ClearForm()
         {
-            if (!ValidasiInput()) return;
+            txtNama.Clear();
+            txtTelepon.Clear();
+            txtWaktu.Clear();
+            txtMeja.Clear();
+        }
+
+        bool ValidasiInput(out string err)
+        {
+            err = "";
+            if (string.IsNullOrWhiteSpace(txtNama.Text))
+                err += "Nama customer tidak boleh kosong.\n";
+
+            if (!Regex.IsMatch(txtTelepon.Text.Trim(), @"^(\+62\d{8,12}|\d{10,15})$"))
+                err += "Nomor telepon tidak valid.\n";
+
+            if (!DateTime.TryParse(txtWaktu.Text.Trim(), out DateTime waktu))
+                err += "Format waktu tidak valid.\n";
+            else if (waktu.Year != 2025)
+                err += "Waktu reservasi harus tahun 2025.\n";
+
+            if (string.IsNullOrWhiteSpace(txtMeja.Text) || txtMeja.Text.Length != 2)
+                err += "Nomor meja harus 2 karakter.\n";
+
+            return err == "";
+        }
+
+        private void btnArEdit_Click(object sender, EventArgs e)
+        {
+            if (dgvAdminReservasi.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Pilih data reservasi yang ingin diedit.");
+                return;
+            }
+
+            if (!ValidasiInput(out string errMsg))
+            {
+                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             try
             {
+                int idReservasi = Convert.ToInt32(dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
+
                 conn.Open();
-                SqlCommand cmd = new SqlCommand(
-                    "INSERT INTO Reservasi (Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja) " +
-                    "VALUES (@Nama, @Telp, @Waktu, @Meja)", conn);
-                cmd.Parameters.AddWithValue("@Nama", txtArNama.Text.Trim());
+                SqlCommand cmd = new SqlCommand("UPDATE Reservasi SET Nama_Customer=@Nama, No_Telp=@Telp, Waktu_Reservasi=@Waktu, Nomor_Meja=@Meja WHERE ID_Reservasi=@ID", conn);
+                cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
                 cmd.Parameters.AddWithValue("@Telp", txtTelepon.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtArWaktu.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtWaktu.Text.Trim()));
                 cmd.Parameters.AddWithValue("@Meja", txtMeja.Text.Trim());
+                cmd.Parameters.AddWithValue("@ID", idReservasi);
 
-                int result = cmd.ExecuteNonQuery();
-                MessageBox.Show(result > 0 ? "Reservasi berhasil ditambahkan." : "Reservasi gagal ditambahkan.");
-
-                LoadReservasi();
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Reservasi berhasil diperbarui!");
+                LoadData();
                 ClearForm();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Terjadi kesalahan: " + ex.Message);
+                MessageBox.Show("Gagal memperbarui data: " + ex.Message);
             }
             finally
             {
@@ -85,109 +102,6 @@ namespace PABDCAFE
             }
         }
 
-        private void Tambah_Load(object sender, EventArgs e)
-        {
-            LoadReservasi();
-        }
-
-        private void LoadReservasi()
-        {
-            try
-            {
-                conn.Open();
-                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Reservasi", conn);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                dgvAdminReservasi.DataSource = dt;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal menampilkan data: " + ex.Message);
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
-        private void btnCustHapus_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtArNama.Text) || string.IsNullOrWhiteSpace(txtArWaktu.Text))
-            {
-                MessageBox.Show("Masukkan nama dan waktu reservasi untuk menghapus.");
-                return;
-            }
-
-            if (!DateTime.TryParse(txtArWaktu.Text.Trim(), out DateTime waktu))
-            {
-                MessageBox.Show("Format waktu tidak valid.");
-                return;
-            }
-
-            try
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(
-                    "DELETE FROM Reservasi WHERE Nama_Customer = @Nama AND Waktu_Reservasi = @Waktu", conn);
-                cmd.Parameters.AddWithValue("@Nama", txtArNama.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", waktu);
-
-                int result = cmd.ExecuteNonQuery();
-                MessageBox.Show(result > 0 ? "Reservasi berhasil dihapus." : "Reservasi tidak ditemukan.");
-
-                LoadReservasi();
-                ClearForm();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Terjadi kesalahan saat menghapus: " + ex.Message);
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
-        private void ClearForm()
-        {
-            txtArNama.Text = "";
-            txtTelepon.Text = "";
-            txtArWaktu.Text = "";
-            txtMeja.Text = "";
-        }
-
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Apakah Anda yakin ingin logout?", "Konfirmasi Logout", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                // Kembali ke LoginPage
-                LoginPage login = new LoginPage();
-                login.Show();
-                this.Close();
-            }
-            else
-            {
-                // cancel
-            }
-        }
-
-        private void btnArHapus_Click(object sender, EventArgs e)
-        {
-            // panggil fungsi utama
-        }
-        private void dgvCutomer_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // isi textbox ketika klik row di datagrid (jika perlu)
-            if (e.RowIndex >= 0 && dgvAdminReservasi.Rows.Count > e.RowIndex)
-            {
-                txtArNama.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
-                txtTelepon.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
-                txtArWaktu.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
-                txtMeja.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
-            }
-        }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -195,5 +109,93 @@ namespace PABDCAFE
             ap.Show();
             this.Close();
         }
+
+        private void btnTambah_Click(object sender, EventArgs e)
+        {
+            if (!ValidasiInput(out string errMsg))
+            {
+                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("INSERT INTO Reservasi (Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja) VALUES (@Nama, @Telp, @Waktu, @Meja)", conn);
+                cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
+                cmd.Parameters.AddWithValue("@Telp", txtTelepon.Text.Trim());
+                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtWaktu.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Meja", txtMeja.Text.Trim());
+
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Reservasi berhasil ditambahkan!");
+                LoadData();
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal menambahkan data: " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        private void btnHapus_Click(object sender, EventArgs e)
+        {
+            if (dgvAdminReservasi.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Pilih data yang ingin dihapus.");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No)
+                return;
+
+            try
+            {
+                int idReservasi = Convert.ToInt32(dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
+
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM Reservasi WHERE ID_Reservasi=@ID", conn);
+                cmd.Parameters.AddWithValue("@ID", idReservasi);
+                cmd.ExecuteNonQuery();
+
+                MessageBox.Show("Reservasi berhasil dihapus!");
+                LoadData();
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal menghapus data: " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+        private void dgvAdminReservasi_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                txtNama.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
+                txtTelepon.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
+                txtWaktu.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
+                txtMeja.Text = dgvAdminReservasi.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
+            }
+
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // (-) BANYAKKKK, GATAU DEH NGANTUKKK
     }
 }

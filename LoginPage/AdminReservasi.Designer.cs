@@ -1,4 +1,6 @@
-﻿namespace PABDCAFE
+﻿using System;
+
+namespace PABDCAFE
 {
     partial class AdminReservasi
     {
@@ -28,11 +30,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtArNama = new System.Windows.Forms.TextBox();
             this.btnTambah = new System.Windows.Forms.Button();
             this.txtTelepon = new System.Windows.Forms.TextBox();
-            this.txtArWaktu = new System.Windows.Forms.TextBox();
-            this.ArNama = new System.Windows.Forms.Label();
             this.lblTelepon = new System.Windows.Forms.Label();
             this.lblWaktu = new System.Windows.Forms.Label();
             this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
@@ -44,15 +43,9 @@
             this.lblNama = new System.Windows.Forms.Label();
             this.txtWaktu = new System.Windows.Forms.TextBox();
             this.txtNama = new System.Windows.Forms.TextBox();
+            this.btnImport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).BeginInit();
             this.SuspendLayout();
-            // 
-            // txtArNama
-            // 
-            this.txtArNama.Location = new System.Drawing.Point(0, 0);
-            this.txtArNama.Name = "txtArNama";
-            this.txtArNama.Size = new System.Drawing.Size(100, 22);
-            this.txtArNama.TabIndex = 14;
             // 
             // btnTambah
             // 
@@ -63,7 +56,7 @@
             this.btnTambah.TabIndex = 1;
             this.btnTambah.Text = "Tambah Reservasi";
             this.btnTambah.UseVisualStyleBackColor = true;
-            this.btnTambah.Click += new System.EventHandler(this.btnArAdd_Click);
+            this.btnTambah.Click += new System.EventHandler(this.btnTambah_Click);
             // 
             // txtTelepon
             // 
@@ -71,20 +64,6 @@
             this.txtTelepon.Name = "txtTelepon";
             this.txtTelepon.Size = new System.Drawing.Size(273, 22);
             this.txtTelepon.TabIndex = 2;
-            // 
-            // txtArWaktu
-            // 
-            this.txtArWaktu.Location = new System.Drawing.Point(0, 0);
-            this.txtArWaktu.Name = "txtArWaktu";
-            this.txtArWaktu.Size = new System.Drawing.Size(100, 22);
-            this.txtArWaktu.TabIndex = 13;
-            // 
-            // ArNama
-            // 
-            this.ArNama.Location = new System.Drawing.Point(0, 0);
-            this.ArNama.Name = "ArNama";
-            this.ArNama.Size = new System.Drawing.Size(100, 23);
-            this.ArNama.TabIndex = 12;
             // 
             // lblTelepon
             // 
@@ -113,6 +92,7 @@
             this.dgvAdminReservasi.RowTemplate.Height = 24;
             this.dgvAdminReservasi.Size = new System.Drawing.Size(569, 150);
             this.dgvAdminReservasi.TabIndex = 7;
+            this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellContentClick);
             // 
             // txtMeja
             // 
@@ -138,7 +118,7 @@
             this.btnHapus.TabIndex = 10;
             this.btnHapus.Text = "Hapus Reservasi";
             this.btnHapus.UseVisualStyleBackColor = true;
-            this.btnHapus.Click += new System.EventHandler(this.btnArHapus_Click);
+            this.btnHapus.Click += new System.EventHandler(this.btnHapus_Click);
             // 
             // btnEdit
             // 
@@ -148,6 +128,7 @@
             this.btnEdit.TabIndex = 11;
             this.btnEdit.Text = "Edit Reservasi";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnBack
             // 
@@ -182,11 +163,21 @@
             this.txtNama.Size = new System.Drawing.Size(273, 22);
             this.txtNama.TabIndex = 18;
             // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(547, 133);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(75, 23);
+            this.btnImport.TabIndex = 19;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            // 
             // AdminReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(711, 360);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.txtNama);
             this.Controls.Add(this.txtWaktu);
             this.Controls.Add(this.lblNama);
@@ -198,29 +189,25 @@
             this.Controls.Add(this.dgvAdminReservasi);
             this.Controls.Add(this.lblWaktu);
             this.Controls.Add(this.lblTelepon);
-            this.Controls.Add(this.ArNama);
-            this.Controls.Add(this.txtArWaktu);
             this.Controls.Add(this.txtTelepon);
             this.Controls.Add(this.btnTambah);
-            this.Controls.Add(this.txtArNama);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "AdminReservasi";
             this.Text = "AdminReservasi";
-            this.Load += new System.EventHandler(this.Tambah_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
+
+       
+
         #endregion
         private System.Windows.Forms.Button btnTambah;
         private System.Windows.Forms.TextBox txtTelepon;
-        private System.Windows.Forms.TextBox txtArWaktu;
-        private System.Windows.Forms.Label ArNama;
         private System.Windows.Forms.Label lblTelepon;
         private System.Windows.Forms.Label lblWaktu;
-        private System.Windows.Forms.TextBox txtArNama;
         private System.Windows.Forms.DataGridView dgvAdminReservasi;
         private System.Windows.Forms.TextBox txtMeja;
         private System.Windows.Forms.Label lblMeja;
@@ -230,5 +217,6 @@
         private System.Windows.Forms.Label lblNama;
         private System.Windows.Forms.TextBox txtWaktu;
         private System.Windows.Forms.TextBox txtNama;
+        private System.Windows.Forms.Button btnImport;
     }
 }
