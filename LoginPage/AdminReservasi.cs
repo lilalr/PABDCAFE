@@ -173,10 +173,6 @@ namespace PABDCAFE
             }
         }
 
-        private void btnCustLihat_Click(object sender, EventArgs e)
-        {
-            // panggil fungsi utama
-        }
         private void btnArHapus_Click(object sender, EventArgs e)
         {
             // panggil fungsi utama

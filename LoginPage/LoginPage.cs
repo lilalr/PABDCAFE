@@ -60,7 +60,7 @@ namespace PABDCAFE
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception) 
             {
                 MessageBox.Show("Login gagal. Periksa username dan password!");
             }

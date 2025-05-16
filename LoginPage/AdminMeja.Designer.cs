@@ -36,11 +36,9 @@
             this.txtNomor = new System.Windows.Forms.TextBox();
             this.txtKapasitas = new System.Windows.Forms.TextBox();
             this.txtStatus = new System.Windows.Forms.TextBox();
-            this.txtWaktu = new System.Windows.Forms.TextBox();
             this.lblNomor = new System.Windows.Forms.Label();
             this.lblKapasitas = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.lblWaktu = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminMeja)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,6 +70,7 @@
             this.btnEdit.TabIndex = 2;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnHapus
             // 
@@ -81,6 +80,7 @@
             this.btnHapus.TabIndex = 3;
             this.btnHapus.Text = "Hapus";
             this.btnHapus.UseVisualStyleBackColor = true;
+            this.btnHapus.Click += new System.EventHandler(this.btnHapus_Click);
             // 
             // dgvAdminMeja
             // 
@@ -91,6 +91,7 @@
             this.dgvAdminMeja.RowTemplate.Height = 24;
             this.dgvAdminMeja.Size = new System.Drawing.Size(584, 150);
             this.dgvAdminMeja.TabIndex = 4;
+            this.dgvAdminMeja.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminMeja_CellContentClick);
             // 
             // txtNomor
             // 
@@ -112,13 +113,6 @@
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.Size = new System.Drawing.Size(365, 22);
             this.txtStatus.TabIndex = 7;
-            // 
-            // txtWaktu
-            // 
-            this.txtWaktu.Location = new System.Drawing.Point(157, 138);
-            this.txtWaktu.Name = "txtWaktu";
-            this.txtWaktu.Size = new System.Drawing.Size(365, 22);
-            this.txtWaktu.TabIndex = 8;
             // 
             // lblNomor
             // 
@@ -147,25 +141,14 @@
             this.lblStatus.TabIndex = 12;
             this.lblStatus.Text = "Status Meja";
             // 
-            // lblWaktu
-            // 
-            this.lblWaktu.AutoSize = true;
-            this.lblWaktu.Location = new System.Drawing.Point(32, 127);
-            this.lblWaktu.Name = "lblWaktu";
-            this.lblWaktu.Size = new System.Drawing.Size(110, 16);
-            this.lblWaktu.TabIndex = 13;
-            this.lblWaktu.Text = "Waktu Reservasi";
-            // 
             // AdminMeja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.lblWaktu);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblKapasitas);
             this.Controls.Add(this.lblNomor);
-            this.Controls.Add(this.txtWaktu);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.txtKapasitas);
             this.Controls.Add(this.txtNomor);
@@ -193,10 +176,8 @@
         private System.Windows.Forms.TextBox txtNomor;
         private System.Windows.Forms.TextBox txtKapasitas;
         private System.Windows.Forms.TextBox txtStatus;
-        private System.Windows.Forms.TextBox txtWaktu;
         private System.Windows.Forms.Label lblNomor;
         private System.Windows.Forms.Label lblKapasitas;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.Label lblWaktu;
     }
 }
