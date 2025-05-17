@@ -224,7 +224,7 @@ namespace PABDCAFE
                 txtCustMeja.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
         }
-        // KELUPAAN KALO TERNYATA DISINI CUSTOMER GABISA LIHAT KAPASITAS MEJANYA, GIMANA DONG???
-        // (-) GIMANA CARANYA BIAR SI CUSTOMER INI GABISA NGEDIT PESANANNYA? (BESOK DEHH TAK COBA LAGI, NGANTUK SOALNYA)
+        
+        // (-) GIMANA CARANYA BIAR SI CUSTOMER INI GABISA NGEDIT PESANANNYA? 
     }
 }

@@ -171,6 +171,7 @@ namespace PABDCAFE
             this.btnImport.TabIndex = 19;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // AdminReservasi
             // 

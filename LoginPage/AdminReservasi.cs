@@ -39,6 +39,7 @@ namespace PABDCAFE
             txtTelepon.Clear();
             txtWaktu.Clear();
             txtMeja.Clear();
+            dgvAdminReservasi.ClearSelection();
         }
 
         bool ValidasiInput(out string err)
@@ -121,14 +122,15 @@ namespace PABDCAFE
             try
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Reservasi (Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja) VALUES (@Nama, @Telp, @Waktu, @Meja)", conn);
-                cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
-                cmd.Parameters.AddWithValue("@Telp", txtTelepon.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtWaktu.Text.Trim()));
-                cmd.Parameters.AddWithValue("@Meja", txtMeja.Text.Trim());
+                SqlCommand cmd = new SqlCommand("TambahReservasi", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
+                cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text.Trim());
+                cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtWaktu.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Nomor_Meja", txtMeja.Text.Trim());
 
                 cmd.ExecuteNonQuery();
-                MessageBox.Show("Reservasi berhasil ditambahkan!");
+                MessageBox.Show("Reservasi berhasil ditambahkan !");
                 LoadData();
                 ClearForm();
             }
@@ -160,11 +162,12 @@ namespace PABDCAFE
                 int idReservasi = Convert.ToInt32(dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
 
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM Reservasi WHERE ID_Reservasi=@ID", conn);
-                cmd.Parameters.AddWithValue("@ID", idReservasi);
+                SqlCommand cmd = new SqlCommand("HapusReservasi", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
                 cmd.ExecuteNonQuery();
 
-                MessageBox.Show("Reservasi berhasil dihapus!");
+                MessageBox.Show("Reservasi berhasil dihapus ");
                 LoadData();
                 ClearForm();
             }
@@ -193,9 +196,97 @@ namespace PABDCAFE
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtNama.Text))
+            {
+                MessageBox.Show("Pilih data yang akan diubah!");
+                return;
+            }
 
+            if (!ValidasiInput(out string errMsg))
+            {
+                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("UpdateMeja", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
+                    cmd.Parameters.AddWithValue("@No_Telp", int.Parse(txtTelepon.Text));
+                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtWaktu.Text);
+                    cmd.Parameters.AddWithValue("@NomorMeja", txtMeja.Text);
+
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadData();
+                        ClearForm();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Data tidak berhasil diperbarui!", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
         }
 
-        // (-) BANYAKKKK, GATAU DEH NGANTUKKK
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "CSV files (*.csv)|*.csv";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string[] lines = System.IO.File.ReadAllLines(openFileDialog.FileName);
+                    conn.Open();
+
+                    foreach (string line in lines)
+                    {
+                        string[] data = line.Split(',');
+                        if (data.Length == 4)
+                        {
+                            SqlCommand cmd = new SqlCommand("TambahReservasi", conn);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@Nama", data[0].Trim());
+                            cmd.Parameters.AddWithValue("@Telp", data[1].Trim());
+                            cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(data[2].Trim()));
+                            cmd.Parameters.AddWithValue("@Meja", data[3].Trim());
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    MessageBox.Show("Import berhasil!");
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal import: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+        }
     }
 }

@@ -238,7 +238,7 @@ namespace PABDCAFE
 
         private void dgvAdminMeja_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dgvAdminMeja.Rows.Count > e.RowIndex)
             {
                 txtNomor.Text = dgvAdminMeja.Rows[e.RowIndex].Cells["Nomor_Meja"].Value.ToString();
                 txtKapasitas.Text = dgvAdminMeja.Rows[e.RowIndex].Cells["Kapasitas"].Value.ToString();
@@ -250,6 +250,7 @@ namespace PABDCAFE
 
         // (-) KALO PAS MENCET DATA YG DI DGV ITU MASIH SUSAH MASUK KE FORMNYA, TAPI TAMBAH EDIT HAPUS DH BISA
         // (-) UNTUK NOMER MEJA TERNYATA MASIH BISA BIMASUKIN HURUF
+        // 
        
     }
 }
