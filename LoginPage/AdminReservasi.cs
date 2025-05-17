@@ -62,7 +62,7 @@ namespace PABDCAFE
             return err == "";
         }
 
-        private void btnArEdit_Click(object sender, EventArgs e)
+        private void btnAEdit_Click(object sender, EventArgs e)
         {
             if (dgvAdminReservasi.SelectedRows.Count == 0)
             {
@@ -81,21 +81,26 @@ namespace PABDCAFE
                 int idReservasi = Convert.ToInt32(dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
 
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE Reservasi SET Nama_Customer=@Nama, No_Telp=@Telp, Waktu_Reservasi=@Waktu, Nomor_Meja=@Meja WHERE ID_Reservasi=@ID", conn);
-                cmd.Parameters.AddWithValue("@Nama", txtNama.Text.Trim());
-                cmd.Parameters.AddWithValue("@Telp", txtTelepon.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtWaktu.Text.Trim()));
-                cmd.Parameters.AddWithValue("@Meja", txtMeja.Text.Trim());
-                cmd.Parameters.AddWithValue("@ID", idReservasi);
+                SqlCommand cmd = new SqlCommand("EditReservasi", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
+                cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
+                cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text.Trim());
+                cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtWaktu.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Nomor_Meja_Baru", txtMeja.Text.Trim());
 
                 cmd.ExecuteNonQuery();
                 MessageBox.Show("Reservasi berhasil diperbarui!");
                 LoadData();
                 ClearForm();
             }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("SQL Error: " + ex.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal memperbarui data: " + ex.Message);
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -215,12 +220,13 @@ namespace PABDCAFE
 
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand("UpdateMeja", conn))
+
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
-                    cmd.Parameters.AddWithValue("@No_Telp", int.Parse(txtTelepon.Text));
-                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtWaktu.Text);
-                    cmd.Parameters.AddWithValue("@NomorMeja", txtMeja.Text);
+                    cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", DateTime.Parse(txtWaktu.Text.Trim()));
+                    cmd.Parameters.AddWithValue("@Nomor_Meja", txtMeja.Text.Trim());
 
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -266,10 +272,11 @@ namespace PABDCAFE
                         {
                             SqlCommand cmd = new SqlCommand("TambahReservasi", conn);
                             cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@Nama", data[0].Trim());
-                            cmd.Parameters.AddWithValue("@Telp", data[1].Trim());
-                            cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(data[2].Trim()));
-                            cmd.Parameters.AddWithValue("@Meja", data[3].Trim());
+
+                            cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text);
+                            cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text);
+                            cmd.Parameters.AddWithValue("@Waktu_Reservasi", txtWaktu.Text);
+                            cmd.Parameters.AddWithValue("@Nomor_Meja", txtMeja.Text); // 
                             cmd.ExecuteNonQuery();
                         }
                     }

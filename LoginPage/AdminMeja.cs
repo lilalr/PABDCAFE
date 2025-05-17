@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PABDCAFE
@@ -20,6 +21,7 @@ namespace PABDCAFE
             txtNomor.Clear();
             txtKapasitas.Clear();
             txtStatus.Clear();
+            dgvAdminMeja.ClearSelection();
         }
 
         void LoadData()
@@ -31,7 +33,7 @@ namespace PABDCAFE
 
                 conn.Open();
 
-                string query = "SELECT * FROM Meja";
+                string query = "SELECT * FROM Meja ";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -63,14 +65,22 @@ namespace PABDCAFE
         bool ValidasiInput(out string errorMsg)
         {
             errorMsg = "";
-            if (string.IsNullOrWhiteSpace(txtNomor.Text) || txtNomor.Text.Length != 2)
-                errorMsg += "Nomor Meja harus 2 karakter.\n";
 
-            if (!int.TryParse(txtKapasitas.Text, out int kapasitas) || kapasitas < 1 || kapasitas > 99)
-                errorMsg += "Kapasitas harus antara 1 - 99.\n";
+            string nomor = txtNomor.Text.Trim();
+            string kapasitasStr = txtKapasitas.Text.Trim();
+            string status = txtStatus.Text.Trim();
 
-            if (txtStatus.Text != "Tersedia" && txtStatus.Text != "Dipesan")
-                errorMsg += "Status Meja harus 'Tersedia' atau 'Dipesan'.\n";
+            // Validasi Nomor Meja: 2 digit angka
+            if (!Regex.IsMatch(nomor, @"^\d{2}$"))
+                errorMsg += "Nomor Meja harus terdiri dari 2 digit angka (contoh: 01, 12).\n";
+
+            // Validasi Kapasitas
+            if (!int.TryParse(kapasitasStr, out int kapasitas) || kapasitas < 1 || kapasitas > 20)
+                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 20.\n";
+
+            // Validasi Status Meja
+            if (status != "Tersedia" && status != "Dipesan")
+                errorMsg += "Status Meja hanya boleh 'Tersedia' atau 'Dipesan'.\n";
 
             return string.IsNullOrEmpty(errorMsg);
         }
@@ -234,7 +244,6 @@ namespace PABDCAFE
             }
         }
 
-      
 
         private void dgvAdminMeja_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -245,13 +254,7 @@ namespace PABDCAFE
                 txtStatus.Text = dgvAdminMeja.Rows[e.RowIndex].Cells["Status_Meja"].Value.ToString();
             }
 
-        }
-
-
-        // (-) KALO PAS MENCET DATA YG DI DGV ITU MASIH SUSAH MASUK KE FORMNYA, TAPI TAMBAH EDIT HAPUS DH BISA
-        // (-) UNTUK NOMER MEJA TERNYATA MASIH BISA BIMASUKIN HURUF
-        // 
-       
+        }       
     }
 }
 
