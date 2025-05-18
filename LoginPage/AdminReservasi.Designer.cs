@@ -49,10 +49,10 @@ namespace PABDCAFE
             // 
             // btnTambah
             // 
-            this.btnTambah.Location = new System.Drawing.Point(547, 28);
+            this.btnTambah.Location = new System.Drawing.Point(615, 35);
             this.btnTambah.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnTambah.Name = "btnTambah";
-            this.btnTambah.Size = new System.Drawing.Size(135, 29);
+            this.btnTambah.Size = new System.Drawing.Size(152, 36);
             this.btnTambah.TabIndex = 1;
             this.btnTambah.Text = "Tambah Reservasi";
             this.btnTambah.UseVisualStyleBackColor = true;
@@ -60,61 +60,65 @@ namespace PABDCAFE
             // 
             // txtTelepon
             // 
-            this.txtTelepon.Location = new System.Drawing.Point(183, 49);
+            this.txtTelepon.Location = new System.Drawing.Point(206, 61);
+            this.txtTelepon.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTelepon.Name = "txtTelepon";
-            this.txtTelepon.Size = new System.Drawing.Size(273, 22);
+            this.txtTelepon.Size = new System.Drawing.Size(307, 26);
             this.txtTelepon.TabIndex = 2;
             // 
             // lblTelepon
             // 
             this.lblTelepon.AutoSize = true;
-            this.lblTelepon.Location = new System.Drawing.Point(64, 55);
+            this.lblTelepon.Location = new System.Drawing.Point(72, 69);
             this.lblTelepon.Name = "lblTelepon";
-            this.lblTelepon.Size = new System.Drawing.Size(102, 16);
+            this.lblTelepon.Size = new System.Drawing.Size(117, 20);
             this.lblTelepon.TabIndex = 5;
             this.lblTelepon.Text = "Nomor Telepon";
             // 
             // lblWaktu
             // 
             this.lblWaktu.AutoSize = true;
-            this.lblWaktu.Location = new System.Drawing.Point(64, 83);
+            this.lblWaktu.Location = new System.Drawing.Point(72, 104);
             this.lblWaktu.Name = "lblWaktu";
-            this.lblWaktu.Size = new System.Drawing.Size(110, 16);
+            this.lblWaktu.Size = new System.Drawing.Size(129, 20);
             this.lblWaktu.TabIndex = 6;
             this.lblWaktu.Text = "Waktu Reservasi";
             // 
             // dgvAdminReservasi
             // 
             this.dgvAdminReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvAdminReservasi.Location = new System.Drawing.Point(47, 189);
+            this.dgvAdminReservasi.Location = new System.Drawing.Point(53, 236);
+            this.dgvAdminReservasi.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dgvAdminReservasi.Name = "dgvAdminReservasi";
             this.dgvAdminReservasi.RowHeadersWidth = 51;
             this.dgvAdminReservasi.RowTemplate.Height = 24;
-            this.dgvAdminReservasi.Size = new System.Drawing.Size(569, 150);
+            this.dgvAdminReservasi.Size = new System.Drawing.Size(640, 188);
             this.dgvAdminReservasi.TabIndex = 7;
             this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellContentClick);
             // 
             // txtMeja
             // 
-            this.txtMeja.Location = new System.Drawing.Point(183, 106);
+            this.txtMeja.Location = new System.Drawing.Point(206, 132);
+            this.txtMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtMeja.Name = "txtMeja";
-            this.txtMeja.Size = new System.Drawing.Size(273, 22);
+            this.txtMeja.Size = new System.Drawing.Size(307, 26);
             this.txtMeja.TabIndex = 8;
             // 
             // lblMeja
             // 
             this.lblMeja.AutoSize = true;
-            this.lblMeja.Location = new System.Drawing.Point(65, 111);
+            this.lblMeja.Location = new System.Drawing.Point(73, 139);
             this.lblMeja.Name = "lblMeja";
-            this.lblMeja.Size = new System.Drawing.Size(81, 16);
+            this.lblMeja.Size = new System.Drawing.Size(94, 20);
             this.lblMeja.TabIndex = 9;
             this.lblMeja.Text = "Nomor Meja";
             // 
             // btnHapus
             // 
-            this.btnHapus.Location = new System.Drawing.Point(547, 62);
+            this.btnHapus.Location = new System.Drawing.Point(615, 78);
+            this.btnHapus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnHapus.Name = "btnHapus";
-            this.btnHapus.Size = new System.Drawing.Size(135, 29);
+            this.btnHapus.Size = new System.Drawing.Size(152, 36);
             this.btnHapus.TabIndex = 10;
             this.btnHapus.Text = "Hapus Reservasi";
             this.btnHapus.UseVisualStyleBackColor = true;
@@ -122,9 +126,10 @@ namespace PABDCAFE
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(547, 97);
+            this.btnEdit.Location = new System.Drawing.Point(615, 121);
+            this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(135, 29);
+            this.btnEdit.Size = new System.Drawing.Size(152, 36);
             this.btnEdit.TabIndex = 11;
             this.btnEdit.Text = "Edit Reservasi";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -132,9 +137,10 @@ namespace PABDCAFE
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(624, 313);
+            this.btnBack.Location = new System.Drawing.Point(702, 391);
+            this.btnBack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 26);
+            this.btnBack.Size = new System.Drawing.Size(84, 32);
             this.btnBack.TabIndex = 15;
             this.btnBack.Text = "<back";
             this.btnBack.UseVisualStyleBackColor = true;
@@ -143,31 +149,34 @@ namespace PABDCAFE
             // lblNama
             // 
             this.lblNama.AutoSize = true;
-            this.lblNama.Location = new System.Drawing.Point(67, 27);
+            this.lblNama.Location = new System.Drawing.Point(72, 34);
             this.lblNama.Name = "lblNama";
-            this.lblNama.Size = new System.Drawing.Size(104, 16);
+            this.lblNama.Size = new System.Drawing.Size(124, 20);
             this.lblNama.TabIndex = 16;
             this.lblNama.Text = "Nama Customer";
             // 
             // txtWaktu
             // 
-            this.txtWaktu.Location = new System.Drawing.Point(183, 78);
+            this.txtWaktu.Location = new System.Drawing.Point(206, 98);
+            this.txtWaktu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWaktu.Name = "txtWaktu";
-            this.txtWaktu.Size = new System.Drawing.Size(273, 22);
+            this.txtWaktu.Size = new System.Drawing.Size(307, 26);
             this.txtWaktu.TabIndex = 17;
             // 
             // txtNama
             // 
-            this.txtNama.Location = new System.Drawing.Point(183, 21);
+            this.txtNama.Location = new System.Drawing.Point(206, 26);
+            this.txtNama.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNama.Name = "txtNama";
-            this.txtNama.Size = new System.Drawing.Size(273, 22);
+            this.txtNama.Size = new System.Drawing.Size(307, 26);
             this.txtNama.TabIndex = 18;
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(547, 133);
+            this.btnImport.Location = new System.Drawing.Point(615, 166);
+            this.btnImport.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(75, 23);
+            this.btnImport.Size = new System.Drawing.Size(84, 29);
             this.btnImport.TabIndex = 19;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -175,9 +184,9 @@ namespace PABDCAFE
             // 
             // AdminReservasi
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(711, 360);
+            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.txtNama);
             this.Controls.Add(this.txtWaktu);

@@ -82,6 +82,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.btnPassword);
             this.Controls.Add(this.btnUsername);
