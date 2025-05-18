@@ -37,9 +37,11 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(343, 278);
+            this.btnLogin.Font = new System.Drawing.Font("Times New Roman", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLogin.Location = new System.Drawing.Point(361, 302);
+            this.btnLogin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(75, 39);
+            this.btnLogin.Size = new System.Drawing.Size(79, 40);
             this.btnLogin.TabIndex = 0;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
@@ -47,48 +49,58 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(297, 142);
+            this.txtUsername.Location = new System.Drawing.Point(266, 131);
+            this.txtUsername.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(165, 26);
+            this.txtUsername.Size = new System.Drawing.Size(272, 33);
             this.txtUsername.TabIndex = 1;
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(297, 220);
+            this.txtPassword.Location = new System.Drawing.Point(266, 234);
+            this.txtPassword.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(165, 26);
+            this.txtPassword.Size = new System.Drawing.Size(272, 33);
             this.txtPassword.TabIndex = 2;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
             // btnUsername
             // 
             this.btnUsername.AutoSize = true;
-            this.btnUsername.Location = new System.Drawing.Point(335, 115);
+            this.btnUsername.BackColor = System.Drawing.Color.Transparent;
+            this.btnUsername.Font = new System.Drawing.Font("Modern No. 20", 10F);
+            this.btnUsername.Location = new System.Drawing.Point(351, 99);
+            this.btnUsername.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnUsername.Name = "btnUsername";
-            this.btnUsername.Size = new System.Drawing.Size(83, 20);
+            this.btnUsername.Size = new System.Drawing.Size(90, 22);
             this.btnUsername.TabIndex = 3;
             this.btnUsername.Text = "Username";
             // 
             // btnPassword
             // 
             this.btnPassword.AutoSize = true;
-            this.btnPassword.Location = new System.Drawing.Point(340, 197);
+            this.btnPassword.BackColor = System.Drawing.Color.Transparent;
+            this.btnPassword.Font = new System.Drawing.Font("Modern No. 20", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPassword.Location = new System.Drawing.Point(357, 202);
+            this.btnPassword.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnPassword.Name = "btnPassword";
-            this.btnPassword.Size = new System.Drawing.Size(78, 20);
+            this.btnPassword.Size = new System.Drawing.Size(86, 22);
             this.btnPassword.TabIndex = 4;
             this.btnPassword.Text = "Password";
             // 
             // LoginPage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
+            this.ClientSize = new System.Drawing.Size(830, 488);
             this.Controls.Add(this.btnPassword);
             this.Controls.Add(this.btnUsername);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.btnLogin);
+            this.Font = new System.Drawing.Font("Times New Roman", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "LoginPage";
             this.Text = "LoginPage";
             this.Load += new System.EventHandler(this.LoginAdmin_Load);

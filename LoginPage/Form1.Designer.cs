@@ -38,7 +38,7 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Modern No. 20", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(170, 178);
+            this.label1.Location = new System.Drawing.Point(192, 175);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(449, 41);
             this.label1.TabIndex = 1;
@@ -47,7 +47,7 @@
             // btnLogin
             // 
             this.btnLogin.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.btnLogin.Location = new System.Drawing.Point(271, 256);
+            this.btnLogin.Location = new System.Drawing.Point(303, 252);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(240, 53);
             this.btnLogin.TabIndex = 2;

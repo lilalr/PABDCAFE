@@ -45,10 +45,10 @@
             // 
             // btnCustTambah
             // 
-            this.btnCustTambah.Location = new System.Drawing.Point(679, 41);
+            this.btnCustTambah.Location = new System.Drawing.Point(764, 83);
             this.btnCustTambah.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustTambah.Name = "btnCustTambah";
-            this.btnCustTambah.Size = new System.Drawing.Size(138, 35);
+            this.btnCustTambah.Size = new System.Drawing.Size(155, 44);
             this.btnCustTambah.TabIndex = 2;
             this.btnCustTambah.Text = "Tambah Reservasi";
             this.btnCustTambah.UseVisualStyleBackColor = true;
@@ -56,10 +56,10 @@
             // 
             // btnCustHapus
             // 
-            this.btnCustHapus.Location = new System.Drawing.Point(679, 93);
+            this.btnCustHapus.Location = new System.Drawing.Point(764, 150);
             this.btnCustHapus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustHapus.Name = "btnCustHapus";
-            this.btnCustHapus.Size = new System.Drawing.Size(138, 37);
+            this.btnCustHapus.Size = new System.Drawing.Size(155, 46);
             this.btnCustHapus.TabIndex = 3;
             this.btnCustHapus.Text = "Hapus Reservasi";
             this.btnCustHapus.UseVisualStyleBackColor = true;
@@ -67,22 +67,23 @@
             // 
             // dgvCustomer
             // 
+            this.dgvCustomer.BackgroundColor = System.Drawing.Color.LavenderBlush;
             this.dgvCustomer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCustomer.Location = new System.Drawing.Point(49, 229);
+            this.dgvCustomer.Location = new System.Drawing.Point(55, 286);
             this.dgvCustomer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvCustomer.Name = "dgvCustomer";
             this.dgvCustomer.RowHeadersWidth = 62;
             this.dgvCustomer.RowTemplate.Height = 28;
-            this.dgvCustomer.Size = new System.Drawing.Size(739, 203);
+            this.dgvCustomer.Size = new System.Drawing.Size(864, 254);
             this.dgvCustomer.TabIndex = 4;
             this.dgvCustomer.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCustomer_CellClick);
             // 
             // btnLogout
             // 
-            this.btnLogout.Location = new System.Drawing.Point(804, 427);
+            this.btnLogout.Location = new System.Drawing.Point(887, 565);
             this.btnLogout.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(67, 27);
+            this.btnLogout.Size = new System.Drawing.Size(75, 34);
             this.btnLogout.TabIndex = 5;
             this.btnLogout.Text = "Logout";
             this.btnLogout.UseVisualStyleBackColor = true;
@@ -90,75 +91,82 @@
             // 
             // txtCustNama
             // 
-            this.txtCustNama.Location = new System.Drawing.Point(208, 24);
+            this.txtCustNama.Location = new System.Drawing.Point(232, 58);
+            this.txtCustNama.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNama.Name = "txtCustNama";
-            this.txtCustNama.Size = new System.Drawing.Size(403, 22);
+            this.txtCustNama.Size = new System.Drawing.Size(465, 26);
             this.txtCustNama.TabIndex = 6;
-            
             // 
             // txtCustNoTelp
             // 
-            this.txtCustNoTelp.Location = new System.Drawing.Point(208, 66);
+            this.txtCustNoTelp.Location = new System.Drawing.Point(232, 104);
+            this.txtCustNoTelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNoTelp.Name = "txtCustNoTelp";
-            this.txtCustNoTelp.Size = new System.Drawing.Size(403, 22);
+            this.txtCustNoTelp.Size = new System.Drawing.Size(465, 26);
             this.txtCustNoTelp.TabIndex = 7;
             // 
             // txtCustWaktu
             // 
-            this.txtCustWaktu.Location = new System.Drawing.Point(208, 109);
+            this.txtCustWaktu.Location = new System.Drawing.Point(232, 150);
+            this.txtCustWaktu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustWaktu.Name = "txtCustWaktu";
-            this.txtCustWaktu.Size = new System.Drawing.Size(403, 22);
+            this.txtCustWaktu.Size = new System.Drawing.Size(465, 26);
             this.txtCustWaktu.TabIndex = 8;
             // 
             // txtCustMeja
             // 
-            this.txtCustMeja.Location = new System.Drawing.Point(208, 156);
+            this.txtCustMeja.Location = new System.Drawing.Point(232, 196);
+            this.txtCustMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustMeja.Name = "txtCustMeja";
-            this.txtCustMeja.Size = new System.Drawing.Size(403, 22);
+            this.txtCustMeja.Size = new System.Drawing.Size(465, 26);
             this.txtCustMeja.TabIndex = 9;
             // 
             // CustNama
             // 
             this.CustNama.AutoSize = true;
-            this.CustNama.Location = new System.Drawing.Point(81, 30);
+            this.CustNama.BackColor = System.Drawing.Color.Transparent;
+            this.CustNama.Location = new System.Drawing.Point(89, 62);
             this.CustNama.Name = "CustNama";
-            this.CustNama.Size = new System.Drawing.Size(104, 16);
+            this.CustNama.Size = new System.Drawing.Size(124, 20);
             this.CustNama.TabIndex = 10;
             this.CustNama.Text = "Nama Customer";
-            
             // 
             // CustTelp
             // 
             this.CustTelp.AutoSize = true;
-            this.CustTelp.Location = new System.Drawing.Point(83, 69);
+            this.CustTelp.BackColor = System.Drawing.Color.Transparent;
+            this.CustTelp.Location = new System.Drawing.Point(90, 107);
             this.CustTelp.Name = "CustTelp";
-            this.CustTelp.Size = new System.Drawing.Size(102, 16);
+            this.CustTelp.Size = new System.Drawing.Size(117, 20);
             this.CustTelp.TabIndex = 11;
             this.CustTelp.Text = "Nomor Telepon";
             // 
             // CustWaktu
             // 
             this.CustWaktu.AutoSize = true;
-            this.CustWaktu.Location = new System.Drawing.Point(85, 114);
+            this.CustWaktu.BackColor = System.Drawing.Color.Transparent;
+            this.CustWaktu.Location = new System.Drawing.Point(89, 153);
             this.CustWaktu.Name = "CustWaktu";
-            this.CustWaktu.Size = new System.Drawing.Size(110, 16);
+            this.CustWaktu.Size = new System.Drawing.Size(129, 20);
             this.CustWaktu.TabIndex = 12;
             this.CustWaktu.Text = "Waktu Reservasi";
             // 
             // CustMeja
             // 
             this.CustMeja.AutoSize = true;
-            this.CustMeja.Location = new System.Drawing.Point(85, 162);
+            this.CustMeja.BackColor = System.Drawing.Color.Transparent;
+            this.CustMeja.Location = new System.Drawing.Point(91, 198);
             this.CustMeja.Name = "CustMeja";
-            this.CustMeja.Size = new System.Drawing.Size(81, 16);
+            this.CustMeja.Size = new System.Drawing.Size(94, 20);
             this.CustMeja.TabIndex = 13;
             this.CustMeja.Text = "Nomor Meja";
             // 
             // CustomerPage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(883, 508);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
+            this.ClientSize = new System.Drawing.Size(993, 635);
             this.Controls.Add(this.CustMeja);
             this.Controls.Add(this.CustWaktu);
             this.Controls.Add(this.CustTelp);
@@ -171,6 +179,7 @@
             this.Controls.Add(this.dgvCustomer);
             this.Controls.Add(this.btnCustHapus);
             this.Controls.Add(this.btnCustTambah);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "CustomerPage";
             this.Text = "CustomerPage";
