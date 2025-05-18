@@ -35,9 +35,11 @@
             // 
             // btnReservasi
             // 
-            this.btnReservasi.Location = new System.Drawing.Point(12, 69);
+            this.btnReservasi.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc;
+            this.btnReservasi.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnReservasi.Location = new System.Drawing.Point(178, 128);
             this.btnReservasi.Name = "btnReservasi";
-            this.btnReservasi.Size = new System.Drawing.Size(152, 42);
+            this.btnReservasi.Size = new System.Drawing.Size(406, 42);
             this.btnReservasi.TabIndex = 0;
             this.btnReservasi.Text = "Reservasi";
             this.btnReservasi.UseVisualStyleBackColor = true;
@@ -45,9 +47,10 @@
             // 
             // btnMeja
             // 
-            this.btnMeja.Location = new System.Drawing.Point(12, 108);
+            this.btnMeja.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc;
+            this.btnMeja.Location = new System.Drawing.Point(178, 202);
             this.btnMeja.Name = "btnMeja";
-            this.btnMeja.Size = new System.Drawing.Size(152, 42);
+            this.btnMeja.Size = new System.Drawing.Size(406, 42);
             this.btnMeja.TabIndex = 1;
             this.btnMeja.Text = "Meja";
             this.btnMeja.UseVisualStyleBackColor = true;
@@ -55,7 +58,7 @@
             // 
             // btnLogout
             // 
-            this.btnLogout.Location = new System.Drawing.Point(684, 364);
+            this.btnLogout.Location = new System.Drawing.Point(680, 367);
             this.btnLogout.Name = "btnLogout";
             this.btnLogout.Size = new System.Drawing.Size(75, 40);
             this.btnLogout.TabIndex = 3;
@@ -67,6 +70,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.btnLogout);
             this.Controls.Add(this.btnMeja);

@@ -44,9 +44,10 @@
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(691, 375);
+            this.btnBack.Location = new System.Drawing.Point(782, 489);
+            this.btnBack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 28);
+            this.btnBack.Size = new System.Drawing.Size(84, 35);
             this.btnBack.TabIndex = 0;
             this.btnBack.Text = "<back";
             this.btnBack.UseVisualStyleBackColor = true;
@@ -54,9 +55,10 @@
             // 
             // btnTambah
             // 
-            this.btnTambah.Location = new System.Drawing.Point(665, 37);
+            this.btnTambah.Location = new System.Drawing.Point(736, 63);
+            this.btnTambah.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnTambah.Name = "btnTambah";
-            this.btnTambah.Size = new System.Drawing.Size(75, 23);
+            this.btnTambah.Size = new System.Drawing.Size(110, 38);
             this.btnTambah.TabIndex = 1;
             this.btnTambah.Text = "Tambah";
             this.btnTambah.UseVisualStyleBackColor = true;
@@ -64,9 +66,10 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(665, 67);
+            this.btnEdit.Location = new System.Drawing.Point(736, 109);
+            this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnEdit.Size = new System.Drawing.Size(110, 38);
             this.btnEdit.TabIndex = 2;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -74,9 +77,10 @@
             // 
             // btnHapus
             // 
-            this.btnHapus.Location = new System.Drawing.Point(665, 97);
+            this.btnHapus.Location = new System.Drawing.Point(736, 155);
+            this.btnHapus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnHapus.Name = "btnHapus";
-            this.btnHapus.Size = new System.Drawing.Size(75, 23);
+            this.btnHapus.Size = new System.Drawing.Size(110, 38);
             this.btnHapus.TabIndex = 3;
             this.btnHapus.Text = "Hapus";
             this.btnHapus.UseVisualStyleBackColor = true;
@@ -84,68 +88,77 @@
             // 
             // dgvAdminMeja
             // 
+            this.dgvAdminMeja.BackgroundColor = System.Drawing.Color.LavenderBlush;
             this.dgvAdminMeja.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvAdminMeja.Location = new System.Drawing.Point(74, 230);
+            this.dgvAdminMeja.Location = new System.Drawing.Point(58, 246);
+            this.dgvAdminMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dgvAdminMeja.Name = "dgvAdminMeja";
             this.dgvAdminMeja.RowHeadersWidth = 51;
             this.dgvAdminMeja.RowTemplate.Height = 24;
-            this.dgvAdminMeja.Size = new System.Drawing.Size(584, 150);
+            this.dgvAdminMeja.Size = new System.Drawing.Size(788, 224);
             this.dgvAdminMeja.TabIndex = 4;
             this.dgvAdminMeja.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminMeja_CellContentClick);
             // 
             // txtNomor
             // 
-            this.txtNomor.Location = new System.Drawing.Point(157, 37);
+            this.txtNomor.Location = new System.Drawing.Point(223, 69);
+            this.txtNomor.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNomor.Name = "txtNomor";
-            this.txtNomor.Size = new System.Drawing.Size(365, 22);
+            this.txtNomor.Size = new System.Drawing.Size(466, 26);
             this.txtNomor.TabIndex = 5;
             // 
             // txtKapasitas
             // 
-            this.txtKapasitas.Location = new System.Drawing.Point(157, 67);
+            this.txtKapasitas.Location = new System.Drawing.Point(223, 116);
+            this.txtKapasitas.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtKapasitas.Name = "txtKapasitas";
-            this.txtKapasitas.Size = new System.Drawing.Size(365, 22);
+            this.txtKapasitas.Size = new System.Drawing.Size(466, 26);
             this.txtKapasitas.TabIndex = 6;
             // 
             // txtStatus
             // 
-            this.txtStatus.Location = new System.Drawing.Point(157, 97);
+            this.txtStatus.Location = new System.Drawing.Point(223, 161);
+            this.txtStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(365, 22);
+            this.txtStatus.Size = new System.Drawing.Size(466, 26);
             this.txtStatus.TabIndex = 7;
             // 
             // lblNomor
             // 
             this.lblNomor.AutoSize = true;
-            this.lblNomor.Location = new System.Drawing.Point(26, 37);
+            this.lblNomor.BackColor = System.Drawing.Color.Transparent;
+            this.lblNomor.Location = new System.Drawing.Point(63, 71);
             this.lblNomor.Name = "lblNomor";
-            this.lblNomor.Size = new System.Drawing.Size(81, 16);
+            this.lblNomor.Size = new System.Drawing.Size(94, 20);
             this.lblNomor.TabIndex = 10;
             this.lblNomor.Text = "Nomor Meja";
             // 
             // lblKapasitas
             // 
             this.lblKapasitas.AutoSize = true;
-            this.lblKapasitas.Location = new System.Drawing.Point(29, 67);
+            this.lblKapasitas.BackColor = System.Drawing.Color.Transparent;
+            this.lblKapasitas.Location = new System.Drawing.Point(63, 118);
             this.lblKapasitas.Name = "lblKapasitas";
-            this.lblKapasitas.Size = new System.Drawing.Size(100, 16);
+            this.lblKapasitas.Size = new System.Drawing.Size(117, 20);
             this.lblKapasitas.TabIndex = 11;
             this.lblKapasitas.Text = "Kapasitas Meja";
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(32, 97);
+            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lblStatus.Location = new System.Drawing.Point(62, 162);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(77, 16);
+            this.lblStatus.Size = new System.Drawing.Size(94, 20);
             this.lblStatus.TabIndex = 12;
             this.lblStatus.Text = "Status Meja";
             // 
             // AdminMeja
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
+            this.ClientSize = new System.Drawing.Size(900, 562);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblKapasitas);
             this.Controls.Add(this.lblNomor);
@@ -157,6 +170,7 @@
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnTambah);
             this.Controls.Add(this.btnBack);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "AdminMeja";
             this.Text = "AdminMeja";
             this.Load += new System.EventHandler(this.AdminMeja_Load);
