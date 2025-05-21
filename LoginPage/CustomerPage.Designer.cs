@@ -34,7 +34,6 @@
             this.btnLogout = new System.Windows.Forms.Button();
             this.txtCustNama = new System.Windows.Forms.TextBox();
             this.txtCustNoTelp = new System.Windows.Forms.TextBox();
-            this.txtCustWaktu = new System.Windows.Forms.TextBox();
             this.CustNama = new System.Windows.Forms.Label();
             this.CustTelp = new System.Windows.Forms.Label();
             this.CustWaktu = new System.Windows.Forms.Label();
@@ -106,14 +105,6 @@
             this.txtCustNoTelp.Size = new System.Drawing.Size(465, 23);
             this.txtCustNoTelp.TabIndex = 7;
             // 
-            // txtCustWaktu
-            // 
-            this.txtCustWaktu.Location = new System.Drawing.Point(232, 150);
-            this.txtCustWaktu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtCustWaktu.Name = "txtCustWaktu";
-            this.txtCustWaktu.Size = new System.Drawing.Size(465, 23);
-            this.txtCustWaktu.TabIndex = 8;
-            // 
             // CustNama
             // 
             this.CustNama.AutoSize = true;
@@ -164,7 +155,7 @@
             // 
             // dtpCustWaktu
             // 
-            this.dtpCustWaktu.Location = new System.Drawing.Point(472, 198);
+            this.dtpCustWaktu.Location = new System.Drawing.Point(232, 147);
             this.dtpCustWaktu.MaxDate = new System.DateTime(2025, 12, 31, 0, 0, 0, 0);
             this.dtpCustWaktu.MinDate = new System.DateTime(2025, 5, 22, 0, 0, 0, 0);
             this.dtpCustWaktu.Name = "dtpCustWaktu";
@@ -185,7 +176,6 @@
             this.Controls.Add(this.CustWaktu);
             this.Controls.Add(this.CustTelp);
             this.Controls.Add(this.CustNama);
-            this.Controls.Add(this.txtCustWaktu);
             this.Controls.Add(this.txtCustNoTelp);
             this.Controls.Add(this.txtCustNama);
             this.Controls.Add(this.btnLogout);
@@ -210,7 +200,6 @@
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.TextBox txtCustNama;
         private System.Windows.Forms.TextBox txtCustNoTelp;
-        private System.Windows.Forms.TextBox txtCustWaktu;
         private System.Windows.Forms.Label CustNama;
         private System.Windows.Forms.Label CustTelp;
         private System.Windows.Forms.Label CustWaktu;
