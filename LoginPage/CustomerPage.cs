@@ -12,7 +12,6 @@ namespace PABDCAFE
 
         public CustomerPage()
         {
-           
             InitializeComponent();
         }
 
@@ -20,7 +19,7 @@ namespace PABDCAFE
         {
             string nama = txtCustNama.Text.Trim();
             string telp = txtCustNoTelp.Text.Trim();
-            string meja = txtCustMeja.Text.Trim();
+            string meja = cmbCustMeja.Text.Trim();
             string waktuStr = txtCustWaktu.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(nama) || nama.Length < 3)
@@ -47,32 +46,9 @@ namespace PABDCAFE
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(meja) || meja.Length != 2)
-            {
-                MessageBox.Show("Nomor meja harus 2 karakter (misal: 01, 12).");
-                return false;
-            }
-
             try
             {
                 conn.Open();
-
-                // Cek apakah nomor meja tersedia
-                SqlCommand cekMeja = new SqlCommand("SELECT Status_Meja FROM Meja WHERE Nomor_Meja = @Meja", conn);
-                cekMeja.Parameters.AddWithValue("@Meja", meja);
-                object status = cekMeja.ExecuteScalar();
-
-                if (status == null)
-                {
-                    MessageBox.Show("Nomor meja tidak ditemukan.");
-                    return false;
-                }
-
-                if (status.ToString() == "Dipesan")
-                {
-                    MessageBox.Show("Meja tersebut sedang dipesan. Pilih meja lain.");
-                    return false;
-                }
 
                 // Cek apakah sudah ada reservasi di meja itu pada waktu yang sama
                 SqlCommand cekJadwal = new SqlCommand(
@@ -115,12 +91,26 @@ namespace PABDCAFE
                 cmd.Parameters.AddWithValue("@Nama", txtCustNama.Text.Trim());
                 cmd.Parameters.AddWithValue("@Telp", txtCustNoTelp.Text.Trim());
                 cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtCustWaktu.Text.Trim()));
-                cmd.Parameters.AddWithValue("@Meja", txtCustMeja.Text.Trim());
+                cmd.Parameters.AddWithValue("@Meja", cmbCustMeja.Text.Trim());
 
                 int result = cmd.ExecuteNonQuery();
-                MessageBox.Show(result > 0 ? "Reservasi berhasil ditambahkan." : "Reservasi gagal ditambahkan.");
+
+                if (result > 0)
+                {
+                    // Update status meja menjadi "Dipesan"
+                    SqlCommand updateMeja = new SqlCommand("UPDATE Meja SET Status_Meja = 'Dipesan' WHERE Nomor_Meja = @Meja", conn);
+                    updateMeja.Parameters.AddWithValue("@Meja", cmbCustMeja.Text.Trim());
+                    updateMeja.ExecuteNonQuery();
+
+                    MessageBox.Show("Reservasi berhasil ditambahkan.");
+                }
+                else
+                {
+                    MessageBox.Show("Reservasi gagal ditambahkan.");
+                }
 
                 LoadReservasi();
+                LoadMejaTersedia();
                 ClearForm();
             }
             catch (Exception ex)
@@ -134,9 +124,67 @@ namespace PABDCAFE
             }
         }
 
+        private void btnCustHapus_Click(object sender, EventArgs e)
+        {
+            string nama = txtCustNama.Text.Trim();
+            string waktuStr = txtCustWaktu.Text.Trim();
+            string meja = cmbCustMeja.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(waktuStr))
+            {
+                MessageBox.Show("Isi Nama dan Waktu Reservasi terlebih dahulu.");
+                return;
+            }
+
+            if (!DateTime.TryParse(waktuStr, out DateTime waktu))
+            {
+                MessageBox.Show("Format waktu tidak valid.");
+                return;
+            }
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM Reservasi WHERE Nama_Customer = @Nama AND Waktu_Reservasi = @Waktu", conn);
+                cmd.Parameters.AddWithValue("@Nama", nama);
+                cmd.Parameters.AddWithValue("@Waktu", waktu);
+
+                int result = cmd.ExecuteNonQuery();
+
+                if (result > 0)
+                {
+                    // Kembalikan status meja menjadi "Tersedia"
+                    SqlCommand updateMeja = new SqlCommand("UPDATE Meja SET Status_Meja = 'Tersedia' WHERE Nomor_Meja = @Meja", conn);
+                    updateMeja.Parameters.AddWithValue("@Meja", meja);
+                    updateMeja.ExecuteNonQuery();
+
+                    MessageBox.Show("Reservasi berhasil dihapus.");
+                }
+                else
+                {
+                    MessageBox.Show("Reservasi tidak ditemukan.");
+                }
+
+                LoadReservasi();
+                LoadMejaTersedia();
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan saat menghapus: " + ex.Message);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
+
         private void CustomerPage_Load(object sender, EventArgs e)
         {
             LoadReservasi();
+            LoadMejaTersedia();
         }
 
         private void LoadReservasi()
@@ -158,42 +206,30 @@ namespace PABDCAFE
             }
         }
 
-        private void btnCustHapus_Click(object sender, EventArgs e)
+        private void LoadMejaTersedia()
         {
-            if (string.IsNullOrWhiteSpace(txtCustNama.Text) || string.IsNullOrWhiteSpace(txtCustWaktu.Text))
-            {
-                MessageBox.Show("Isi Nama dan Waktu Reservasi terlebih dahulu.");
-                return;
-            }
-
-            if (!DateTime.TryParse(txtCustWaktu.Text.Trim(), out DateTime waktu))
-            {
-                MessageBox.Show("Format waktu tidak valid.");
-                return;
-            }
-
             try
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(
-                    "DELETE FROM Reservasi WHERE Nama_Customer = @Nama AND Waktu_Reservasi = @Waktu", conn);
-                cmd.Parameters.AddWithValue("@Nama", txtCustNama.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", waktu);
+                cmbCustMeja.Items.Clear();
 
-                int result = cmd.ExecuteNonQuery();
-                MessageBox.Show(result > 0 ? "Reservasi berhasil dihapus." : "Reservasi tidak ditemukan.");
+                using (SqlConnection localConn = new SqlConnection(conn.ConnectionString))
+                {
+                    localConn.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja WHERE Status_Meja = 'Tersedia'", localConn);
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-                LoadReservasi();
-                ClearForm();
+                    while (reader.Read())
+                    {
+                        cmbCustMeja.Items.Add(reader["Nomor_Meja"].ToString());
+                    }
+                }
+
+                if (cmbCustMeja.Items.Count > 0)
+                    cmbCustMeja.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Terjadi kesalahan saat menghapus: " + ex.Message);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open)
-                    conn.Close();
+                MessageBox.Show("Gagal memuat meja tersedia: " + ex.Message);
             }
         }
 
@@ -202,7 +238,7 @@ namespace PABDCAFE
             txtCustNama.Clear();
             txtCustNoTelp.Clear();
             txtCustWaktu.Clear();
-            txtCustMeja.Clear();
+            cmbCustMeja.SelectedIndex = cmbCustMeja.Items.Count > 0 ? 0 : -1;
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
@@ -222,11 +258,13 @@ namespace PABDCAFE
                 txtCustNama.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
                 txtCustNoTelp.Text = dgvCustomer.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
                 txtCustWaktu.Text = dgvCustomer.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
-                txtCustMeja.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
+                cmbCustMeja.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
         }
-        
-        // (-) GIMANA CARANYA BIAR SI CUSTOMER INI GABISA NGEDIT PESANANNYA?
-        // (-) waktu konfirmasi hapus itu harusnya kalo dibatalkan, data ga bakal kehapus, tp ini masih kehapus
+
+        private void dtpCustWaktu_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

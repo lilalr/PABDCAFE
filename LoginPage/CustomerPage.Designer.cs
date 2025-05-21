@@ -35,11 +35,12 @@
             this.txtCustNama = new System.Windows.Forms.TextBox();
             this.txtCustNoTelp = new System.Windows.Forms.TextBox();
             this.txtCustWaktu = new System.Windows.Forms.TextBox();
-            this.txtCustMeja = new System.Windows.Forms.TextBox();
             this.CustNama = new System.Windows.Forms.Label();
             this.CustTelp = new System.Windows.Forms.Label();
             this.CustWaktu = new System.Windows.Forms.Label();
             this.CustMeja = new System.Windows.Forms.Label();
+            this.cmbCustMeja = new System.Windows.Forms.ComboBox();
+            this.dtpCustWaktu = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -94,7 +95,7 @@
             this.txtCustNama.Location = new System.Drawing.Point(232, 58);
             this.txtCustNama.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNama.Name = "txtCustNama";
-            this.txtCustNama.Size = new System.Drawing.Size(465, 26);
+            this.txtCustNama.Size = new System.Drawing.Size(465, 23);
             this.txtCustNama.TabIndex = 6;
             // 
             // txtCustNoTelp
@@ -102,7 +103,7 @@
             this.txtCustNoTelp.Location = new System.Drawing.Point(232, 104);
             this.txtCustNoTelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNoTelp.Name = "txtCustNoTelp";
-            this.txtCustNoTelp.Size = new System.Drawing.Size(465, 26);
+            this.txtCustNoTelp.Size = new System.Drawing.Size(465, 23);
             this.txtCustNoTelp.TabIndex = 7;
             // 
             // txtCustWaktu
@@ -110,16 +111,8 @@
             this.txtCustWaktu.Location = new System.Drawing.Point(232, 150);
             this.txtCustWaktu.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustWaktu.Name = "txtCustWaktu";
-            this.txtCustWaktu.Size = new System.Drawing.Size(465, 26);
+            this.txtCustWaktu.Size = new System.Drawing.Size(465, 23);
             this.txtCustWaktu.TabIndex = 8;
-            // 
-            // txtCustMeja
-            // 
-            this.txtCustMeja.Location = new System.Drawing.Point(232, 196);
-            this.txtCustMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtCustMeja.Name = "txtCustMeja";
-            this.txtCustMeja.Size = new System.Drawing.Size(465, 26);
-            this.txtCustMeja.TabIndex = 9;
             // 
             // CustNama
             // 
@@ -127,7 +120,7 @@
             this.CustNama.BackColor = System.Drawing.Color.Transparent;
             this.CustNama.Location = new System.Drawing.Point(89, 62);
             this.CustNama.Name = "CustNama";
-            this.CustNama.Size = new System.Drawing.Size(124, 20);
+            this.CustNama.Size = new System.Drawing.Size(109, 17);
             this.CustNama.TabIndex = 10;
             this.CustNama.Text = "Nama Customer";
             // 
@@ -137,7 +130,7 @@
             this.CustTelp.BackColor = System.Drawing.Color.Transparent;
             this.CustTelp.Location = new System.Drawing.Point(90, 107);
             this.CustTelp.Name = "CustTelp";
-            this.CustTelp.Size = new System.Drawing.Size(117, 20);
+            this.CustTelp.Size = new System.Drawing.Size(106, 17);
             this.CustTelp.TabIndex = 11;
             this.CustTelp.Text = "Nomor Telepon";
             // 
@@ -147,7 +140,7 @@
             this.CustWaktu.BackColor = System.Drawing.Color.Transparent;
             this.CustWaktu.Location = new System.Drawing.Point(89, 153);
             this.CustWaktu.Name = "CustWaktu";
-            this.CustWaktu.Size = new System.Drawing.Size(129, 20);
+            this.CustWaktu.Size = new System.Drawing.Size(115, 17);
             this.CustWaktu.TabIndex = 12;
             this.CustWaktu.Text = "Waktu Reservasi";
             // 
@@ -157,21 +150,41 @@
             this.CustMeja.BackColor = System.Drawing.Color.Transparent;
             this.CustMeja.Location = new System.Drawing.Point(91, 198);
             this.CustMeja.Name = "CustMeja";
-            this.CustMeja.Size = new System.Drawing.Size(94, 20);
+            this.CustMeja.Size = new System.Drawing.Size(84, 17);
             this.CustMeja.TabIndex = 13;
             this.CustMeja.Text = "Nomor Meja";
             // 
+            // cmbCustMeja
+            // 
+            this.cmbCustMeja.FormattingEnabled = true;
+            this.cmbCustMeja.Location = new System.Drawing.Point(232, 195);
+            this.cmbCustMeja.Name = "cmbCustMeja";
+            this.cmbCustMeja.Size = new System.Drawing.Size(200, 24);
+            this.cmbCustMeja.TabIndex = 14;
+            // 
+            // dtpCustWaktu
+            // 
+            this.dtpCustWaktu.Location = new System.Drawing.Point(472, 198);
+            this.dtpCustWaktu.MaxDate = new System.DateTime(2025, 12, 31, 0, 0, 0, 0);
+            this.dtpCustWaktu.MinDate = new System.DateTime(2025, 5, 22, 0, 0, 0, 0);
+            this.dtpCustWaktu.Name = "dtpCustWaktu";
+            this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
+            this.dtpCustWaktu.TabIndex = 15;
+            this.dtpCustWaktu.Value = new System.DateTime(2025, 5, 22, 1, 49, 14, 0);
+            this.dtpCustWaktu.ValueChanged += new System.EventHandler(this.dtpCustWaktu_ValueChanged);
+            // 
             // CustomerPage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(993, 635);
+            this.Controls.Add(this.dtpCustWaktu);
+            this.Controls.Add(this.cmbCustMeja);
             this.Controls.Add(this.CustMeja);
             this.Controls.Add(this.CustWaktu);
             this.Controls.Add(this.CustTelp);
             this.Controls.Add(this.CustNama);
-            this.Controls.Add(this.txtCustMeja);
             this.Controls.Add(this.txtCustWaktu);
             this.Controls.Add(this.txtCustNoTelp);
             this.Controls.Add(this.txtCustNama);
@@ -198,10 +211,11 @@
         private System.Windows.Forms.TextBox txtCustNama;
         private System.Windows.Forms.TextBox txtCustNoTelp;
         private System.Windows.Forms.TextBox txtCustWaktu;
-        private System.Windows.Forms.TextBox txtCustMeja;
         private System.Windows.Forms.Label CustNama;
         private System.Windows.Forms.Label CustTelp;
         private System.Windows.Forms.Label CustWaktu;
         private System.Windows.Forms.Label CustMeja;
+        private System.Windows.Forms.ComboBox cmbCustMeja;
+        private System.Windows.Forms.DateTimePicker dtpCustWaktu;
     }
 }

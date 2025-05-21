@@ -35,7 +35,6 @@ namespace PABDCAFE
             this.lblTelepon = new System.Windows.Forms.Label();
             this.lblWaktu = new System.Windows.Forms.Label();
             this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
-            this.txtMeja = new System.Windows.Forms.TextBox();
             this.lblMeja = new System.Windows.Forms.Label();
             this.btnHapus = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -44,6 +43,7 @@ namespace PABDCAFE
             this.txtNama = new System.Windows.Forms.TextBox();
             this.btnImport = new System.Windows.Forms.Button();
             this.dtpWaktuReservasi = new System.Windows.Forms.DateTimePicker();
+            this.cbxNomorMeja = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,13 +96,6 @@ namespace PABDCAFE
             this.dgvAdminReservasi.Size = new System.Drawing.Size(760, 197);
             this.dgvAdminReservasi.TabIndex = 7;
             this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellContentClick);
-            // 
-            // txtMeja
-            // 
-            this.txtMeja.Location = new System.Drawing.Point(219, 158);
-            this.txtMeja.Name = "txtMeja";
-            this.txtMeja.Size = new System.Drawing.Size(374, 22);
-            this.txtMeja.TabIndex = 8;
             // 
             // lblMeja
             // 
@@ -173,12 +166,18 @@ namespace PABDCAFE
             // 
             // dtpWaktuReservasi
             // 
-            this.dtpWaktuReservasi.Location = new System.Drawing.Point(219, 126);
-            this.dtpWaktuReservasi.MaxDate = new System.DateTime(2025, 7, 31, 0, 0, 0, 0);
-            this.dtpWaktuReservasi.MinDate = new System.DateTime(2025, 5, 21, 0, 0, 0, 0);
+            this.dtpWaktuReservasi.Location = new System.Drawing.Point(219, 121);
             this.dtpWaktuReservasi.Name = "dtpWaktuReservasi";
             this.dtpWaktuReservasi.Size = new System.Drawing.Size(200, 22);
-            this.dtpWaktuReservasi.TabIndex = 20;
+            this.dtpWaktuReservasi.TabIndex = 22;
+            // 
+            // cbxNomorMeja
+            // 
+            this.cbxNomorMeja.FormattingEnabled = true;
+            this.cbxNomorMeja.Location = new System.Drawing.Point(219, 161);
+            this.cbxNomorMeja.Name = "cbxNomorMeja";
+            this.cbxNomorMeja.Size = new System.Drawing.Size(121, 24);
+            this.cbxNomorMeja.TabIndex = 21;
             // 
             // AdminReservasi
             // 
@@ -186,6 +185,7 @@ namespace PABDCAFE
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(883, 501);
+            this.Controls.Add(this.cbxNomorMeja);
             this.Controls.Add(this.dtpWaktuReservasi);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.txtNama);
@@ -194,7 +194,6 @@ namespace PABDCAFE
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnHapus);
             this.Controls.Add(this.lblMeja);
-            this.Controls.Add(this.txtMeja);
             this.Controls.Add(this.dgvAdminReservasi);
             this.Controls.Add(this.lblWaktu);
             this.Controls.Add(this.lblTelepon);
@@ -220,7 +219,6 @@ namespace PABDCAFE
         private System.Windows.Forms.Label lblTelepon;
         private System.Windows.Forms.Label lblWaktu;
         private System.Windows.Forms.DataGridView dgvAdminReservasi;
-        private System.Windows.Forms.TextBox txtMeja;
         private System.Windows.Forms.Label lblMeja;
         private System.Windows.Forms.Button btnHapus;
         private System.Windows.Forms.Button btnEdit;
@@ -229,5 +227,6 @@ namespace PABDCAFE
         private System.Windows.Forms.TextBox txtNama;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.DateTimePicker dtpWaktuReservasi;
+        private System.Windows.Forms.ComboBox cbxNomorMeja;
     }
 }
