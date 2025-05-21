@@ -15,7 +15,7 @@ namespace PABDCAFE
     public partial class LoginPage : Form
     {
         // ganti "server" sesuai dengan SQL server anda
-        private string baseconnectionString = "Data Source=IDEAPAD5PRO\\LILA; Initial Catalog=ReservasiCafe;";
+        private string baseconnectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA; Initial Catalog=ReservasiCafe;";
 
         public LoginPage()
         {

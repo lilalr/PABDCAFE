@@ -12,6 +12,7 @@ namespace PABDCAFE
 
         public CustomerPage()
         {
+           
             InitializeComponent();
         }
 
@@ -225,6 +226,7 @@ namespace PABDCAFE
             }
         }
         
-        // (-) GIMANA CARANYA BIAR SI CUSTOMER INI GABISA NGEDIT PESANANNYA? 
+        // (-) GIMANA CARANYA BIAR SI CUSTOMER INI GABISA NGEDIT PESANANNYA?
+        // (-) waktu konfirmasi hapus itu harusnya kalo dibatalkan, data ga bakal kehapus, tp ini masih kehapus
     }
 }
