@@ -20,7 +20,7 @@ namespace PABDCAFE
             string nama = txtCustNama.Text.Trim();
             string telp = txtCustNoTelp.Text.Trim();
             string meja = cmbCustMeja.Text.Trim();
-            string waktuStr = txtCustWaktu.Text.Trim();
+            string waktuStr = dtpCustWaktu.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(nama) || nama.Length < 3)
             {
@@ -90,7 +90,7 @@ namespace PABDCAFE
                     "VALUES (@Nama, @Telp, @Waktu, @Meja)", conn);
                 cmd.Parameters.AddWithValue("@Nama", txtCustNama.Text.Trim());
                 cmd.Parameters.AddWithValue("@Telp", txtCustNoTelp.Text.Trim());
-                cmd.Parameters.AddWithValue("@Waktu", DateTime.Parse(txtCustWaktu.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Waktu", dtpCustWaktu.Value);
                 cmd.Parameters.AddWithValue("@Meja", cmbCustMeja.Text.Trim());
 
                 int result = cmd.ExecuteNonQuery();
@@ -127,7 +127,7 @@ namespace PABDCAFE
         private void btnCustHapus_Click(object sender, EventArgs e)
         {
             string nama = txtCustNama.Text.Trim();
-            string waktuStr = txtCustWaktu.Text.Trim();
+            string waktuStr = dtpCustWaktu.Text.Trim();
             string meja = cmbCustMeja.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(waktuStr))
@@ -237,7 +237,7 @@ namespace PABDCAFE
         {
             txtCustNama.Clear();
             txtCustNoTelp.Clear();
-            txtCustWaktu.Clear();
+            dtpCustWaktu.Value = DateTime.Now;
             cmbCustMeja.SelectedIndex = cmbCustMeja.Items.Count > 0 ? 0 : -1;
         }
 
@@ -257,7 +257,7 @@ namespace PABDCAFE
             {
                 txtCustNama.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nama_Customer"].Value?.ToString();
                 txtCustNoTelp.Text = dgvCustomer.Rows[e.RowIndex].Cells["No_Telp"].Value?.ToString();
-                txtCustWaktu.Text = dgvCustomer.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value?.ToString();
+                dtpCustWaktu.Value = Convert.ToDateTime(dgvCustomer.Rows[e.RowIndex].Cells["Waktu_Reservasi"].Value);
                 cmbCustMeja.Text = dgvCustomer.Rows[e.RowIndex].Cells["Nomor_Meja"].Value?.ToString();
             }
         }
