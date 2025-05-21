@@ -29,23 +29,32 @@ namespace PABDCAFE
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string Username = txtUsername.Text;
-            string Password = txtPassword.Text;
+            string Username = txtUsername.Text.Trim();
+            string Password = txtPassword.Text.Trim();
 
             try
             {
-                string connectionString = baseconnectionString + $"User ID={Username};Password={Password};";
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(baseconnectionString))
                 {
-                    if (Username == "admin")
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username AND Password = @Password", conn);
+                    cmd.Parameters.AddWithValue("@Username", Username);
+                    cmd.Parameters.AddWithValue("@Password", Password);
+
+                    int userCount = (int)cmd.ExecuteScalar();
+
+                    if (userCount > 0)
                     {
-                        // Masuk ke halaman admin
-                        MessageBox.Show("Login berhasil sebagai admin.");
-                        AdminPage admin = new AdminPage();
-                        admin.Show();
-                        this.Hide();
+                        if (Username == "admin")
+                        {
+                            // Masuk ke halaman admin
+                            MessageBox.Show("Login berhasil sebagai admin.");
+                            AdminPage admin = new AdminPage();
+                            admin.Show();
+                            this.Hide();
+                        }   
                     }
+                    
                     else if (Username == "customer")
                     {
                         // Masuk ke halaman customer

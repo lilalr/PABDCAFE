@@ -8,7 +8,7 @@ namespace PABDCAFE
 {
     public partial class CustomerPage : Form
     {
-        SqlConnection conn = new SqlConnection("Data Source=LAPTOP-4FJGLBGI\\NANDA; Initial Catalog=ReservasiCafe; Integrated Security=True;");
+        SqlConnection conn = new SqlConnection("Data Source=IDEAPAD5PRO\\LILA; Initial Catalog=ReservasiCafe; Integrated Security=True;");
 
         public CustomerPage()
         {
