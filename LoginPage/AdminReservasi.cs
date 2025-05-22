@@ -17,7 +17,7 @@ namespace PABDCAFE
         {
             InitializeComponent();
             SetupDateTimePicker();
-            SetupNomorMejaComboBox(); // Metode untuk mengatur ComboBox Nomor Meja
+            LoadAvailableMeja(cbxNomorMeja); // Metode untuk mengatur ComboBox Nomor Meja
             LoadData(); // Memuat data awal ke DataGridView
         }
 
@@ -33,19 +33,6 @@ namespace PABDCAFE
             }
         }
 
-        private void SetupNomorMejaComboBox()
-        {
-            Control[] controls = this.Controls.Find("cbxNomorMeja", true);
-            if (controls.Length > 0 && controls[0] is ComboBox cbx)
-            {
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList; // Membuat ComboBox tidak bisa diketik
-                LoadAvailableMeja(cbx); // Memuat daftar meja yang tersedia
-            }
-            else
-            {
-                MessageBox.Show("Error: Kontrol ComboBox dengan nama 'cbxNomorMeja' tidak ditemukan di form Anda. Harap tambahkan.", "Kontrol Hilang", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
