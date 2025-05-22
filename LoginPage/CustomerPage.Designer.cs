@@ -153,16 +153,7 @@
             this.cmbCustMeja.Size = new System.Drawing.Size(200, 24);
             this.cmbCustMeja.TabIndex = 14;
             // 
-            // dtpCustWaktu
-            // 
-            this.dtpCustWaktu.Location = new System.Drawing.Point(232, 147);
-            this.dtpCustWaktu.MaxDate = new System.DateTime(2025, 12, 31, 0, 0, 0, 0);
-            this.dtpCustWaktu.MinDate = new System.DateTime(2025, 5, 22, 0, 0, 0, 0);
-            this.dtpCustWaktu.Name = "dtpCustWaktu";
-            this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
-            this.dtpCustWaktu.TabIndex = 15;
-            this.dtpCustWaktu.Value = new System.DateTime(2025, 5, 22, 1, 49, 14, 0);
-            this.dtpCustWaktu.ValueChanged += new System.EventHandler(this.dtpCustWaktu_ValueChanged);
+           
             // 
             // CustomerPage
             // 
