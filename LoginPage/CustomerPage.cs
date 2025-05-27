@@ -8,12 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions; // Diperlukan untuk Regex (validasi input)
 using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
+
+
 namespace PABDCAFE
+
 {
     // Form CustomerPage digunakan oleh customer untuk membuat dan melihat reservasi mereka.
     public partial class CustomerPage : Form
+
     {
         // Field untuk menyimpan string koneksi yang diterima dari LoginPage.
         // 'readonly' berarti nilainya hanya bisa diatur sekali dalam konstruktor.
@@ -42,7 +47,9 @@ namespace PABDCAFE
         // Sebaiknya dihindari jika string koneksi selalu dibutuhkan dari LoginPage.
         // Jika terpanggil, fungsionalitas database mungkin tidak berjalan.
         public CustomerPage()
+
         {
+
             InitializeComponent();
             MessageBox.Show("CustomerPage dibuat tanpa string koneksi. Fitur database mungkin tidak berfungsi.", "Peringatan Konstruktor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             // Inisialisasi this.connectionString ke null atau string kosong agar pengecekan nanti bisa menangani kasus ini.
@@ -128,10 +135,12 @@ namespace PABDCAFE
 
         // Metode untuk memvalidasi input dari form reservasi customer.
         private bool ValidasiInput()
+
         {
             if (!IsConnectionReady()) return false; // Pastikan koneksi siap.
 
             string nama = txtCustNama.Text.Trim();
+
             string telp = txtCustNoTelp.Text.Trim();
             // Mengambil teks yang dipilih atau diketik di ComboBox.
             string meja = cmbCustMeja.SelectedItem?.ToString() ?? cmbCustMeja.Text.Trim();
@@ -139,17 +148,23 @@ namespace PABDCAFE
 
             // Validasi nama.
             if (string.IsNullOrWhiteSpace(nama) || nama.Length < 3)
+
             {
                 MessageBox.Show("Nama customer tidak boleh kosong dan minimal 3 karakter.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                 return false;
+
             }
 
             // Validasi nomor telepon (format Indonesia).
             // Memperbolehkan +62 atau 0 di awal.
             if (!Regex.IsMatch(telp, @"^(\+62\d{8,12}|0\d{9,14})$"))
+
             {
                 MessageBox.Show("Nomor telepon tidak valid. Contoh: +6281234567890 atau 081234567890.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                 return false;
+
             }
 
             // Validasi waktu reservasi tidak boleh di masa lalu.
@@ -157,6 +172,7 @@ namespace PABDCAFE
             {
                 MessageBox.Show("Waktu reservasi tidak boleh di masa lalu.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
+
             }
 
             // Validasi tahun reservasi (sesuai kebutuhan awal).
@@ -164,6 +180,7 @@ namespace PABDCAFE
             {
                 MessageBox.Show("Reservasi hanya boleh di tahun 2025.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
+
             }
 
             // Validasi pemilihan meja.
@@ -175,6 +192,7 @@ namespace PABDCAFE
 
             // Validasi tambahan ke database: Cek status meja dan jadwal.
             try
+
             {
                 if (conn.State == ConnectionState.Closed)
                 {
@@ -188,9 +206,12 @@ namespace PABDCAFE
                 object statusMejaObj = cekMejaCmd.ExecuteScalar();
 
                 if (statusMejaObj == null)
+
                 {
                     MessageBox.Show($"Nomor meja '{meja}' tidak ditemukan di database.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     return false;
+
                 }
                 if (statusMejaObj.ToString() != "Tersedia")
                 {
@@ -216,13 +237,20 @@ namespace PABDCAFE
 
                 return true; // Semua validasi berhasil.
             }
+
             catch (Exception ex)
+
             {
                 MessageBox.Show("Kesalahan saat validasi data ke database: " + ex.Message, "Error Validasi DB", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                 return false;
+
             }
+
             finally
+
             {
+
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close(); // Tutup koneksi setelah validasi database.
@@ -232,11 +260,15 @@ namespace PABDCAFE
 
         // Event handler untuk tombol "Tambah Reservasi" oleh customer.
         private void btnCustTambah_Click(object sender, EventArgs e)
+
         {
             if (!IsConnectionReady()) return; // Pastikan koneksi siap.
             if (!ValidasiInput()) return; // Lakukan validasi input.
 
+
+
             try
+
             {
                 if (conn.State == ConnectionState.Closed)
                 {
@@ -249,6 +281,7 @@ namespace PABDCAFE
                     "INSERT INTO Reservasi (Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja) " +
                     "VALUES (@Nama, @Telp, @Waktu, @Meja); SELECT SCOPE_IDENTITY();", conn); // SCOPE_IDENTITY() untuk mendapatkan ID jika perlu.
                 cmd.Parameters.AddWithValue("@Nama", txtCustNama.Text.Trim());
+
                 cmd.Parameters.AddWithValue("@Telp", txtCustNoTelp.Text.Trim());
                 cmd.Parameters.AddWithValue("@Waktu", dtpCustWaktu.Value);
                 cmd.Parameters.AddWithValue("@Meja", cmbCustMeja.SelectedItem.ToString()); // Ambil dari SelectedItem agar pasti valid.
@@ -265,18 +298,27 @@ namespace PABDCAFE
                 LoadReservasi();
                 LoadComboBoxMeja(cmbCustMeja); // Refresh daftar meja, karena status meja mungkin berubah.
                 ClearForm();
+
             }
+
             catch (Exception ex)
+
             {
                 MessageBox.Show("Terjadi kesalahan saat menambahkan reservasi: " + ex.Message, "Error Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
+
             finally
+
             {
+
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close(); // Tutup koneksi.
                 }
+
             }
+
         }
 
         // Metode untuk memuat data reservasi ke DataGridView.
@@ -314,6 +356,7 @@ namespace PABDCAFE
 
             }
             catch (Exception ex)
+
             {
                 MessageBox.Show("Gagal menampilkan data reservasi: " + ex.Message, "Error Data", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -369,13 +412,20 @@ namespace PABDCAFE
                 LoadReservasi();
                 LoadComboBoxMeja(cmbCustMeja); // Status meja mungkin berubah menjadi 'Tersedia'.
                 ClearForm();
+
             }
+
             catch (Exception ex)
+
             {
                 MessageBox.Show("Terjadi kesalahan saat menghapus reservasi: " + ex.Message, "Error Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
+
             finally
+
             {
+
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close(); // Tutup koneksi.
@@ -427,8 +477,11 @@ namespace PABDCAFE
 
         // Metode untuk membersihkan semua input field di form.
         private void ClearForm()
+
         {
+
             txtCustNama.Clear();
+
             txtCustNoTelp.Clear();
             cmbCustMeja.SelectedIndex = -1; // Hapus pilihan di ComboBox.
             cmbCustMeja.Text = ""; // Bersihkan teks ComboBox jika ada.
@@ -438,14 +491,18 @@ namespace PABDCAFE
 
         // Event handler untuk tombol "Logout".
         private void btnLogout_Click(object sender, EventArgs e)
+
         {
+
             DialogResult result = MessageBox.Show("Apakah Anda yakin ingin logout?", "Konfirmasi Logout", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
             if (result == DialogResult.Yes)
+
             {
                 new LoginPage().Show(); // Membuat instance baru LoginPage dan menampilkannya.
                 this.Close(); // Menutup form CustomerPage saat ini.
+
             }
-        }
 
         // Metode helper untuk memeriksa kesiapan koneksi.
         private bool IsConnectionReady()
