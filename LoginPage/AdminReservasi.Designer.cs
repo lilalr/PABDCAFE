@@ -95,7 +95,7 @@ namespace PABDCAFE
             this.dgvAdminReservasi.RowTemplate.Height = 24;
             this.dgvAdminReservasi.Size = new System.Drawing.Size(760, 197);
             this.dgvAdminReservasi.TabIndex = 7;
-            this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellContentClick);
+            this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellClick);
             // 
             // lblMeja
             // 
