@@ -5,220 +5,255 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO; // Diperlukan untuk operasi File seperti File.ReadAllLines
 using System.Collections.Generic; // Diperlukan untuk List<T>
+using System.Runtime.Caching; // Diperlukan untuk Caching
 
 namespace PABDCAFE
 {
     public partial class AdminReservasi : Form
     {
-        // Menyimpan string koneksi database yang diterima dari form sebelumnya (misalnya Login atau AdminPage)
         private readonly string connectionString;
-        // Objek koneksi SQL yang akan digunakan untuk semua operasi database di form ini
         private SqlConnection conn;
 
-        // Konstruktor untuk AdminReservasi, menerima string koneksi sebagai parameter
+        // Caching fields
+        private readonly MemoryCache _reservasiDataCache = MemoryCache.Default;
+        private const string ReservasiDataCacheKey = "AdminReservasiGridData";
+
+        private readonly MemoryCache _availableMejaCache = MemoryCache.Default;
+        private const string AvailableMejaCacheKey = "AdminReservasiAvailableMejaList";
+        private readonly TimeSpan _cacheDuration = TimeSpan.FromMinutes(5);
+
         public AdminReservasi(string connStr)
         {
-            InitializeComponent(); // Inisialisasi komponen-komponen form (otomatis oleh Visual Studio)
+            InitializeComponent();
 
-            // Validasi apakah string koneksi diberikan
             if (string.IsNullOrWhiteSpace(connStr))
             {
                 MessageBox.Show("String koneksi tidak ada atau kosong. Tidak dapat terhubung ke database.", "Kesalahan Konfigurasi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Melemparkan exception jika string koneksi tidak valid untuk menghentikan pembuatan form
                 throw new ArgumentNullException(nameof(connStr), "String koneksi database (connStr) tidak boleh null atau kosong.");
             }
-            this.connectionString = connStr; // Menyimpan string koneksi
-            this.conn = new SqlConnection(this.connectionString); // Membuat instance objek SqlConnection
+            this.connectionString = connStr;
+            this.conn = new SqlConnection(this.connectionString);
 
-            SetupDateTimePicker(); // Mengatur format dan nilai awal untuk DateTimePicker
+            SetupDateTimePicker();
 
-            // Mencari ComboBox 'cbxNomorMeja' di form
-            Control[] cbxControls = this.Controls.Find("cbxNomorMeja", true);
-            if (cbxControls.Length > 0 && cbxControls[0] is ComboBox cbx)
+            // Asumsikan cbxNomorMeja adalah nama kontrol ComboBox di designer
+            if (this.cbxNomorMeja != null)
             {
-                LoadAvailableMeja(cbx); // Memuat nomor meja yang tersedia ke ComboBox
+                LoadAvailableMeja(this.cbxNomorMeja);
             }
             else
             {
-                // Menampilkan pesan error jika ComboBox tidak ditemukan
-                MessageBox.Show("Error: ComboBox 'cbxNomorMeja' tidak ditemukan.", "Kesalahan Kontrol", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error: Kontrol ComboBox 'cbxNomorMeja' tidak ditemukan sebagai field.", "Kesalahan Kontrol", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            LoadData(); // Memuat data reservasi awal ke DataGridView
+            LoadData();
         }
 
-        // Metode untuk mengatur properti DateTimePicker
+        private void InvalidateReservasiDataCache()
+        {
+            _reservasiDataCache.Remove(ReservasiDataCacheKey);
+            // System.Diagnostics.Debug.WriteLine("Cache ReservasiData invalidated.");
+        }
+
+        private void InvalidateAvailableMejaCache()
+        {
+            _availableMejaCache.Remove(AvailableMejaCacheKey);
+            // System.Diagnostics.Debug.WriteLine("Cache AvailableMeja invalidated.");
+        }
+
         private void SetupDateTimePicker()
         {
-            // Mencari kontrol DateTimePicker dengan nama 'dtpWaktuReservasi'
-            Control[] controls = this.Controls.Find("dtpWaktuReservasi", true);
-            if (controls.Length > 0 && controls[0] is DateTimePicker dtp)
+            // Asumsikan dtpWaktuReservasi adalah nama kontrol DateTimePicker di designer
+            if (this.dtpWaktuReservasi != null)
             {
-                dtp.Format = DateTimePickerFormat.Custom; // Mengatur format menjadi kustom
-                dtp.CustomFormat = "yyyy-MM-dd HH:mm";   // Menentukan format tanggal dan waktu
-                dtp.Value = DateTime.Now;                // Mengatur nilai awal ke waktu saat ini
-                // Properti ShowUpDown sebaiknya diatur ke False di Designer agar kalender muncul
+                this.dtpWaktuReservasi.Format = DateTimePickerFormat.Custom;
+                this.dtpWaktuReservasi.CustomFormat = "yyyy-MM-dd HH:mm";
+                this.dtpWaktuReservasi.Value = DateTime.Now;
             }
         }
 
-        // Metode untuk memuat daftar nomor meja yang statusnya 'Tersedia' ke ComboBox
         private void LoadAvailableMeja(ComboBox cbx)
         {
-            // Memastikan objek koneksi sudah diinisialisasi
-            if (this.conn == null)
+            List<string> mejaList = _availableMejaCache.Get(AvailableMejaCacheKey) as List<string>;
+
+            if (mejaList == null) // Jika tidak ada di cache, ambil dari database
             {
-                MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            try
-            {
-                // Membuka koneksi jika tertutup
-                if (this.conn.State == ConnectionState.Closed)
+                if (this.conn == null)
                 {
-                    this.conn.Open();
+                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Inisialisasi mejaList sebagai list kosong agar tidak null di bagian selanjutnya
+                    mejaList = new List<string>();
                 }
-
-                // Perintah SQL untuk mengambil Nomor_Meja dari tabel Meja yang statusnya 'Tersedia'
-                // Menggunakan 'this.conn' yang merupakan objek SqlConnection
-                using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja WHERE Status_Meja = 'Tersedia' ORDER BY Nomor_Meja", this.conn))
+                else // Koneksi ada, coba ambil data
                 {
-                    SqlDataReader reader = cmd.ExecuteReader(); // Menjalankan query dan mendapatkan reader
-                    List<string> mejaList = new List<string>(); // List untuk menyimpan nomor meja
-                    while (reader.Read()) // Membaca setiap baris hasil query
+                    mejaList = new List<string>(); // Inisialisasi di sini untuk menampung hasil DB
+                    try
                     {
-                        mejaList.Add(reader["Nomor_Meja"].ToString()); // Menambahkan nomor meja ke list
-                    }
-                    reader.Close(); // Menutup reader setelah selesai membaca
+                        if (this.conn.State == ConnectionState.Closed)
+                        {
+                            this.conn.Open();
+                        }
 
-                    // Mengatur DataSource ComboBox
-                    cbx.DataSource = null; // Menghapus DataSource sebelumnya untuk refresh
-                    cbx.Items.Clear();     // Menghapus item sebelumnya jika ada
-                    cbx.DataSource = mejaList; // Mengisi ComboBox dengan daftar meja yang tersedia
-
-                    if (mejaList.Count > 0)
-                    {
-                        cbx.SelectedIndex = -1; // Tidak ada item yang dipilih secara default
+                        using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja WHERE Status_Meja = 'Tersedia' ORDER BY Nomor_Meja", this.conn))
+                        {
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                mejaList.Add(reader["Nomor_Meja"].ToString());
+                            }
+                            reader.Close();
+                            // Simpan ke cache hanya jika berhasil mengambil data
+                            if (mejaList.Count > 0)
+                            {
+                                _availableMejaCache.Set(AvailableMejaCacheKey, mejaList, DateTimeOffset.Now.Add(_cacheDuration));
+                            }
+                            // System.Diagnostics.Debug.WriteLine("Available Meja loaded from DB and cached.");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        // Jika tidak ada meja tersedia, tambahkan item placeholder
-                        cbx.Items.Add("Tidak ada meja tersedia");
-                        cbx.SelectedIndex = 0; // Pilih item placeholder
+                        MessageBox.Show("Gagal memuat daftar meja yang tersedia: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // mejaList sudah diinisialisasi sebagai list kosong di atas blok try
+                    }
+                    finally
+                    {
+                        if (this.conn != null && this.conn.State == ConnectionState.Open)
+                        {
+                            this.conn.Close();
+                        }
                     }
                 }
             }
-            catch (Exception ex)
+            // else
+            // {
+            //     // System.Diagnostics.Debug.WriteLine("Available Meja loaded from cache.");
+            // }
+
+            // Pastikan cbx merujuk ke kontrol yang valid
+            if (cbx == null) return;
+
+            // Reset ComboBox
+            cbx.DataSource = null;
+            cbx.Items.Clear();
+
+            // Setelah mejaList didapatkan (dari cache atau DB, atau list kosong jika ada error)
+            if (mejaList != null && mejaList.Count > 0)
             {
-                MessageBox.Show("Gagal memuat daftar meja yang tersedia: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Hanya set DataSource jika ada item di mejaList
+                cbx.DataSource = mejaList;
+                cbx.SelectedIndex = -1; // Tidak ada item yang dipilih secara default
             }
-            finally
+            else
             {
-                // Menutup koneksi jika terbuka
-                if (this.conn.State == ConnectionState.Open)
+                // Jika mejaList kosong atau null, DataSource tetap null.
+                // Tambahkan placeholder secara manual ke Items collection.
+                cbx.Items.Add("Tidak ada meja tersedia");
+                if (cbx.Items.Count > 0) // Pastikan item berhasil ditambahkan
                 {
-                    this.conn.Close();
+                    cbx.SelectedIndex = 0; // Pilih item placeholder
                 }
             }
         }
 
-        // Metode untuk memuat data reservasi dari database ke DataGridView
+
         void LoadData()
         {
-            if (this.conn == null)
+            DataTable dt = _reservasiDataCache.Get(ReservasiDataCacheKey) as DataTable;
+
+            if (dt == null)
             {
-                MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            try
-            {
-                // SqlDataAdapter dapat mengelola pembukaan/penutupan koneksi jika belum terbuka
-                // Query untuk mengambil data reservasi, diurutkan berdasarkan waktu reservasi terbaru
-                using (var da = new SqlDataAdapter(
-                    "SELECT ID_Reservasi, Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Waktu_Reservasi DESC", this.conn))
+                if (this.conn == null)
                 {
-                    var dt = new DataTable(); // Membuat DataTable untuk menampung data
-                    da.Fill(dt); // Mengisi DataTable dengan data dari database
-                    dgvAdminReservasi.DataSource = dt; // Menetapkan DataTable sebagai sumber data DataGridView
-
-                    // Mengatur teks header kolom DataGridView
-                    if (dgvAdminReservasi.Columns.Contains("ID_Reservasi"))
-                        dgvAdminReservasi.Columns["ID_Reservasi"].HeaderText = "ID";
-                    if (dgvAdminReservasi.Columns.Contains("Nama_Customer"))
-                        dgvAdminReservasi.Columns["Nama_Customer"].HeaderText = "Nama Customer";
-                    if (dgvAdminReservasi.Columns.Contains("No_Telp"))
-                        dgvAdminReservasi.Columns["No_Telp"].HeaderText = "No. Telepon";
-                    if (dgvAdminReservasi.Columns.Contains("Waktu_Reservasi"))
+                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                try
+                {
+                    using (var da = new SqlDataAdapter(
+                        "SELECT ID_Reservasi, Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Waktu_Reservasi DESC", this.conn))
                     {
-                        dgvAdminReservasi.Columns["Waktu_Reservasi"].HeaderText = "Waktu Reservasi";
-                        // Mengatur format tampilan kolom tanggal dan waktu
-                        dgvAdminReservasi.Columns["Waktu_Reservasi"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm";
+                        dt = new DataTable();
+                        da.Fill(dt);
+                        _reservasiDataCache.Set(ReservasiDataCacheKey, dt, DateTimeOffset.Now.Add(_cacheDuration));
+                        // System.Diagnostics.Debug.WriteLine("Reservasi Data loaded from DB and cached.");
                     }
-                    if (dgvAdminReservasi.Columns.Contains("Nomor_Meja"))
-                        dgvAdminReservasi.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
-
-                    dgvAdminReservasi.ClearSelection(); // Menghapus seleksi awal pada DataGridView
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memuat data: " + ex.Message, "Kesalahan Data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
-            catch (Exception ex)
+            // else
+            // {
+            //    // System.Diagnostics.Debug.WriteLine("Reservasi Data loaded from cache.");
+            // }
+
+            // Asumsikan dgvAdminReservasi adalah nama kontrol DataGridView di designer
+            if (this.dgvAdminReservasi != null)
             {
-                MessageBox.Show("Gagal memuat data: " + ex.Message, "Kesalahan Data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.dgvAdminReservasi.DataSource = dt;
+
+                if (this.dgvAdminReservasi.Columns.Contains("ID_Reservasi"))
+                    this.dgvAdminReservasi.Columns["ID_Reservasi"].HeaderText = "ID";
+                if (this.dgvAdminReservasi.Columns.Contains("Nama_Customer"))
+                    this.dgvAdminReservasi.Columns["Nama_Customer"].HeaderText = "Nama Customer";
+                if (this.dgvAdminReservasi.Columns.Contains("No_Telp"))
+                    this.dgvAdminReservasi.Columns["No_Telp"].HeaderText = "No. Telepon";
+                if (this.dgvAdminReservasi.Columns.Contains("Waktu_Reservasi"))
+                {
+                    this.dgvAdminReservasi.Columns["Waktu_Reservasi"].HeaderText = "Waktu Reservasi";
+                    this.dgvAdminReservasi.Columns["Waktu_Reservasi"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm";
+                }
+                if (this.dgvAdminReservasi.Columns.Contains("Nomor_Meja"))
+                    this.dgvAdminReservasi.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
+
+                this.dgvAdminReservasi.ClearSelection();
             }
         }
 
-        // Event handler yang dipanggil saat form AdminReservasi dimuat
         private void AdminReservasi_Load(object sender, EventArgs e)
         {
-            // LoadData(), SetupDateTimePicker(), dan LoadAvailableMeja() sudah dipanggil di konstruktor.
-            // Tidak ada kode tambahan yang diperlukan di sini kecuali ada inisialisasi lain yang spesifik.
+            // Setup sudah di konstruktor
         }
 
-        // Metode untuk membersihkan input field pada form
         void ClearForm()
         {
-            txtNama.Clear(); // Membersihkan TextBox nama
-            txtTelepon.Clear(); // Membersihkan TextBox telepon
+            // Asumsikan txtNama, txtTelepon adalah nama kontrol TextBox di designer
+            if (this.txtNama != null) this.txtNama.Clear();
+            if (this.txtTelepon != null) this.txtTelepon.Clear();
 
-            // Mengatur ulang DateTimePicker ke waktu saat ini
-            Control[] dtpControls = this.Controls.Find("dtpWaktuReservasi", true);
-            if (dtpControls.Length > 0 && dtpControls[0] is DateTimePicker dtp)
+            if (this.dtpWaktuReservasi != null)
             {
-                dtp.Value = DateTime.Now;
+                this.dtpWaktuReservasi.Value = DateTime.Now;
             }
 
-            // Membersihkan seleksi ComboBox dan memuat ulang daftar meja yang tersedia
-            Control[] cbxControls = this.Controls.Find("cbxNomorMeja", true);
-            if (cbxControls.Length > 0 && cbxControls[0] is ComboBox cbx)
+            if (this.cbxNomorMeja != null)
             {
-                cbx.SelectedIndex = -1; // Menghapus seleksi
-                LoadAvailableMeja(cbx); // Memuat ulang daftar meja untuk menyegarkan
+                this.cbxNomorMeja.SelectedIndex = -1;
+                InvalidateAvailableMejaCache(); // Invalidate cache sebelum load ulang
+                LoadAvailableMeja(this.cbxNomorMeja);
             }
 
-            dgvAdminReservasi.ClearSelection(); // Menghapus seleksi pada DataGridView
-            txtNama.Focus(); // Mengatur fokus ke TextBox nama
+            if (this.dgvAdminReservasi != null) this.dgvAdminReservasi.ClearSelection();
+            if (this.txtNama != null) this.txtNama.Focus();
         }
 
-        // Metode untuk memvalidasi input dari pengguna
         bool ValidasiInput(out string err)
         {
-            err = string.Empty; // Inisialisasi pesan error
-            if (string.IsNullOrWhiteSpace(txtNama.Text))
+            err = string.Empty;
+            if (this.txtNama == null || string.IsNullOrWhiteSpace(this.txtNama.Text))
                 err += "Nama customer tidak boleh kosong.\n";
 
-            // Validasi format nomor telepon Indonesia (mulai dengan +62 atau 0)
-            // Regex ini disesuaikan dengan constraint CHECK di database
-            if (!Regex.IsMatch(txtTelepon.Text.Trim(), @"^(\+62\d{8,12}|0\d{9,14})$"))
+            if (this.txtTelepon == null || !Regex.IsMatch(this.txtTelepon.Text.Trim(), @"^(\+62\d{8,12}|0\d{9,14})$"))
                 err += "Format nomor telepon tidak valid (Contoh: +6281234567890 atau 081234567890).\n";
 
-            // Validasi DateTimePicker
-            var dtpControls = this.Controls.Find("dtpWaktuReservasi", true);
-            if (dtpControls.Length > 0 && dtpControls[0] is DateTimePicker dtp)
+            if (this.dtpWaktuReservasi != null)
             {
-                // Validasi waktu reservasi tidak boleh di masa lalu (dengan toleransi 1 menit)
-                if (dtp.Value < DateTime.Now.AddMinutes(-1))
+                if (this.dtpWaktuReservasi.Value < DateTime.Now.AddMinutes(-1))
                 {
                     err += "Waktu reservasi tidak boleh di masa lalu.\n";
                 }
-                // Validasi tahun harus 2025 (sesuai constraint database di kode asli)
-                if (dtp.Value.Year != 2025)
+                if (this.dtpWaktuReservasi.Value.Year != 2025) // Sesuai constraint di kode asli
                 {
                     err += "Waktu reservasi hanya diperbolehkan untuk tahun 2025.\n";
                 }
@@ -228,12 +263,9 @@ namespace PABDCAFE
                 err += "Kontrol DateTimePicker untuk waktu reservasi tidak ditemukan.\n";
             }
 
-            // Validasi ComboBox Nomor Meja
-            var cbxControls = this.Controls.Find("cbxNomorMeja", true);
-            if (cbxControls.Length > 0 && cbxControls[0] is ComboBox cbx)
+            if (this.cbxNomorMeja != null)
             {
-                // Memastikan item dipilih dan bukan placeholder "Tidak ada meja tersedia"
-                if (cbx.SelectedItem == null || string.IsNullOrWhiteSpace(cbx.SelectedItem.ToString()) || cbx.SelectedItem.ToString() == "Tidak ada meja tersedia")
+                if (this.cbxNomorMeja.SelectedItem == null || string.IsNullOrWhiteSpace(this.cbxNomorMeja.SelectedItem.ToString()) || this.cbxNomorMeja.SelectedItem.ToString() == "Tidak ada meja tersedia")
                     err += "Nomor meja yang valid harus dipilih.\n";
             }
             else
@@ -241,33 +273,28 @@ namespace PABDCAFE
                 err += "Kontrol ComboBox untuk nomor meja tidak ditemukan.\n";
             }
 
-            return string.IsNullOrEmpty(err); // Mengembalikan true jika tidak ada error
+            return string.IsNullOrEmpty(err);
         }
 
-        // Metode helper untuk memeriksa kesiapan koneksi database
         private bool IsConnectionReady()
         {
             if (this.conn == null || string.IsNullOrWhiteSpace(this.conn.ConnectionString))
             {
                 MessageBox.Show("Koneksi database tidak dikonfigurasi atau hilang.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false; // Koneksi tidak siap
+                return false;
             }
-            return true; // Koneksi siap
+            return true;
         }
 
-        // Event handler untuk tombol Edit
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Periksa koneksi sebelum melanjutkan
-
-            // Memastikan ada baris yang dipilih di DataGridView
-            if (dgvAdminReservasi.CurrentRow == null || dgvAdminReservasi.CurrentRow.IsNewRow)
+            if (!IsConnectionReady()) return;
+            if (this.dgvAdminReservasi == null || this.dgvAdminReservasi.CurrentRow == null || this.dgvAdminReservasi.CurrentRow.IsNewRow)
             {
                 MessageBox.Show("Pilih data reservasi yang ingin diedit dari tabel.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Memvalidasi input sebelum proses edit
             if (!ValidasiInput(out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -276,36 +303,29 @@ namespace PABDCAFE
 
             try
             {
-                // Mengambil ID Reservasi dari baris yang dipilih
-                int idReservasi = Convert.ToInt32(dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
-                // Mengambil nilai dari kontrol input
-                DateTime waktuReservasi = ((DateTimePicker)this.Controls.Find("dtpWaktuReservasi", true)[0]).Value;
-                string selectedMeja = ((ComboBox)this.Controls.Find("cbxNomorMeja", true)[0]).SelectedItem.ToString();
+                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
+                DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
+                string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                // Membuka koneksi jika tertutup
-                if (conn.State == ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
+                if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // Menggunakan Stored Procedure 'EditReservasi'
                 using (SqlCommand cmd = new SqlCommand("EditReservasi", conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure; // Menentukan tipe command adalah Stored Procedure
-                    // Menambahkan parameter untuk Stored Procedure
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
-                    cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
-                    cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Nama_Customer", this.txtNama.Text.Trim());
+                    cmd.Parameters.AddWithValue("@No_Telp", this.txtTelepon.Text.Trim());
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja_Baru", selectedMeja);
 
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Menjalankan Stored Procedure
-
-                    if (rowsAffected > 0) // Jika ada baris yang terpengaruh (berhasil diupdate)
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
                     {
                         MessageBox.Show("Data reservasi berhasil diperbarui!", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData();  // Memuat ulang data di DataGridView
-                        ClearForm(); // Membersihkan form input
+                        InvalidateReservasiDataCache();
+                        InvalidateAvailableMejaCache(); // Status meja mungkin berubah
+                        LoadData();
+                        ClearForm();
                     }
                     else
                     {
@@ -313,41 +333,31 @@ namespace PABDCAFE
                     }
                 }
             }
-            catch (SqlException sqlEx) // Menangkap error spesifik SQL
+            catch (SqlException sqlEx)
             {
-                // Pesan error dari RAISERROR di Stored Procedure akan ditampilkan di sini
                 MessageBox.Show("Kesalahan SQL: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) // Menangkap error umum
+            catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Menutup koneksi jika terbuka
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
-        // Event handler untuk tombol Kembali (Back)
         private void btnBack_Click(object sender, EventArgs e)
         {
-            // Membuat instance AdminPage dan menampilkannya
-            // Jika AdminPage juga memerlukan string koneksi, pastikan konstruktornya diadaptasi
             AdminPage ap = new AdminPage(this.connectionString);
             ap.Show();
-            this.Close(); // Menutup form AdminReservasi saat ini
+            this.Close();
         }
 
-        // Event handler untuk tombol Tambah
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Periksa koneksi
+            if (!IsConnectionReady()) return;
 
-            // Memvalidasi input sebelum proses tambah
             if (!ValidasiInput(out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -356,91 +366,72 @@ namespace PABDCAFE
 
             try
             {
-                // Mengambil nilai dari kontrol input
-                DateTime waktuReservasi = ((DateTimePicker)this.Controls.Find("dtpWaktuReservasi", true)[0]).Value;
-                string selectedMeja = ((ComboBox)this.Controls.Find("cbxNomorMeja", true)[0]).SelectedItem.ToString();
+                DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
+                string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                // Membuka koneksi jika tertutup
-                if (conn.State == ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
+                if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // Menggunakan Stored Procedure 'TambahReservasi'
                 using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    // Menambahkan parameter untuk Stored Procedure
-                    cmd.Parameters.AddWithValue("@Nama_Customer", txtNama.Text.Trim());
-                    cmd.Parameters.AddWithValue("@No_Telp", txtTelepon.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Nama_Customer", this.txtNama.Text.Trim());
+                    cmd.Parameters.AddWithValue("@No_Telp", this.txtTelepon.Text.Trim());
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
 
-                    cmd.ExecuteNonQuery(); // Menjalankan Stored Procedure
-                    MessageBox.Show("Reservasi berhasil ditambahkan!");
-                    LoadData();  // Memuat ulang data di DataGridView
-                    ClearForm(); // Membersihkan form input
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Reservasi berhasil ditambahkan!", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    InvalidateReservasiDataCache();
+                    InvalidateAvailableMejaCache(); // Meja yg baru dipesan tidak lagi tersedia
+                    LoadData();
+                    ClearForm();
                 }
             }
-            catch (SqlException sqlEx) // Menangkap error spesifik SQL (misalnya dari trigger atau constraint)
+            catch (SqlException sqlEx)
             {
                 MessageBox.Show("Gagal menambahkan reservasi: " + sqlEx.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) // Menangkap error umum
+            catch (Exception ex)
             {
                 MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Menutup koneksi jika terbuka
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
-        // Event handler untuk tombol Hapus
         private void btnHapus_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Periksa koneksi
-
-            // Memastikan ada baris yang dipilih di DataGridView
-            if (dgvAdminReservasi.CurrentRow == null || dgvAdminReservasi.CurrentRow.IsNewRow)
+            if (!IsConnectionReady()) return;
+            if (this.dgvAdminReservasi == null || this.dgvAdminReservasi.CurrentRow == null || this.dgvAdminReservasi.CurrentRow.IsNewRow)
             {
                 MessageBox.Show("Pilih data reservasi yang ingin dihapus dari tabel.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Konfirmasi penghapusan dari pengguna
             DialogResult result = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.No) // Jika pengguna memilih 'Tidak'
-                return;
+            if (result == DialogResult.No) return;
 
             try
             {
-                // Mengambil ID Reservasi dari baris yang dipilih
-                int idReservasi = Convert.ToInt32(dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
+                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
 
-                // Membuka koneksi jika tertutup
-                if (conn.State == ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
+                if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // Menggunakan Stored Procedure 'HapusReservasi'
                 using (SqlCommand cmd = new SqlCommand("HapusReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    // Menambahkan parameter ID Reservasi
                     cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Menjalankan Stored Procedure
+                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0) // Jika ada baris yang terpengaruh (berhasil dihapus)
+                    if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Reservasi berhasil dihapus.");
-                        LoadData();  // Memuat ulang data di DataGridView
-                        ClearForm(); // Membersihkan form input
+                        MessageBox.Show("Reservasi berhasil dihapus.", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        InvalidateReservasiDataCache();
+                        InvalidateAvailableMejaCache(); // Meja yg dihapus reservasi nya jadi tersedia lagi
+                        LoadData();
+                        ClearForm();
                     }
                     else
                     {
@@ -448,230 +439,212 @@ namespace PABDCAFE
                     }
                 }
             }
-            catch (SqlException sqlEx) // Menangkap error spesifik SQL
+            catch (SqlException sqlEx)
             {
                 MessageBox.Show("Gagal menghapus data: " + sqlEx.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) // Menangkap error umum
+            catch (Exception ex)
             {
                 MessageBox.Show("Gagal menghapus data: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Menutup koneksi jika terbuka
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
-        // Event handler saat sel di DataGridView diklik (diganti dari CellContentClick untuk responsivitas yang lebih baik pada seleksi baris)
         private void dgvAdminReservasi_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Memastikan klik terjadi pada baris yang valid dan bukan baris baru (jika ada)
-            if (e.RowIndex < 0 || e.RowIndex >= dgvAdminReservasi.Rows.Count || dgvAdminReservasi.Rows[e.RowIndex].IsNewRow)
+            if (this.dgvAdminReservasi == null || e.RowIndex < 0 || e.RowIndex >= this.dgvAdminReservasi.Rows.Count || this.dgvAdminReservasi.Rows[e.RowIndex].IsNewRow)
                 return;
 
-            DataGridViewRow row = dgvAdminReservasi.Rows[e.RowIndex]; // Mendapatkan baris yang diklik
+            DataGridViewRow row = this.dgvAdminReservasi.Rows[e.RowIndex];
 
-            // Mengisi TextBox dengan data dari baris yang dipilih
-            txtNama.Text = row.Cells["Nama_Customer"].Value?.ToString() ?? string.Empty;
-            txtTelepon.Text = row.Cells["No_Telp"].Value?.ToString() ?? string.Empty;
+            if (this.txtNama != null) this.txtNama.Text = row.Cells["Nama_Customer"].Value?.ToString() ?? string.Empty;
+            if (this.txtTelepon != null) this.txtTelepon.Text = row.Cells["No_Telp"].Value?.ToString() ?? string.Empty;
 
-            // Mengisi DateTimePicker
-            Control[] dtpControls = this.Controls.Find("dtpWaktuReservasi", true);
-            if (dtpControls.Length > 0 && dtpControls[0] is DateTimePicker dtp)
+            if (this.dtpWaktuReservasi != null)
             {
-                // Mengatur MinDate dan MaxDate untuk mencegah error jika nilai dari database di luar rentang DateTimePicker
-                // Rentang ini sesuai dengan rentang DATETIME di SQL Server
-                dtp.MinDate = new DateTime(1753, 1, 1);
-                dtp.MaxDate = new DateTime(9998, 12, 31);
+                this.dtpWaktuReservasi.MinDate = new DateTime(1753, 1, 1);
+                this.dtpWaktuReservasi.MaxDate = new DateTime(9998, 12, 31);
 
                 if (row.Cells["Waktu_Reservasi"].Value != null && row.Cells["Waktu_Reservasi"].Value != DBNull.Value)
                 {
                     DateTime nilai = Convert.ToDateTime(row.Cells["Waktu_Reservasi"].Value);
-                    // Memastikan nilai berada dalam rentang yang valid untuk DateTimePicker sebelum di-set
-                    dtp.Value = (nilai < dtp.MinDate) ? dtp.MinDate : (nilai > dtp.MaxDate ? dtp.MaxDate : nilai);
+                    this.dtpWaktuReservasi.Value = (nilai < this.dtpWaktuReservasi.MinDate) ? this.dtpWaktuReservasi.MinDate : (nilai > this.dtpWaktuReservasi.MaxDate ? this.dtpWaktuReservasi.MaxDate : nilai);
                 }
                 else
                 {
-                    dtp.Value = DateTime.Now; // Jika kosong, setel ke waktu saat ini
+                    this.dtpWaktuReservasi.Value = DateTime.Now;
                 }
             }
 
-            // Mengisi ComboBox Nomor Meja
-            Control[] cbxControls = this.Controls.Find("cbxNomorMeja", true);
-            if (cbxControls.Length > 0 && cbxControls[0] is ComboBox cbx)
+            if (this.cbxNomorMeja != null)
             {
                 string selectedMejaFromGrid = row.Cells["Nomor_Meja"].Value?.ToString() ?? string.Empty;
 
-                // Logika untuk menangani ComboBox saat baris dipilih:
-                // Jika meja dari grid tidak ada dalam daftar meja yang 'Tersedia' saat ini
-                // (misalnya, karena meja tersebut adalah meja yang sedang diedit reservasinya),
-                // kita perlu memastikan meja tersebut bisa ditampilkan dan dipilih di ComboBox.
-                List<string> currentItems = new List<string>();
-                if (cbx.DataSource is List<string> ds) // Jika DataSource adalah List<string>
+                // Dapatkan daftar item saat ini dari ComboBox (bisa dari cache atau yang baru di-load)
+                List<string> currentDisplayItems = new List<string>();
+                if (this.cbxNomorMeja.DataSource is List<string> ds)
                 {
-                    currentItems.AddRange(ds); // Salin item dari DataSource
+                    currentDisplayItems.AddRange(ds);
                 }
-                else
-                { // Fallback jika DataSource bukan List<string> (misalnya diisi manual)
-                    foreach (var item in cbx.Items) currentItems.Add(item.ToString());
+                else // Fallback jika DataSource bukan List<string> (misalnya diisi manual atau Items)
+                {
+                    foreach (var item in this.cbxNomorMeja.Items) currentDisplayItems.Add(item.ToString());
                 }
 
-                // Jika nomor meja dari grid tidak ada di daftar item ComboBox saat ini
-                if (!string.IsNullOrEmpty(selectedMejaFromGrid) && !currentItems.Contains(selectedMejaFromGrid))
+                // Jika meja dari grid tidak ada di daftar, tambahkan sementara untuk display edit
+                if (!string.IsNullOrEmpty(selectedMejaFromGrid) && !currentDisplayItems.Contains(selectedMejaFromGrid))
                 {
-                    // Buat list baru untuk DataSource yang menyertakan item yang dipilih dari grid
-                    List<string> displayItems = new List<string>(currentItems);
-                    if (!displayItems.Contains(selectedMejaFromGrid)) // Periksa lagi untuk menghindari duplikasi
-                    {
-                        displayItems.Add(selectedMejaFromGrid); // Tambahkan meja dari grid
-                        displayItems.Sort(); // Opsional: urutkan daftar meja
-                    }
-                    cbx.DataSource = null; // Hapus DataSource lama
-                    cbx.Items.Clear();     // Bersihkan item lama
-                    cbx.DataSource = displayItems; // Set DataSource baru
-                    cbx.SelectedItem = selectedMejaFromGrid; // Pilih meja dari grid
+                    List<string> tempItems = new List<string>(currentDisplayItems);
+                    tempItems.Add(selectedMejaFromGrid);
+                    tempItems.Sort(); // Opsional
+
+                    this.cbxNomorMeja.DataSource = null;
+                    this.cbxNomorMeja.Items.Clear();
+                    this.cbxNomorMeja.DataSource = tempItems; // Set DataSource baru dengan item tambahan
                 }
-                else if (cbx.Items.Contains(selectedMejaFromGrid)) // Jika meja ada di daftar item
+                // Pilih item yang sesuai
+                this.cbxNomorMeja.SelectedItem = selectedMejaFromGrid;
+                if (this.cbxNomorMeja.SelectedItem == null && !string.IsNullOrEmpty(selectedMejaFromGrid))
                 {
-                    cbx.SelectedItem = selectedMejaFromGrid; // Langsung pilih
+                    // Jika setelah set DataSource itemnya tidak terpilih (misal karena DataSource tidak langsung update Items), coba via Items
+                    if (!this.cbxNomorMeja.Items.Contains(selectedMejaFromGrid)) this.cbxNomorMeja.Items.Add(selectedMejaFromGrid); // Pastikan ada
+                    this.cbxNomorMeja.SelectedItem = selectedMejaFromGrid;
                 }
-                else // Jika meja kosong atau kasus lain
+                else if (string.IsNullOrEmpty(selectedMejaFromGrid))
                 {
-                    cbx.SelectedIndex = -1; // Tidak ada yang dipilih
+                    this.cbxNomorMeja.SelectedIndex = -1;
                 }
             }
         }
 
-        // Event handler untuk tombol Impor Data dari CSV
         private void btnImport_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Periksa koneksi
+            if (!IsConnectionReady()) return;
 
-            OpenFileDialog openFileDialog = new OpenFileDialog(); // Membuat dialog untuk memilih file
-            openFileDialog.Filter = "CSV files (.csv)|.csv|All files (.)|."; // Filter jenis file (hanya CSV)
-            openFileDialog.Title = "Pilih File CSV untuk Impor"; // Judul dialog
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK) // Jika pengguna memilih file dan klik OK
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                string filePath = openFileDialog.FileName; // Mendapatkan path file yang dipilih
-                int successCount = 0; // Penghitung data yang berhasil diimpor
-                int failCount = 0;    // Penghitung data yang gagal diimpor
-                string errorMessages = ""; // String untuk mengakumulasi pesan error
+                Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                Title = "Pilih File CSV untuk Impor"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                int successCount = 0;
+                int failCount = 0;
+                List<string> errorDetails = new List<string>();
 
                 try
                 {
-                    string[] lines = File.ReadAllLines(filePath); // Membaca semua baris dari file CSV
-                    // Memeriksa apakah file kosong atau hanya berisi header (jika header dianggap tidak valid)
-                    if (lines.Length == 0 || (lines.Length == 1 && string.IsNullOrWhiteSpace(lines[0])))
+                    string[] lines = File.ReadAllLines(filePath);
+                    if (lines.Length == 0)
                     {
-                        MessageBox.Show("File CSV kosong atau tidak valid.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("File CSV kosong.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
 
-                    if (conn.State == ConnectionState.Closed) conn.Open(); // Membuka koneksi jika tertutup
+                    if (conn.State == ConnectionState.Closed) conn.Open();
 
-                    // Loop melalui setiap baris dalam file CSV
-                    // Diasumsikan baris pertama bisa jadi header atau data.
-                    // Jika baris pertama adalah header dan ingin dilewati, ubah 'i = 0' menjadi 'i = 1'.
+                    // Jika baris pertama adalah header, ubah i = 0 menjadi i = 1 untuk melewatinya.
+                    // Diasumsikan CSV tidak memiliki header, atau header diproses sebagai data.
                     for (int i = 0; i < lines.Length; i++)
                     {
-                        string line = lines[i]; // Mendapatkan baris saat ini
-                        if (string.IsNullOrWhiteSpace(line)) continue; // Lewati baris kosong
+                        string line = lines[i];
+                        if (string.IsNullOrWhiteSpace(line)) continue;
 
-                        string[] data = line.Split(','); // Memecah baris berdasarkan koma (delimiter CSV)
-                        if (data.Length >= 4) // Memastikan ada setidaknya 4 kolom data (Nama, Telp, Waktu, Meja)
+                        string[] data = line.Split(',');
+                        if (data.Length >= 4) // Nama, Telp, Waktu, Meja
                         {
                             try
                             {
-                                string namaCustomer = data[0].Trim(); // Data kolom pertama (Nama)
-                                string noTelp = data[1].Trim();       // Data kolom kedua (No. Telepon)
+                                string namaCustomer = data[0].Trim();
+                                string noTelp = data[1].Trim();
+                                string waktuReservasiStr = data[2].Trim();
+                                string nomorMeja = data[3].Trim();
                                 DateTime waktuReservasi;
-                                // Mencoba parsing tanggal dengan format spesifik "yyyy-MM-dd HH:mm"
-                                if (!DateTime.TryParseExact(data[2].Trim(), "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi))
-                                {
-                                    // Jika format spesifik gagal, coba parsing dengan format umum
-                                    if (!DateTime.TryParse(data[2].Trim(), out waktuReservasi))
-                                    {
-                                        failCount++;
-                                        errorMessages += $"Baris {i + 1}: Format waktu '{data[2]}' tidak valid. Diharapkan format yyyy-MM-dd HH:mm.\n";
-                                        continue; // Lanjut ke baris berikutnya
-                                    }
-                                }
-                                string nomorMeja = data[3].Trim(); // Data kolom keempat (Nomor Meja)
 
-                                // Validasi data dari CSV sebelum dimasukkan ke database
+                                if (!DateTime.TryParseExact(waktuReservasiStr, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) &&
+                                    !DateTime.TryParse(waktuReservasiStr, out waktuReservasi))
+                                {
+                                    failCount++;
+                                    errorDetails.Add($"Baris {i + 1}: Format waktu '{waktuReservasiStr}' tidak valid. Data: {line}");
+                                    continue;
+                                }
+
                                 string csvRowError = "";
                                 if (string.IsNullOrWhiteSpace(namaCustomer)) csvRowError += "Nama kosong. ";
                                 if (!Regex.IsMatch(noTelp, @"^(\+62\d{8,12}|0\d{9,14})$")) csvRowError += "Format telepon salah. ";
-                                if (waktuReservasi < DateTime.Now.AddMinutes(-1)) csvRowError += "Waktu di masa lalu. "; // Validasi waktu
-                                if (waktuReservasi.Year != 2025) csvRowError += "Tahun harus 2025. "; // Validasi tahun
-                                if (string.IsNullOrWhiteSpace(nomorMeja) || nomorMeja.Length != 2 || !int.TryParse(nomorMeja, out _)) csvRowError += "Format Nomor Meja salah. ";
+                                if (waktuReservasi < DateTime.Now.AddMinutes(-1)) csvRowError += "Waktu di masa lalu. ";
+                                if (waktuReservasi.Year != 2025) csvRowError += "Tahun harus 2025. ";
+                                if (string.IsNullOrWhiteSpace(nomorMeja) || !Regex.IsMatch(nomorMeja, @"^\d{2}$")) csvRowError += "Format Nomor Meja salah (harus 2 digit angka). ";
 
-                                if (!string.IsNullOrEmpty(csvRowError)) // Jika ada error validasi untuk baris ini
+                                if (!string.IsNullOrEmpty(csvRowError))
                                 {
                                     failCount++;
-                                    errorMessages += $"Baris {i + 1}: Validasi gagal - {csvRowError.Trim()} (Data: {line}).\n";
-                                    continue; // Lanjut ke baris berikutnya
+                                    errorDetails.Add($"Baris {i + 1}: Validasi gagal - {csvRowError.Trim()} Data: {line}");
+                                    continue;
                                 }
 
-                                // Menggunakan Stored Procedure 'TambahReservasi' untuk setiap baris data CSV
                                 using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
                                 {
                                     cmd.CommandType = CommandType.StoredProcedure;
                                     cmd.Parameters.AddWithValue("@Nama_Customer", namaCustomer);
-                                    cmd.Parameters.AddWithValue("@No_Telp", noTelp);
-                                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
-                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                                    cmd.ExecuteNonQuery(); // Menjalankan Stored Procedure
-                                    successCount++; // Menambah hitungan sukses
+                                    cmd.Parameters.AddWithValue("@No_Telp", noTelp); // BUG FIX: Added
+                                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi); // BUG FIX: Added
+                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja); // BUG FIX: Added
+                                    cmd.ExecuteNonQuery();
+                                    successCount++;
                                 }
                             }
-                            catch (SqlException sqlEx) // Menangkap error SQL untuk baris tertentu
+                            catch (SqlException sqlExInner)
                             {
                                 failCount++;
-                                errorMessages += $"Baris {i + 1} (SQL Error): {sqlEx.Message} (Data: {line})\n";
+                                errorDetails.Add($"Baris {i + 1}: Kesalahan SQL - {sqlExInner.Message.Split('\n')[0]}. Data: {line}");
                             }
-                            catch (Exception ex) // Menangkap error lain (parsing, dll.) untuk baris tertentu
+                            catch (Exception exInner)
                             {
                                 failCount++;
-                                errorMessages += $"Baris {i + 1} (Error): {ex.Message} (Data: {line})\n";
+                                errorDetails.Add($"Baris {i + 1}: Kesalahan - {exInner.Message}. Data: {line}");
                             }
                         }
-                        else // Jika jumlah kolom tidak sesuai
+                        else
                         {
                             failCount++;
-                            errorMessages += $"Baris {i + 1}: Jumlah kolom tidak sesuai (Diharapkan minimal 4, ditemukan {data.Length}). Data: {line}\n";
+                            errorDetails.Add($"Baris {i + 1}: Jumlah kolom tidak cukup. Data: {line}");
                         }
                     }
 
-                    // Menampilkan ringkasan hasil impor
-                    MessageBox.Show($"Impor selesai.\nBerhasil: {successCount} data.\nGagal: {failCount} data." +
-                                    (failCount > 0 ? "\n\nDetail Kegagalan:\n" + errorMessages : ""), // Tampilkan detail error jika ada
-                                    "Hasil Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadData();  // Muat ulang data setelah impor
-                    ClearForm(); // Bersihkan form
+                    InvalidateReservasiDataCache();
+                    InvalidateAvailableMejaCache();
+                    LoadData();
+                    ClearForm();
+
+                    string summaryMessage = $"Impor Selesai.\nBerhasil: {successCount}\nGagal: {failCount}";
+                    if (failCount > 0)
+                    {
+                        summaryMessage += "\n\nDetail Kegagalan (maks 10 baris pertama):\n" + string.Join("\n", errorDetails.GetRange(0, Math.Min(errorDetails.Count, 10)));
+                        // Pertimbangkan untuk menyimpan semua errorDetails ke file log jika jumlahnya banyak
+                        // File.WriteAllLines("import_errors.log", errorDetails);
+                    }
+                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+
                 }
-                catch (IOException ioEx) // Menangkap error saat membaca file
+                catch (IOException ioEx)
                 {
-                    MessageBox.Show("Gagal membaca file: " + ioEx.Message, "Kesalahan I/O File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Gagal membaca file: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                catch (Exception ex) // Menangkap error umum saat proses impor
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Gagal melakukan impor: " + ex.Message, "Kesalahan Impor Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Terjadi kesalahan saat impor: " + ex.Message, "Kesalahan Impor Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
-                    if (conn.State == ConnectionState.Open) conn.Close(); // Menutup koneksi
+                    if (conn.State == ConnectionState.Open) conn.Close();
                 }
             }
         }
-
-        // Event handler dtpWaktuReservasi_ValueChanged_1 yang sebelumnya mungkin ada telah dihapus
-        // karena bisa menyebabkan DateTimePicker mereset nilai secara terus-menerus jika tidak ditangani dengan benar.
-        // Pengaturan awal di SetupDateTimePicker() dan pengambilan nilai saat submit sudah cukup.
     }
 }

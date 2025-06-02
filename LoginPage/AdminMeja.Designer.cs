@@ -37,6 +37,7 @@
             this.txtKapasitas = new System.Windows.Forms.TextBox();
             this.lblNomor = new System.Windows.Forms.Label();
             this.lblKapasitas = new System.Windows.Forms.Label();
+            this.btnImport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminMeja)).BeginInit();
             this.SuspendLayout();
             // 
@@ -126,12 +127,22 @@
             this.lblKapasitas.TabIndex = 11;
             this.lblKapasitas.Text = "Kapasitas Meja";
             // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(654, 161);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(98, 30);
+            this.btnImport.TabIndex = 12;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            // 
             // AdminMeja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.lblKapasitas);
             this.Controls.Add(this.lblNomor);
             this.Controls.Add(this.txtKapasitas);
@@ -161,5 +172,6 @@
         private System.Windows.Forms.TextBox txtKapasitas;
         private System.Windows.Forms.Label lblNomor;
         private System.Windows.Forms.Label lblKapasitas;
+        private System.Windows.Forms.Button btnImport;
     }
 }

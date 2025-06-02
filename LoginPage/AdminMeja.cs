@@ -54,11 +54,15 @@ namespace PABDCAFE
         void LoadData()
         {
             DataTable dt = _cache.Get(CacheKey) as DataTable;
-            // Memastikan objek koneksi sudah diinisialisasi
-            if (this.conn == null)
+            if (dt == null) // Kalo data ga ditemukan di chace, maka ambil dari database
             {
-                MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                // Memastikan objek koneksi sudah diinisialisasi
+                if (this.conn == null)
+                {
+                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
             }
 
             try
@@ -70,7 +74,7 @@ namespace PABDCAFE
                 dt = new DataTable(); // Membuat DataTable untuk menampung data
                 da.Fill(dt); // Mengisi DataTable dengan data dari database
                 dgvAdminMeja.DataSource = dt; // Menetapkan DataTable sebagai sumber data DataGridView
-                _cache.Set(CacheKey, dt, _policy);
+                _cache.Set(CacheKey, dt, _policy); // Simpan data yang baru diambil ke cache dengan expiration policy
 
                 // Mengatur teks header kolom DataGridView
                 if (dgvAdminMeja.Columns["Nomor_Meja"] != null)
@@ -88,8 +92,15 @@ namespace PABDCAFE
             // atau dikelola secara manual dalam operasi CRUD.
         }
 
-
-        //Pembatas
+        // Metode untuk invalidasi cache
+        private void InvalidateAdminMejaCache()
+        {
+            if (_cache.Contains(CacheKey))
+            {
+                _cache.Remove(CacheKey);
+                // System.Diagnostics.Debug.WriteLine("Cache invalidated."); // For debugging
+            }
+        }
 
 
         // Event handler yang dipanggil saat form AdminMeja dimuat

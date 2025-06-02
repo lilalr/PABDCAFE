@@ -17,7 +17,6 @@ namespace PABDCAFE
     public partial class LoginPage : Form
     {
         // Bagian dasar dari string koneksi ke database SQL Server Anda.
-        // "IDEAPAD5PRO\\LILA" adalah nama server SQL Anda, dan "ReservasiCafe" adalah nama database.
         // Pastikan ini sesuai dengan konfigurasi server Anda.
         // Kredensial pengguna (User ID dan Password) akan ditambahkan secara dinamis.
         private string baseconnectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA; Initial Catalog=ReservasiCafe;";

@@ -40,6 +40,7 @@
             this.CustMeja = new System.Windows.Forms.Label();
             this.cmbCustMeja = new System.Windows.Forms.ComboBox();
             this.dtpCustWaktu = new System.Windows.Forms.DateTimePicker();
+            this.btnImport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -160,12 +161,22 @@
             this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
             this.dtpCustWaktu.TabIndex = 0;
             // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(764, 220);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(155, 42);
+            this.btnImport.TabIndex = 15;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            // 
             // CustomerPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(993, 635);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.dtpCustWaktu);
             this.Controls.Add(this.cmbCustMeja);
             this.Controls.Add(this.CustMeja);
@@ -202,5 +213,6 @@
         private System.Windows.Forms.Label CustMeja;
         private System.Windows.Forms.ComboBox cmbCustMeja;
         private System.Windows.Forms.DateTimePicker dtpCustWaktu;
+        private System.Windows.Forms.Button btnImport;
     }
 }

@@ -158,7 +158,7 @@ namespace PABDCAFE
             // 
             this.btnImport.Location = new System.Drawing.Point(659, 162);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(135, 23);
+            this.btnImport.Size = new System.Drawing.Size(135, 32);
             this.btnImport.TabIndex = 19;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
