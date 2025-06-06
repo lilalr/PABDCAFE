@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
@@ -6,6 +7,9 @@ using System.Windows.Forms;
 using System.IO; // Diperlukan untuk operasi File seperti File.ReadAllLines
 using System.Collections.Generic; // Diperlukan untuk List<T>
 using System.Runtime.Caching; // Diperlukan untuk Caching
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using LoginPage; // Untuk format .xlsx
 
 namespace PABDCAFE
 {
@@ -22,8 +26,12 @@ namespace PABDCAFE
         private const string AvailableMejaCacheKey = "AdminReservasiAvailableMejaList";
         private readonly TimeSpan _cacheDuration = TimeSpan.FromMinutes(5);
 
+        // DataTable untuk menyimpan data preview
+        private DataTable PreviewDataTable;
+
         public AdminReservasi(string connStr)
         {
+            InitializePreviewDataTable();
             InitializeComponent();
 
             if (string.IsNullOrWhiteSpace(connStr))
@@ -46,6 +54,103 @@ namespace PABDCAFE
                 MessageBox.Show("Error: Kontrol ComboBox 'cbxNomorMeja' tidak ditemukan sebagai field.", "Kesalahan Kontrol", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             LoadData();
+        }
+
+        private void InitializePreviewDataTable()
+        {
+            PreviewDataTable = new DataTable();
+        }
+
+        private void PreviewData(string filePath)
+        {
+            try
+            {
+                // Mengosongkan DataTable sebelum memuat data baru
+                PreviewDataTable.Clear();
+
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    // Membuka workbook Excel (mendukung .xlsx)
+                    IWorkbook workbook = new XSSFWorkbook(fs);
+                    // Mendapatkan worksheet pertama
+                    ISheet sheet = workbook.GetSheetAt(0);
+
+                    // Membaca header kolom
+                    IRow headerRow = sheet.GetRow(0);
+                    if (headerRow != null)
+                    {
+                        foreach (var cell in headerRow.Cells)
+                        {
+                            // Menambahkan kolom ke DataTable berdasarkan header Excel
+                            PreviewDataTable.Columns.Add(cell.ToString());
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("File Excel kosong atau tidak memiliki baris header.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    // Membaca sisa data
+                    // Loop dimulai dari baris ke-1 (indeks 1) untuk melewati baris header
+                    for (int i = 1; i <= sheet.LastRowNum; i++)
+                    {
+                        IRow dataRow = sheet.GetRow(i);
+                        // Lewati baris kosong
+                        if (dataRow == null) continue;
+
+                        DataRow newRow = PreviewDataTable.NewRow();
+                        int cellIndex = 0;
+
+                        // Mengisi DataRow dengan data dari setiap sel
+                        foreach (var cell in dataRow.Cells)
+                        {
+                            if (cellIndex < PreviewDataTable.Columns.Count)
+                            {
+                                // Mengambil nilai sel dan menambahkannya ke DataRow
+                                // Anda mungkin perlu menambahkan logika parsing tipe data di sini
+                                // jika kolom memiliki tipe data spesifik (misalnya DateTime, int)
+                                newRow[cellIndex] = cell.ToString();
+                            }
+                            cellIndex++;
+                        }
+                        PreviewDataTable.Rows.Add(newRow);
+                    }
+                }
+
+                // Tampilkan PreviewForm dengan DataTable yang sudah disiapkan
+                // Ganti PreviewForm dengan nama kelas form preview Anda
+                PreviewFormAdminReservasi previewForm = new PreviewFormAdminReservasi(PreviewDataTable);
+                DialogResult dialogResult = previewForm.ShowDialog(); // Tampilkan sebagai dialog
+
+                // Setelah PreviewForm ditutup
+                if (dialogResult == DialogResult.OK)
+                {
+                    // Jika PreviewForm mengembalikan DialogResult.OK, berarti impor berhasil
+                    MessageBox.Show("Impor data dari Excel selesai.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Contoh pemanggilan metode setelah impor berhasil
+                    // InvalidateReservasiDataCache();
+                    // InvalidateAvailableMejaCache();
+                    // LoadData(); // Muat ulang data setelah impor
+                    // ClearForm();
+                }
+                else if (dialogResult == DialogResult.Cancel)
+                {
+                    MessageBox.Show("Impor data dibatalkan oleh pengguna.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else if (dialogResult == DialogResult.Abort)
+                {
+                    MessageBox.Show("Impor data dibatalkan karena kesalahan.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (IOException ioEx)
+            {
+                MessageBox.Show("Gagal membaca file: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan saat menyiapkan data preview: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void InvalidateReservasiDataCache()
@@ -154,7 +259,6 @@ namespace PABDCAFE
             }
         }
 
-
         void LoadData()
         {
             DataTable dt = _reservasiDataCache.Get(ReservasiDataCacheKey) as DataTable;
@@ -214,6 +318,7 @@ namespace PABDCAFE
         private void AdminReservasi_Load(object sender, EventArgs e)
         {
             // Setup sudah di konstruktor
+            LoadData();
         }
 
         void ClearForm()
@@ -289,25 +394,28 @@ namespace PABDCAFE
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (!IsConnectionReady()) return;
-            if (this.dgvAdminReservasi == null || this.dgvAdminReservasi.CurrentRow == null || this.dgvAdminReservasi.CurrentRow.IsNewRow)
+
+            if (this.dgvAdminReservasi.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Pilih data reservasi yang ingin diedit dari tabel.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Pilih data yang akan diubah!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (!ValidasiInput(out string errMsg))
+            if (string.IsNullOrWhiteSpace(this.txtNama.Text) ||
+                string.IsNullOrWhiteSpace(this.txtTelepon.Text) ||
+                this.cbxNomorMeja.SelectedItem == null)
             {
-                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
+                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
                 DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
                 string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                if (conn.State == ConnectionState.Closed) conn.Open();
+                conn.Open();
 
                 using (SqlCommand cmd = new SqlCommand("EditReservasi", conn))
                 {
@@ -321,25 +429,21 @@ namespace PABDCAFE
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Data reservasi berhasil diperbarui!", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         InvalidateReservasiDataCache();
-                        InvalidateAvailableMejaCache(); // Status meja mungkin berubah
+                        InvalidateAvailableMejaCache();
                         LoadData();
                         ClearForm();
                     }
                     else
                     {
-                        MessageBox.Show("Data tidak diperbarui atau tidak ada perubahan data.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Data tidak ditemukan atau gagal diperbarui!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Kesalahan SQL: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception ex)
             {
-                MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -356,100 +460,126 @@ namespace PABDCAFE
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
+            // Pastikan koneksi ke database siap
             if (!IsConnectionReady()) return;
 
-            if (!ValidasiInput(out string errMsg))
+            // Validasi input: pastikan semua kolom yang diperlukan terisi
+            // Meniru validasi kolom kosong seperti di gambar
+            if (string.IsNullOrWhiteSpace(this.txtNama.Text) ||
+                string.IsNullOrWhiteSpace(this.txtTelepon.Text) ||
+                this.cbxNomorMeja.SelectedItem == null)
             {
-                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
+                // Buka koneksi ke database
+                conn.Open();
+
+                // Ambil nilai dari kontrol input
                 DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
                 string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                if (conn.State == ConnectionState.Closed) conn.Open();
-
+                // Gunakan SqlCommand untuk memanggil Stored Procedure
                 using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Tambahkan parameter ke Stored Procedure
                     cmd.Parameters.AddWithValue("@Nama_Customer", this.txtNama.Text.Trim());
                     cmd.Parameters.AddWithValue("@No_Telp", this.txtTelepon.Text.Trim());
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
 
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Reservasi berhasil ditambahkan!", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    InvalidateReservasiDataCache();
-                    InvalidateAvailableMejaCache(); // Meja yg baru dipesan tidak lagi tersedia
-                    LoadData();
-                    ClearForm();
+                    // Eksekusi Stored Procedure dan periksa jumlah baris yang terpengaruh
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    // Berikan pesan berdasarkan hasil operasi
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Reservasi berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Segarkan data dan form setelah berhasil
+                        InvalidateReservasiDataCache();
+                        InvalidateAvailableMejaCache(); // Meja yang baru dipesan tidak lagi tersedia
+                        LoadData();
+                        ClearForm();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Reservasi tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-            }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Gagal menambahkan reservasi: " + sqlEx.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Tangani semua jenis kesalahan dan tampilkan pesan error umum
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                if (conn.State == ConnectionState.Open) conn.Close();
+                // Pastikan koneksi ditutup jika terbuka
+                if (conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
             }
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
         {
             if (!IsConnectionReady()) return;
-            if (this.dgvAdminReservasi == null || this.dgvAdminReservasi.CurrentRow == null || this.dgvAdminReservasi.CurrentRow.IsNewRow)
+
+            if (this.dgvAdminReservasi.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Pilih data reservasi yang ingin dihapus dari tabel.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Pilih data yang akan dihapus!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            DialogResult result = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.No) return;
+            DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm == DialogResult.No)
+            {
+                return;
+            }
 
             try
             {
-                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value);
+                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
 
-                if (conn.State == ConnectionState.Closed) conn.Open();
+                conn.Open();
 
                 using (SqlCommand cmd = new SqlCommand("HapusReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
+
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Reservasi berhasil dihapus.", "Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         InvalidateReservasiDataCache();
-                        InvalidateAvailableMejaCache(); // Meja yg dihapus reservasi nya jadi tersedia lagi
+                        InvalidateAvailableMejaCache();
                         LoadData();
                         ClearForm();
                     }
                     else
                     {
-                        MessageBox.Show("Data tidak ditemukan atau gagal dihapus.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Data tidak ditemukan atau gagal dihapus!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Gagal menghapus data: " + sqlEx.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal menghapus data: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                if (conn.State == ConnectionState.Open) conn.Close();
+                if (conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
             }
         }
 
@@ -548,8 +678,6 @@ namespace PABDCAFE
 
                     if (conn.State == ConnectionState.Closed) conn.Open();
 
-                    // Jika baris pertama adalah header, ubah i = 0 menjadi i = 1 untuk melewatinya.
-                    // Diasumsikan CSV tidak memiliki header, atau header diproses sebagai data.
                     for (int i = 0; i < lines.Length; i++)
                     {
                         string line = lines[i];
@@ -592,9 +720,9 @@ namespace PABDCAFE
                                 {
                                     cmd.CommandType = CommandType.StoredProcedure;
                                     cmd.Parameters.AddWithValue("@Nama_Customer", namaCustomer);
-                                    cmd.Parameters.AddWithValue("@No_Telp", noTelp); // BUG FIX: Added
-                                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi); // BUG FIX: Added
-                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja); // BUG FIX: Added
+                                    cmd.Parameters.AddWithValue("@No_Telp", noTelp);
+                                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
+                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
                                     cmd.ExecuteNonQuery();
                                     successCount++;
                                 }
@@ -626,10 +754,9 @@ namespace PABDCAFE
                     if (failCount > 0)
                     {
                         summaryMessage += "\n\nDetail Kegagalan (maks 10 baris pertama):\n" + string.Join("\n", errorDetails.GetRange(0, Math.Min(errorDetails.Count, 10)));
-                        // Pertimbangkan untuk menyimpan semua errorDetails ke file log jika jumlahnya banyak
-                        // File.WriteAllLines("import_errors.log", errorDetails);
                     }
-                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount
+                        > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
 
                 }
                 catch (IOException ioEx)
@@ -646,5 +773,7 @@ namespace PABDCAFE
                 }
             }
         }
+
+        
     }
 }

@@ -1,19 +1,21 @@
-﻿using System;
+﻿using Org.BouncyCastle.Asn1.Cmp;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions; // Diperlukan untuk Regex (validasi input)
-using System.Windows.Forms;
+using System.IO;
+using System.Linq;
 using System.Runtime.Caching;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace PABDCAFE
 {
     public partial class AdminMeja : Form
     {
-        // Menyimpan string koneksi database yang diterima dari form sebelumnya
         private readonly string connectionString;
-        // Objek koneksi SQL yang akan digunakan untuk operasi database di form ini
         private SqlConnection conn;
-
         private readonly MemoryCache _cache = MemoryCache.Default;
         private readonly CacheItemPolicy _policy = new CacheItemPolicy
         {
@@ -21,146 +23,159 @@ namespace PABDCAFE
         };
         private const string CacheKey = "AdminMeja";
 
-
-        // Konstruktor AdminMeja, menerima string koneksi sebagai parameter
-        public AdminMeja(string connStr) // Nama parameter diubah menjadi connStr
+        public AdminMeja(string connStr)
         {
-            InitializeComponent(); // Inisialisasi komponen form (otomatis oleh Visual Studio)
-
-            // Memeriksa apakah string koneksi valid (tidak null atau kosong)
+            InitializeComponent();
             if (string.IsNullOrWhiteSpace(connStr))
             {
-                MessageBox.Show("String koneksi tidak ada atau kosong. Tidak dapat terhubung ke database.", "Kesalahan Konfigurasi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Melemparkan exception jika string koneksi tidak valid untuk menghentikan pembuatan form
-                throw new ArgumentNullException(nameof(connStr), "String koneksi database (connStr) tidak boleh null atau kosong.");
+                MessageBox.Show("String koneksi tidak ada atau kosong.", "Kesalahan Konfigurasi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ArgumentNullException(nameof(connStr), "String koneksi tidak boleh null.");
             }
+            this.connectionString = connStr;
+            this.conn = new SqlConnection(this.connectionString);
 
-            this.connectionString = connStr; // Menyimpan string koneksi yang diterima
-            this.conn = new SqlConnection(this.connectionString); // Membuat instance objek SqlConnection
-
-            LoadData(); // Memuat data meja awal ke DataGridView
+             
         }
 
-        // Metode untuk membersihkan field input pada form
         void ClearForm()
         {
-            txtNomor.Clear(); // Membersihkan TextBox Nomor Meja
-            txtKapasitas.Clear(); // Membersihkan TextBox Kapasitas
-            dgvAdminMeja.ClearSelection(); // Menghapus seleksi pada DataGridView
-            txtNomor.Focus(); // Mengatur fokus ke TextBox Nomor Meja
+            txtNomor.Clear();
+            txtKapasitas.Clear();
+            dgvAdminMeja.ClearSelection();
+            txtNomor.Focus();
         }
 
-        // Metode untuk memuat data meja dari database ke DataGridView
-        void LoadData()
+        private void AdminMeja_Load(object sender, EventArgs e)
         {
             DataTable dt = _cache.Get(CacheKey) as DataTable;
-            if (dt == null) // Kalo data ga ditemukan di chace, maka ambil dari database
+            if (dt == null)
             {
-                // Memastikan objek koneksi sudah diinisialisasi
                 if (this.conn == null)
                 {
                     MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                
-            }
+                try
+                {
+                    string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja ORDER BY Nomor_Meja ASC";
+                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    dt = new DataTable();
+                    da.Fill(dt);
+                    dgvAdminMeja.DataSource = dt;
+                    _cache.Set(CacheKey, dt, _policy);
 
-            try
-            {
-                // Query untuk mengambil data Nomor_Meja, Kapasitas, dan Status_Meja dari tabel Meja
-                string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja";
-                // SqlDataAdapter akan menangani pembukaan dan penutupan koneksi jika diperlukan
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                dt = new DataTable(); // Membuat DataTable untuk menampung data
-                da.Fill(dt); // Mengisi DataTable dengan data dari database
-                dgvAdminMeja.DataSource = dt; // Menetapkan DataTable sebagai sumber data DataGridView
-                _cache.Set(CacheKey, dt, _policy); // Simpan data yang baru diambil ke cache dengan expiration policy
-
-                // Mengatur teks header kolom DataGridView
-                if (dgvAdminMeja.Columns["Nomor_Meja"] != null)
-                    dgvAdminMeja.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
-                if (dgvAdminMeja.Columns["Status_Meja"] != null) // Kolom Status Meja ditampilkan tapi tidak diedit dari form ini
-                    dgvAdminMeja.Columns["Status_Meja"].HeaderText = "Status";
-                if (dgvAdminMeja.Columns["Kapasitas"] != null)
-                    dgvAdminMeja.Columns["Kapasitas"].HeaderText = "Kapasitas";
+                    if (dgvAdminMeja.Columns.Contains("Nomor_Meja"))
+                        dgvAdminMeja.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
+                    if (dgvAdminMeja.Columns.Contains("Status_Meja"))
+                        dgvAdminMeja.Columns["Status_Meja"].HeaderText = "Status";
+                    if (dgvAdminMeja.Columns.Contains("Kapasitas"))
+                        dgvAdminMeja.Columns["Kapasitas"].HeaderText = "Kapasitas";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error memuat data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Error memuat data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvAdminMeja.DataSource = dt;
             }
-            // Koneksi akan ditutup oleh SqlDataAdapter jika ia yang membukanya,
-            // atau dikelola secara manual dalam operasi CRUD.
         }
 
-        // Metode untuk invalidasi cache
         private void InvalidateAdminMejaCache()
         {
             if (_cache.Contains(CacheKey))
             {
                 _cache.Remove(CacheKey);
-                // System.Diagnostics.Debug.WriteLine("Cache invalidated."); // For debugging
             }
         }
 
-
-        // Event handler yang dipanggil saat form AdminMeja dimuat
-        private void AdminMeja_Load(object sender, EventArgs e)
-        {
-            // LoadData() sudah dipanggil di konstruktor, jadi tidak perlu dipanggil lagi di sini
-            // kecuali ada logika inisialisasi tambahan yang spesifik untuk event Load.
-        }
-
-        // Event handler untuk tombol Kembali (Back)
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            // Membuat instance AdminPage dan menampilkannya
-            // String koneksi diteruskan kembali jika AdminPage memerlukannya
-            AdminPage ap = new AdminPage(this.connectionString);
-            ap.Show();
-            this.Close(); // Menutup form AdminMeja saat ini
-        }
-
-        // Metode untuk memvalidasi input Nomor Meja dan Kapasitas
-        // Status Meja tidak divalidasi/diinput dari form ini
-        bool ValidasiInput(out string nomorMeja, out int kapasitas, out string errorMsg)
-        {
-            errorMsg = ""; // Inisialisasi pesan error
-            nomorMeja = txtNomor.Text.Trim(); // Mengambil dan membersihkan Nomor Meja dari TextBox
-            string kapasitasStr = txtKapasitas.Text.Trim(); // Mengambil dan membersihkan Kapasitas dari TextBox
-            kapasitas = 0; // Inisialisasi kapasitas
-
-            // Validasi Nomor Meja: harus terdiri dari 2 digit angka
-            if (!Regex.IsMatch(nomorMeja, @"^\d{2}$"))
-            {
-                errorMsg += "Nomor Meja harus terdiri dari 2 digit angka (contoh: 01, 12).\n";
-            }
-
-            // Validasi Kapasitas: harus berupa angka antara 1 sampai 20
-            if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 20)
-            {
-                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 20.\n";
-            }
-
-            return string.IsNullOrEmpty(errorMsg); // Mengembalikan true jika tidak ada error validasi
-        }
-
-        // Metode helper untuk memeriksa kesiapan koneksi database
         private bool IsConnectionReady()
         {
             if (this.conn == null || string.IsNullOrWhiteSpace(this.conn.ConnectionString))
             {
-                MessageBox.Show("Koneksi database tidak dikonfigurasi atau hilang.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false; // Koneksi tidak siap
+                MessageBox.Show("Koneksi database tidak dikonfigurasi.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
-            return true; // Koneksi siap
+            return true;
         }
 
-        // Event handler untuk tombol Tambah
+        bool ValidasiInput(out string nomorMeja, out int kapasitas, out string errorMsg)
+        {
+            errorMsg = "";
+            nomorMeja = txtNomor.Text.Trim();
+            string kapasitasStr = txtKapasitas.Text.Trim();
+            kapasitas = 0;
+            if (!Regex.IsMatch(nomorMeja, @"^\d{2}$"))
+            {
+                errorMsg += "Nomor Meja harus terdiri dari 2 digit angka.\n";
+            }
+            if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 20)
+            {
+                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 20.\n";
+            }
+            return string.IsNullOrEmpty(errorMsg);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            AdminPage ap = new AdminPage(this.connectionString);
+            ap.Show();
+            this.Close();
+        }
+
+        private void dgvAdminMeja_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < dgvAdminMeja.Rows.Count && !dgvAdminMeja.Rows[e.RowIndex].IsNewRow)
+            {
+                DataGridViewRow row = dgvAdminMeja.Rows[e.RowIndex];
+                txtNomor.Text = row.Cells["Nomor_Meja"].Value?.ToString() ?? "";
+                txtKapasitas.Text = row.Cells["Kapasitas"].Value?.ToString() ?? "";
+            }
+        }
+
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Memeriksa kesiapan koneksi
+            if (!IsConnectionReady()) return;
+            if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
+            {
+                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            try
+            {
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                using (SqlCommand cmd = new SqlCommand("TambahMeja", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
+                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
+                    cmd.ExecuteNonQuery();
 
-            // Memvalidasi input sebelum menambahkan data
+                    MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    InvalidateAdminMejaCache();
+                    AdminMeja_Load(null, null);
+                    ClearForm();
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open) conn.Close();
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (!IsConnectionReady()) return;
+
             if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -169,101 +184,62 @@ namespace PABDCAFE
 
             try
             {
-                // Membuka koneksi jika sedang tertutup
-                if (conn.State == ConnectionState.Closed)
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                using (SqlCommand cmd = new SqlCommand("EditMeja", conn))
                 {
-                    conn.Open();
-                }
-
-                // Menggunakan Stored Procedure 'TambahMeja'
-                // Status_Meja akan diatur ke 'Tersedia' secara otomatis oleh Stored Procedure
-                using (SqlCommand cmd = new SqlCommand("TambahMeja", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure; // Menentukan tipe command adalah Stored Procedure
-                    // Menambahkan parameter untuk Stored Procedure
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
                     cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
-                    // Parameter @Status_Meja tidak dikirim, SP yang akan mengaturnya
+                    cmd.ExecuteNonQuery();
 
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Menjalankan Stored Procedure
-
-                    if (rowsAffected > 0) // Jika ada baris yang terpengaruh (data berhasil ditambahkan)
-                    {
-                        MessageBox.Show("Data berhasil ditambahkan! Status otomatis diatur ke 'Tersedia'.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData();  // Memuat ulang data di DataGridView
-                        ClearForm(); // Membersihkan form input
-                    }
-                    else
-                    {
-                        // Bisa terjadi jika SP melakukan validasi dan return tanpa error, atau RAISERROR tidak menghentikan di C#
-                        MessageBox.Show("Data tidak berhasil ditambahkan. Periksa input atau kemungkinan nomor meja sudah ada.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    MessageBox.Show("Kapasitas meja berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    InvalidateAdminMejaCache();
+                    AdminMeja_Load(null, null);
+                    ClearForm();
                 }
             }
-            catch (SqlException sqlEx) // Menangkap error spesifik SQL (misalnya dari RAISERROR di SP)
+            catch (SqlException sqlEx)
             {
                 MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) // Menangkap error umum
+            catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Menutup koneksi jika sedang terbuka
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
-        // Event handler untuk tombol Hapus
         private void btnHapus_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Memeriksa kesiapan koneksi
-
-            string nomorMeja = txtNomor.Text.Trim(); // Mengambil Nomor Meja dari TextBox
-            // Validasi awal apakah Nomor Meja diisi
+            if (!IsConnectionReady()) return;
+            string nomorMeja = txtNomor.Text.Trim();
             if (string.IsNullOrEmpty(nomorMeja))
             {
-                MessageBox.Show("Silakan pilih data meja yang ingin dihapus atau isi Nomor Meja pada field yang sesuai.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            // Validasi format Nomor Meja
-            if (!Regex.IsMatch(nomorMeja, @"^\d{2}$"))
-            {
-                MessageBox.Show("Nomor Meja yang akan dihapus harus terdiri dari 2 digit angka.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Silakan pilih data meja yang ingin dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Konfirmasi penghapusan dari pengguna
-            DialogResult result = MessageBox.Show(
-                $"Apakah Anda yakin ingin menghapus meja dengan Nomor '{nomorMeja}'?",
-                "Konfirmasi Penghapusan",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (result == DialogResult.No) // Jika pengguna memilih 'Tidak'
-                return;
+            DialogResult result = MessageBox.Show($"Apakah Anda yakin ingin menghapus meja nomor '{nomorMeja}'?", "Konfirmasi Penghapusan", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No) return;
 
             try
             {
-                if (conn.State == ConnectionState.Closed) conn.Open(); // Membuka koneksi jika tertutup
-
-                // Menggunakan Stored Procedure 'HapusMeja' (pastikan SP ini ada di database)
+                if (conn.State == ConnectionState.Closed) conn.Open();
                 using (SqlCommand cmd = new SqlCommand("HapusMeja", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja); // Parameter untuk SP
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Menjalankan SP
+                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
+                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0) // Jika ada baris yang terpengaruh (data berhasil dihapus)
+                    if (rowsAffected > 0)
                     {
                         MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData();  // Memuat ulang data
-                        ClearForm(); // Membersihkan form
+                        InvalidateAdminMejaCache();
+                        AdminMeja_Load(null, null);
+                        ClearForm();
                     }
                     else
                     {
@@ -271,103 +247,173 @@ namespace PABDCAFE
                     }
                 }
             }
-            catch (SqlException sqlEx) // Menangkap error SQL
+            catch (SqlException sqlEx)
             {
                 MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) // Menangkap error umum
+            catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                if (conn.State == ConnectionState.Open) conn.Close(); // Menutup koneksi
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
-        // Event handler untuk tombol Edit
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return; // Memeriksa kesiapan koneksi
-
-            // Validasi awal apakah Nomor Meja diisi (karena digunakan sebagai kunci untuk update)
-            if (string.IsNullOrWhiteSpace(txtNomor.Text))
+            if (!IsConnectionReady()) return;
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                MessageBox.Show("Pilih data yang akan diubah atau pastikan Nomor Meja terisi!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Filter = "CSV files (*.csv)|*.csv",
+                Title = "Pilih File CSV untuk Impor Data Meja"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                int successCount = 0;
+                int failCount = 0;
+                var errorDetails = new List<string>();
+
+                try
+                {
+                    string[] lines = File.ReadAllLines(filePath);
+                    if (lines.Length == 0)
+                    {
+                        MessageBox.Show("File CSV kosong.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    if (conn.State == ConnectionState.Closed) conn.Open();
+
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        if (i == 0 && lines[i].ToLower().Contains("nomor_meja")) continue;
+
+                        string line = lines[i];
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        string[] data = line.Split(',');
+
+                        if (ValidateCsvRow(data, i + 1, out string nomorMejaCsv, out int kapasitasCsv, ref errorDetails))
+                        {
+                            try
+                            {
+                                using (SqlCommand cmd = new SqlCommand("TambahMeja", conn))
+                                {
+                                    cmd.CommandType = CommandType.StoredProcedure;
+                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMejaCsv);
+                                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitasCsv);
+                                    cmd.ExecuteNonQuery();
+                                    successCount++;
+                                }
+                            }
+                            catch (SqlException ex)
+                            {
+                                failCount++;
+                                errorDetails.Add($"Baris {i + 1} ('{line}'): Gagal - {ex.Message}");
+                            }
+                        }
+                        else
+                        {
+                            failCount++;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Terjadi error saat proses impor: " + ex.Message, "Kesalahan Impor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open) conn.Close();
+
+                    string summaryMessage = $"Proses Impor Selesai.\nBerhasil: {successCount} meja.\nGagal: {failCount} meja.";
+                    if (failCount > 0)
+                    {
+                        summaryMessage += "\n\nDetail Kegagalan (maks 5):\n" + string.Join("\n", errorDetails.Take(5));
+                    }
+                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+
+                    InvalidateAdminMejaCache();
+                    AdminMeja_Load(null, null);
+                    ClearForm();
+                }
+            }
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (dgvAdminMeja.Rows.Count == 0)
+            {
+                MessageBox.Show("Tidak ada data untuk diekspor.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            // Memvalidasi input (Nomor Meja dan Kapasitas)
-            // Status Meja tidak diubah melalui form ini
-            if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                Filter = "CSV File (*.csv)|*.csv",
+                Title = "Simpan Data Meja sebagai CSV",
+                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+            };
 
-            try
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (conn.State == ConnectionState.Closed) // Membuka koneksi jika tertutup
+                try
                 {
-                    conn.Open();
-                }
-                // Menggunakan Stored Procedure 'EditMeja'
-                // SP ini diasumsikan hanya mengupdate kolom Kapasitas berdasarkan Nomor_Meja.
-                // Status Meja tidak diubah.
-                using (SqlCommand cmd = new SqlCommand("EditMeja", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja); // Kunci untuk klausa WHERE di SP
-                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);   // Nilai baru untuk kapasitas
-                    // Tidak ada parameter @Status_Meja yang dikirim
+                    StringBuilder sb = new StringBuilder();
+                    IEnumerable<string> columnHeaders = dgvAdminMeja.Columns.Cast<DataGridViewColumn>().Select(column => $"\"{column.HeaderText}\"");
+                    sb.AppendLine(string.Join(",", columnHeaders));
 
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Menjalankan SP
-
-                    if (rowsAffected > 0) // Jika ada baris yang terpengaruh (data berhasil diupdate)
+                    foreach (DataGridViewRow row in dgvAdminMeja.Rows)
                     {
-                        MessageBox.Show("Data kapasitas meja berhasil diperbarui! Status meja tidak diubah.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData(); // Memuat ulang data untuk melihat perubahan kapasitas
-                        ClearForm(); // Membersihkan form
+                        if (row.IsNewRow) continue;
+                        IEnumerable<string> fields = row.Cells.Cast<DataGridViewCell>().Select(cell => $"\"{cell.Value?.ToString()?.Replace("\"", "\"\"") ?? ""}\"");
+                        sb.AppendLine(string.Join(",", fields));
                     }
-                    else
-                    {
-                        MessageBox.Show("Data tidak berhasil diperbarui! Pastikan Nomor Meja ada.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+
+                    File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
+                    MessageBox.Show("Data berhasil diekspor!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch (SqlException sqlEx) // Menangkap error SQL
-            {
-                MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex) // Menangkap error umum
-            {
-                MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) // Menutup koneksi
+                catch (Exception ex)
                 {
-                    conn.Close();
+                    MessageBox.Show("Error saat mengekspor data: " + ex.Message, "Kesalahan Export", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        // Event handler saat sel di DataGridView diklik
-        private void dgvAdminMeja_CellClick(object sender, DataGridViewCellEventArgs e)
+      
+
+        private bool ValidateCsvRow(string[] data, int lineNumber, out string nomorMejaCsv, out int kapasitasCsv, ref List<string> errorDetails)
         {
-            // Memastikan klik terjadi pada baris yang valid (bukan header atau baris baru)
-            if (e.RowIndex >= 0 && e.RowIndex < dgvAdminMeja.Rows.Count && dgvAdminMeja.Rows[e.RowIndex].Cells["Nomor_Meja"].Value != null)
+            nomorMejaCsv = "";
+            kapasitasCsv = 0;
+            bool isValid = true;
+            if (data.Length < 2)
             {
-                // Menghindari baris baru jika AllowUserToAddRows = true dan belum ada isinya
-                if (dgvAdminMeja.Rows[e.RowIndex].IsNewRow) return;
-
-                DataGridViewRow row = dgvAdminMeja.Rows[e.RowIndex]; // Mendapatkan baris yang diklik
-                // Mengisi TextBox Nomor Meja dan Kapasitas dari data baris yang dipilih
-                // ?.ToString() ?? "" digunakan untuk menangani nilai null dengan aman
-                txtNomor.Text = row.Cells["Nomor_Meja"].Value?.ToString() ?? "";
-                txtKapasitas.Text = row.Cells["Kapasitas"].Value?.ToString() ?? "";
-                // TextBox untuk Status Meja tidak ada, jadi tidak diisi. Status terlihat di DataGridView.
+                errorDetails.Add($"Baris {lineNumber}: Format tidak valid. Harusnya 'Nomor_Meja,Kapasitas'.");
+                return false;
             }
+            string tempNomorMeja = data[0].Trim();
+            string tempKapasitasStr = data[1].Trim();
+            if (!Regex.IsMatch(tempNomorMeja, @"^\d{2}$"))
+            {
+                errorDetails.Add($"Baris {lineNumber}: Nomor Meja '{tempNomorMeja}' tidak valid.");
+                isValid = false;
+            }
+            else
+            {
+                nomorMejaCsv = tempNomorMeja;
+            }
+            if (!int.TryParse(tempKapasitasStr, out kapasitasCsv) || kapasitasCsv < 1 || kapasitasCsv > 20)
+            {
+                errorDetails.Add($"Baris {lineNumber}: Kapasitas '{tempKapasitasStr}' tidak valid.");
+                isValid = false;
+            }
+            return isValid;
         }
+
+        
     }
 }
