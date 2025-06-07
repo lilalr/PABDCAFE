@@ -61,12 +61,57 @@ namespace PABDCAFE
                 return;
             }
 
+            EnsureIndexes();
+
             LoadReservasi();
             LoadComboBoxMeja(cmbCustMeja);
 
             dtpCustWaktu.Format = DateTimePickerFormat.Custom;
             dtpCustWaktu.CustomFormat = "yyyy-MM-dd HH:mm";
             dtpCustWaktu.ShowUpDown = false;
+        }
+
+        private void EnsureIndexes()
+        {
+            if (!IsConnectionReady()) return;
+
+            try
+            {
+                using (var sqlConnection = new SqlConnection(connectionString))
+                {
+                    sqlConnection.Open();
+                    var indexScript = @"
+                    IF OBJECT_ID('dbo.Reservasi', 'U') IS NOT NULL
+                    BEGIN
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nomor_Meja')
+                            CREATE NON CLUSTERED INDEX IX_Reservasi_Nomor_Meja ON dbo.Reservasi(Nomor_Meja);
+
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Waktu')
+                            CREATE NON CLUSTERED INDEX IX_Reservasi_Waktu ON dbo.Reservasi(Waktu_Reservasi);
+
+                        IF NOT EXISTS (SELECT 1 FROM sys,indexes WHERE name = 'IX_Reservasi_Nama_Customer')
+                            CREATE NON CLUSTERED INDEX IX_Reservasi_Nama_Customer ON dbo.Reservasi(Nama_Customer);
+
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_No_Telp')
+                            CREATE NON CLUSTERED INDEX IX_Reservasi_No_Telp ON dbo.Reservasi(No_Telp);
+                    END
+
+                    IF OBJECT_ID('dbo.Meja', 'U') IS NOT NULL
+                    BEGIN
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Meja_Status')
+                            CREATE NONCLUSTERED INDEX IX_Meja_Status ON dbo.Meja(Status_Meja);
+                    END";
+
+                    using (var cmd = new SqlCommand(indexScript, sqlConnection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memastikan index dalam database: " + ex.Message, "Peringatan Performa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void InvalidateReservasiCache()
