@@ -110,9 +110,9 @@ namespace PABDCAFE
             {
                 errorMsg += "Nomor Meja harus terdiri dari 2 digit angka.\n";
             }
-            if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 20)
+            if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 99)
             {
-                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 20.\n";
+                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 99.\n";
             }
             return string.IsNullOrEmpty(errorMsg);
         }
@@ -142,73 +142,84 @@ namespace PABDCAFE
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            try
+
+            // C# menangani transaksi
+            using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using (SqlCommand cmd = new SqlCommand("TambahMeja", conn))
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
+
+                try
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand("TambahMeja", conn, transaction)) // Kaitkan command dengan transaksi
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
+                        cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit(); // Commit jika berhasil
 
                     MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     InvalidateAdminMejaCache();
                     AdminMeja_Load(null, null);
                     ClearForm();
                 }
-            }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
+                catch (SqlException sqlEx)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (!IsConnectionReady()) return;
-
             if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            try
+            using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using (SqlCommand cmd = new SqlCommand("EditMeja", conn))
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
+
+                try
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand("EditMeja", conn, transaction)) // Kaitkan command dengan transaksi
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
+                        cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit(); // Commit jika berhasil
 
                     MessageBox.Show("Kapasitas meja berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     InvalidateAdminMejaCache();
                     AdminMeja_Load(null, null);
                     ClearForm();
                 }
-            }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
+                catch (SqlException sqlEx)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -221,46 +232,51 @@ namespace PABDCAFE
                 MessageBox.Show("Silakan pilih data meja yang ingin dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            DialogResult result = MessageBox.Show($"Apakah Anda yakin ingin menghapus meja nomor '{nomorMeja}'?", "Konfirmasi Penghapusan", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.No) return;
-
-            try
+            if (MessageBox.Show($"Apakah Anda yakin ingin menghapus meja nomor '{nomorMeja}'?", "Konfirmasi Penghapusan", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using (SqlCommand cmd = new SqlCommand("HapusMeja", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                return;
+            }
 
-                    if (rowsAffected > 0)
+            using (SqlConnection conn = new SqlConnection(this.connectionString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("HapusMeja", conn, transaction)) // Kaitkan command dengan transaksi
                     {
-                        MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        InvalidateAdminMejaCache();
-                        AdminMeja_Load(null, null);
-                        ClearForm();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Data tidak ditemukan atau tidak ada data yang dihapus.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
-                    else
-                    {
-                        MessageBox.Show("Data tidak ditemukan atau tidak ada data yang dihapus.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+
+                    transaction.Commit(); // Commit jika berhasil
+
+                    InvalidateAdminMejaCache();
+                    AdminMeja_Load(null, null);
+                    ClearForm();
+                }
+                catch (SqlException sqlEx)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback(); // Batalkan (rollback) jika ada error
+                    MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
-            }
         }
-
         private void btnImport_Click(object sender, EventArgs e)
         {
             if (!IsConnectionReady()) return;
@@ -272,74 +288,81 @@ namespace PABDCAFE
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                // ... (logika untuk membaca file tetap sama) ...
                 string filePath = openFileDialog.FileName;
                 int successCount = 0;
                 int failCount = 0;
                 var errorDetails = new List<string>();
-
-                try
+                string[] lines = File.ReadAllLines(filePath);
+                if (lines.Length == 0)
                 {
-                    string[] lines = File.ReadAllLines(filePath);
-                    if (lines.Length == 0)
+                    MessageBox.Show("File CSV kosong.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Transaksi akan membungkus SELURUH proses impor.
+                // Entah semua data valid berhasil masuk, atau tidak ada sama sekali.
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
+                {
+                    conn.Open();
+                    SqlTransaction transaction = conn.BeginTransaction(); // Mulai satu transaksi untuk seluruh file
+
+                    try
                     {
-                        MessageBox.Show("File CSV kosong.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-
-                    if (conn.State == ConnectionState.Closed) conn.Open();
-
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        if (i == 0 && lines[i].ToLower().Contains("nomor_meja")) continue;
-
-                        string line = lines[i];
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-                        string[] data = line.Split(',');
-
-                        if (ValidateCsvRow(data, i + 1, out string nomorMejaCsv, out int kapasitasCsv, ref errorDetails))
+                        for (int i = 0; i < lines.Length; i++)
                         {
-                            try
+                            if (i == 0 && lines[i].ToLower().Contains("nomor_meja")) continue;
+                            string line = lines[i];
+                            if (string.IsNullOrWhiteSpace(line)) continue;
+                            string[] data = line.Split(',');
+
+                            if (ValidateCsvRow(data, i + 1, out string nomorMejaCsv, out int kapasitasCsv, ref errorDetails))
                             {
-                                using (SqlCommand cmd = new SqlCommand("TambahMeja", conn))
+                                try
                                 {
-                                    cmd.CommandType = CommandType.StoredProcedure;
-                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMejaCsv);
-                                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitasCsv);
-                                    cmd.ExecuteNonQuery();
-                                    successCount++;
+                                    using (SqlCommand cmd = new SqlCommand("TambahMeja", conn, transaction)) // Gunakan transaksi yang sama
+                                    {
+                                        cmd.CommandType = CommandType.StoredProcedure;
+                                        cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMejaCsv);
+                                        cmd.Parameters.AddWithValue("@Kapasitas", kapasitasCsv);
+                                        cmd.ExecuteNonQuery();
+                                        successCount++;
+                                    }
+                                }
+                                catch (SqlException ex) // Menangkap error DB seperti duplikat primary key dari SP
+                                {
+                                    // Jika satu command saja gagal, kita akan membatalkan semuanya.
+                                    // Lempar exception agar ditangkap oleh blok catch terluar.
+                                    throw new Exception($"Baris {i + 1} ('{line}'): Gagal di database - {ex.Message}", ex);
                                 }
                             }
-                            catch (SqlException ex)
+                            else
                             {
                                 failCount++;
-                                errorDetails.Add($"Baris {i + 1} ('{line}'): Gagal - {ex.Message}");
                             }
                         }
-                        else
-                        {
-                            failCount++;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Terjadi error saat proses impor: " + ex.Message, "Kesalahan Impor", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open) conn.Close();
 
-                    string summaryMessage = $"Proses Impor Selesai.\nBerhasil: {successCount} meja.\nGagal: {failCount} meja.";
-                    if (failCount > 0)
+                        transaction.Commit(); // Commit HANYA jika semua baris diproses tanpa error database
+                    }
+                    catch (Exception ex)
                     {
-                        summaryMessage += "\n\nDetail Kegagalan (maks 5):\n" + string.Join("\n", errorDetails.Take(5));
+                        transaction.Rollback(); // Batalkan seluruh transaksi jika ada satu saja kegagalan
+                        MessageBox.Show("Proses impor dihentikan dan semua perubahan dibatalkan karena error:\n" + ex.Message, "Kesalahan Impor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        successCount = 0; // Set ulang jumlah sukses karena semua dibatalkan
                     }
-                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
-
-                    InvalidateAdminMejaCache();
-                    AdminMeja_Load(null, null);
-                    ClearForm();
                 }
+
+                // Pelaporan hasil
+                string summaryMessage = $"Proses Impor Selesai.\nBerhasil: {successCount} meja.\nGagal Validasi: {failCount} meja.";
+                if (failCount > 0)
+                {
+                    summaryMessage += "\n\nDetail Kegagalan Validasi (maks 5):\n" + string.Join("\n", errorDetails.Take(5));
+                }
+                MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount > 0 || successCount == 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+
+                InvalidateAdminMejaCache();
+                AdminMeja_Load(null, null);
+                ClearForm();
             }
         }
 
@@ -382,9 +405,9 @@ namespace PABDCAFE
                 }
             }
         }
+    
 
-      
-
+     
         private bool ValidateCsvRow(string[] data, int lineNumber, out string nomorMejaCsv, out int kapasitasCsv, ref List<string> errorDetails)
         {
             nomorMejaCsv = "";
@@ -406,7 +429,7 @@ namespace PABDCAFE
             {
                 nomorMejaCsv = tempNomorMeja;
             }
-            if (!int.TryParse(tempKapasitasStr, out kapasitasCsv) || kapasitasCsv < 1 || kapasitasCsv > 20)
+            if (!int.TryParse(tempKapasitasStr, out kapasitasCsv) || kapasitasCsv < 1 || kapasitasCsv > 99)
             {
                 errorDetails.Add($"Baris {lineNumber}: Kapasitas '{tempKapasitasStr}' tidak valid.");
                 isValid = false;
