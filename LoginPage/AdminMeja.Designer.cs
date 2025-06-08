@@ -39,6 +39,7 @@
             this.lblKapasitas = new System.Windows.Forms.Label();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
+            this.btnAnalisis = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminMeja)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,7 +65,7 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(198, 142);
+            this.btnEdit.Location = new System.Drawing.Point(170, 142);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(98, 30);
             this.btnEdit.TabIndex = 2;
@@ -74,7 +75,7 @@
             // 
             // btnHapus
             // 
-            this.btnHapus.Location = new System.Drawing.Point(343, 142);
+            this.btnHapus.Location = new System.Drawing.Point(292, 142);
             this.btnHapus.Name = "btnHapus";
             this.btnHapus.Size = new System.Drawing.Size(98, 30);
             this.btnHapus.TabIndex = 3;
@@ -130,7 +131,7 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(511, 142);
+            this.btnImport.Location = new System.Drawing.Point(418, 142);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(102, 30);
             this.btnImport.TabIndex = 12;
@@ -140,7 +141,7 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(660, 142);
+            this.btnExport.Location = new System.Drawing.Point(550, 142);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(92, 30);
             this.btnExport.TabIndex = 13;
@@ -148,12 +149,23 @@
             this.btnExport.UseVisualStyleBackColor = true;
             this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
+            // btnAnalisis
+            // 
+            this.btnAnalisis.Location = new System.Drawing.Point(673, 142);
+            this.btnAnalisis.Name = "btnAnalisis";
+            this.btnAnalisis.Size = new System.Drawing.Size(79, 29);
+            this.btnAnalisis.TabIndex = 14;
+            this.btnAnalisis.Text = "Analisis";
+            this.btnAnalisis.UseVisualStyleBackColor = true;
+            this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
+            // 
             // AdminMeja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.lblKapasitas);
@@ -187,5 +199,6 @@
         private System.Windows.Forms.Label lblKapasitas;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Button btnAnalisis;
     }
 }
