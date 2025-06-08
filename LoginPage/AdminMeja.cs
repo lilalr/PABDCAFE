@@ -11,7 +11,6 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using ClosedXML.Excel;
 using static System.Net.WebRequestMethods;
 
 namespace PABDCAFE
@@ -38,7 +37,7 @@ namespace PABDCAFE
             this.connectionString = connStr;
             this.conn = new SqlConnection(this.connectionString);
 
-             
+
         }
 
         void ClearForm()
@@ -116,7 +115,7 @@ namespace PABDCAFE
             {
                 MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            
+
         }
 
         private void AnalyzeQuery(string sqlQuery)
@@ -353,7 +352,7 @@ namespace PABDCAFE
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 // Filter diatur untuk file Excel (.xlsx), sesuai modul 
-                Filter = "CSV File (*.csv)|*.csv",
+                Filter = "CSV File (.csv)|.csv",
                 Title = "Pilih File CSV untuk Impor Data Meja"
             };
 
@@ -477,45 +476,27 @@ namespace PABDCAFE
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
-                Title = "Simpan Data Meja sebagai Excel",
-                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                Filter = "CSV File (.csv)|.csv",
+                Title = "Simpan Data Meja sebagai CSV",
+                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    // Buat Workbook (file Excel) baru
-                    using (var workbook = new XLWorkbook())
+                    StringBuilder sb = new StringBuilder();
+                    IEnumerable<string> columnHeaders = dgvAdminMeja.Columns.Cast<DataGridViewColumn>().Select(column => $"\"{column.HeaderText}\"");
+                    sb.AppendLine(string.Join(",", columnHeaders));
+
+                    foreach (DataGridViewRow row in dgvAdminMeja.Rows)
                     {
-                        // Buat Worksheet (lembar kerja) baru
-                        var worksheet = workbook.Worksheets.Add("Data Meja");
-
-                        // Tambahkan Header dari DataGridView ke baris pertama worksheet
-                        for (int i = 0; i < dgvAdminMeja.Columns.Count; i++)
-                        {
-                            worksheet.Cell(1, i + 1).Value = dgvAdminMeja.Columns[i].HeaderText;
-                        }
-
-                        // Tambahkan Data dari DataGridView ke baris berikutnya
-                        for (int i = 0; i < dgvAdminMeja.Rows.Count; i++)
-                        {
-                            // Jangan sertakan baris baru yang kosong di akhir
-                            if (dgvAdminMeja.Rows[i].IsNewRow) continue;
-
-                            for (int j = 0; j < dgvAdminMeja.Columns.Count; j++)
-                            {
-                                // Pastikan nilai tidak null sebelum mengambil Value
-                                var cellValue = dgvAdminMeja.Rows[i].Cells[j].Value;
-                                worksheet.Cell(i + 2, j + 1).Value = cellValue != null ? cellValue.ToString() : "";
-                            }
-                        }
-
-                        // Simpan workbook ke file yang dipilih pengguna
-                        workbook.SaveAs(saveFileDialog.FileName);
+                        if (row.IsNewRow) continue;
+                        IEnumerable<string> fields = row.Cells.Cast<DataGridViewCell>().Select(cell => $"\"{cell.Value?.ToString()?.Replace("\"", "\"\"") ?? ""}\"");
+                        sb.AppendLine(string.Join(",", fields));
                     }
 
+                    System.IO.File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
                     MessageBox.Show("Data berhasil diekspor!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -524,9 +505,9 @@ namespace PABDCAFE
                 }
             }
         }
-    
 
-     
+
+
         private bool ValidateCsvRow(string[] data, int lineNumber, out string nomorMejaCsv, out int kapasitasCsv, ref List<string> errorDetails)
         {
             nomorMejaCsv = "";
@@ -563,6 +544,6 @@ namespace PABDCAFE
 
         }
 
-        
+
     }
 }
