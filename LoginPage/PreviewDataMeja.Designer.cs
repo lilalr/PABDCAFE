@@ -63,6 +63,7 @@
             this.Controls.Add(this.dgvPreview);
             this.Name = "PreviewDataMeja";
             this.Text = "PreviewDataMeja";
+            this.Load += new System.EventHandler(this.PreviewDataMeja_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvPreview)).EndInit();
             this.ResumeLayout(false);
 

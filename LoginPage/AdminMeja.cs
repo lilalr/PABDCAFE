@@ -1,4 +1,6 @@
-﻿using Org.BouncyCastle.Asn1.Cmp;
+﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -363,6 +365,46 @@ namespace PABDCAFE
                 InvalidateAdminMejaCache();
                 AdminMeja_Load(null, null);
                 ClearForm();
+            }
+        }
+
+        private void PreviewDataMeja(string filePath)
+        {
+            try
+            {
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    IWorkbook workbook = new XSSFWorkbook(fs);
+                    ISheet sheet = workbook.GetSheetAt(0);
+                    DataTable dt = new DataTable();
+
+                    IRow headerRow = sheet.GetRow(0);
+                    foreach (var cell in headerRow.Cells)
+                        dt.Columns.Add(cell.ToString());
+                    for (int i = 1; i <= sheet.LastRowNum; i++)
+                    {
+                        IRow datarow = sheet.GetRow(i);
+                        DataRow newRow = dt.NewRow();
+                        int cellIndex = 0;
+                        foreach (var cell in datarow.Cells)
+                        {
+                            newRow[cellIndex] = cell.ToString();
+                            cellIndex++;
+                        }
+                        dt.Rows.Add(newRow);
+
+                    }
+                    PreviewDataMeja previewForm = new PreviewDataMeja(dt, this.connectionString);
+                    if (previewForm.ShowDialog() == DialogResult.OK && previewForm.ImportConfirmed)
+                    {
+                        InvalidateAdminMejaCache();
+                        AdminMeja_Load(null, null);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error reading the Excel file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
