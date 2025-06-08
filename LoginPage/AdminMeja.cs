@@ -418,9 +418,9 @@ namespace PABDCAFE
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "CSV File (*.csv)|*.csv",
-                Title = "Simpan Data Meja sebagai CSV",
-                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx", // Filter diubah ke .xlsx
+                Title = "Simpan Data Meja sebagai Excel",  // Judul diubah
+                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx" // Ekstensi file diubah
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
