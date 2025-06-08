@@ -1,4 +1,5 @@
-﻿using NPOI.SS.UserModel;
+﻿using LoginPage;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
@@ -352,7 +353,7 @@ namespace PABDCAFE
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 // Filter diatur untuk file Excel (.xlsx), sesuai modul 
-                Filter = "CSV File (.csv)|.csv",
+                Filter = "CSV File (*.csv)|*.csv",
                 Title = "Pilih File CSV untuk Impor Data Meja"
             };
 
@@ -415,95 +416,10 @@ namespace PABDCAFE
             }
         }
 
-        private void PreviewDataMeja(string filePath)
-        {
-            try
-            {
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    IWorkbook workbook = new XSSFWorkbook(fs); // Membuka workbook Excel 
-                    ISheet sheet = workbook.GetSheetAt(0);     // Mendapatkan worksheet pertama 
-                    DataTable dt = new DataTable();
-
-                    // Membaca header kolom dari baris pertama Excel 
-                    IRow headerRow = sheet.GetRow(0);
-                    foreach (var cell in headerRow.Cells)
-                    {
-                        dt.Columns.Add(cell.ToString());
-                    }
-
-                    // Membaca sisa data dari baris berikutnya 
-                    for (int i = 1; i <= sheet.LastRowNum; i++)
-                    {
-                        IRow dataRow = sheet.GetRow(i);
-                        if (dataRow == null) continue;
-
-                        DataRow newRow = dt.NewRow();
-                        // Iterasi berdasarkan header agar jumlah kolom konsisten
-                        for (int cellIndex = 0; cellIndex < headerRow.LastCellNum; cellIndex++)
-                        {
-                            newRow[cellIndex] = dataRow.GetCell(cellIndex)?.ToString() ?? "";
-                        }
-                        dt.Rows.Add(newRow);
-                    }
-
-                    // Membuka form preview dan mengirimkan DataTable 
-                    PreviewDataMeja previewForm = new PreviewDataMeja(dt, this.connectionString);
-
-                    // Tampilkan form preview sebagai dialog 
-                    if (previewForm.ShowDialog() == DialogResult.OK && previewForm.ImportConfirmed)
-                    {
-                        // Jika import berhasil, refresh data di grid utama
-                        InvalidateAdminMejaCache();
-                        AdminMeja_Load(null, null);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Menangani error jika gagal membaca file Excel 
-                MessageBox.Show("Error saat membaca file Excel: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void btnExport_Click(object sender, EventArgs e)
         {
-            if (dgvAdminMeja.Rows.Count == 0)
-            {
-                MessageBox.Show("Tidak ada data untuk diekspor.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "CSV File (.csv)|.csv",
-                Title = "Simpan Data Meja sebagai CSV",
-                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    StringBuilder sb = new StringBuilder();
-                    IEnumerable<string> columnHeaders = dgvAdminMeja.Columns.Cast<DataGridViewColumn>().Select(column => $"\"{column.HeaderText}\"");
-                    sb.AppendLine(string.Join(",", columnHeaders));
-
-                    foreach (DataGridViewRow row in dgvAdminMeja.Rows)
-                    {
-                        if (row.IsNewRow) continue;
-                        IEnumerable<string> fields = row.Cells.Cast<DataGridViewCell>().Select(cell => $"\"{cell.Value?.ToString()?.Replace("\"", "\"\"") ?? ""}\"");
-                        sb.AppendLine(string.Join(",", fields));
-                    }
-
-                    System.IO.File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
-                    MessageBox.Show("Data berhasil diekspor!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saat mengekspor data: " + ex.Message, "Kesalahan Export", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+             ReportViewerMeja form = new ReportViewerMeja();
+            form.ShowDialog();
         }
 
 

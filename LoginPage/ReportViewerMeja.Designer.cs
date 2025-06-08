@@ -1,4 +1,4 @@
-﻿namespace LoginPage
+﻿namespace PABDCAFE
 {
     partial class ReportViewerMeja
     {
@@ -28,36 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dgvReport = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvReport)).BeginInit();
+            this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
             this.SuspendLayout();
             // 
-            // dgvReport
+            // reportViewer1
             // 
-            this.dgvReport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvReport.Location = new System.Drawing.Point(93, 137);
-            this.dgvReport.Name = "dgvReport";
-            this.dgvReport.RowHeadersWidth = 51;
-            this.dgvReport.RowTemplate.Height = 24;
-            this.dgvReport.Size = new System.Drawing.Size(618, 163);
-            this.dgvReport.TabIndex = 0;
+            this.reportViewer1.Location = new System.Drawing.Point(12, 12);
+            this.reportViewer1.Name = "reportViewer1";
+            this.reportViewer1.ServerReport.BearerToken = null;
+            this.reportViewer1.Size = new System.Drawing.Size(776, 310);
+            this.reportViewer1.TabIndex = 0;
+            this.reportViewer1.Load += new System.EventHandler(this.reportViewer1_Load);
             // 
             // ReportViewerMeja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.dgvReport);
+            this.Controls.Add(this.reportViewer1);
             this.Name = "ReportViewerMeja";
             this.Text = "ReportViewerMeja";
             this.Load += new System.EventHandler(this.ReportViewerMeja_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvReport)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.DataGridView dgvReport;
+        private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
     }
 }
