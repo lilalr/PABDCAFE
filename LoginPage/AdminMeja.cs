@@ -50,6 +50,8 @@ namespace PABDCAFE
 
         private void AdminMeja_Load(object sender, EventArgs e)
         {
+            EnsureIndexes();
+
             DataTable dt = _cache.Get(CacheKey) as DataTable;
             if (dt == null)
             {
@@ -82,6 +84,72 @@ namespace PABDCAFE
             else
             {
                 dgvAdminMeja.DataSource = dt;
+            }
+        }
+
+        private void EnsureIndexes()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    var indexScript = @"
+            IF OBJECT_ID('dbo.Meja', 'U') IS NOT NULL
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Kapasitas')
+                    CREATE NONCLUSTERED INDEX idx_Meja_Kapasitas ON dbo.Meja(Kapasitas);
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Status_Meja')
+                    CREATE NONCLUSTERED INDEX idx_Meja_Status_Meja ON dbo.Meja(Status_Meja);
+            END";
+
+                    using (var cmd = new SqlCommand(indexScript, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            
+            
+        }
+
+        private void AnalyzeQuery(string sqlQuery)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    // Baris ini akan menangkap pesan statistik dari SQL Server
+                    // dan menampilkannya di MessageBox
+                    conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
+
+                    conn.Open();
+
+                    // Membungkus query asli dengan perintah statistik
+                    var wrappedQuery = $@"
+                       SET STATISTICS IO ON;
+                       SET STATISTICS TIME ON;
+                       {sqlQuery}
+                       SET STATISTICS TIME OFF;
+                       SET STATISTICS IO OFF;";
+
+                    using (var cmd = new SqlCommand(wrappedQuery, conn))
+                    {
+                        // Menggunakan ExecuteNonQuery karena kita tidak mengharapkan data kembali,
+                        // hanya pesan statistik dari InfoMessage.
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal melakukan analisis query: " + ex.Message, "Kesalahan Analisis", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -468,6 +536,13 @@ namespace PABDCAFE
                 isValid = false;
             }
             return isValid;
+        }
+
+        private void btnAnalisis_Click(object sender, EventArgs e)
+        {
+            string queryToAnalyze = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja ORDER BY Nomor_Meja ASC";
+            AnalyzeQuery(queryToAnalyze);
+
         }
 
         
