@@ -116,7 +116,6 @@ namespace PABDCAFE
                 MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             
-            
         }
 
         private void AnalyzeQuery(string sqlQuery)

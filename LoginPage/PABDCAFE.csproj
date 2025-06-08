@@ -132,6 +132,14 @@
     <Compile Include="CustomerPage.Designer.cs">
       <DependentUpon>CustomerPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataSet1.cs">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -164,6 +172,12 @@
     <Compile Include="AdminReservasi.Designer.cs">
       <DependentUpon>AdminReservasi.cs</DependentUpon>
     </Compile>
+    <Compile Include="ReportViewerMeja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportViewerMeja.Designer.cs">
+      <DependentUpon>ReportViewerMeja.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AdminMeja.resx">
       <DependentUpon>AdminMeja.cs</DependentUpon>
     </EmbeddedResource>
@@ -179,6 +193,7 @@
     <EmbeddedResource Include="LoginPage.resx">
       <DependentUpon>LoginPage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MejaReport1.rdlc" />
     <EmbeddedResource Include="PreviewDataMeja.resx">
       <DependentUpon>PreviewDataMeja.cs</DependentUpon>
     </EmbeddedResource>
@@ -198,6 +213,20 @@
     <EmbeddedResource Include="AdminReservasi.resx">
       <DependentUpon>AdminReservasi.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ReportViewerMeja.resx">
+      <DependentUpon>ReportViewerMeja.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="DataSet1.xsc">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet1.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DataSet1.xss">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
