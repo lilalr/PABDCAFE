@@ -165,7 +165,7 @@ namespace PABDCAFE
             // System.Diagnostics.Debug.WriteLine("Cache AvailableMeja invalidated.");
         }
 
-        
+
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
@@ -848,7 +848,7 @@ namespace PABDCAFE
 
         private void dtpWaktuReservasi_ValueChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void btnExport_Click(object sender, EventArgs e)
@@ -926,64 +926,7 @@ namespace PABDCAFE
 
         private void btnAnalisis_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return;
 
-            var queryToAnalyze = "SELECT Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi WHERE Nomor_Meja = '01' ORDER BY Waktu_Reservasi DESC";
-
-            StringBuilder statisticsInfo = new StringBuilder();
-            statisticsInfo.AppendLine("SQL Server Execution Times:");
-
-            EventHandler<SqlInfoMessageEventArgs> infoMessageHandler = null;
-
-            try
-            {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-
-                infoMessageHandler = (s, args) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(args.Message) &&
-                        (args.Message.Contains("SQL Server parse and compile time") ||
-                         args.Message.Contains("Table") ||
-                         args.Message.Contains("CPU time") ||
-                         args.Message.Contains("elapsed time")))
-                    {
-                        statisticsInfo.AppendLine(args.Message);
-                    }
-                };
-                conn.InfoMessage += infoMessageHandler;
-
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandTimeout = 30;
-
-                    cmd.CommandText = "SET STATISTICS IO ON; SET STATISTICS TIME ON;";
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = queryToAnalyze;
-                    cmd.ExecuteReader().Close();
-
-                    cmd.CommandText = "SET STATISTICS IO OFF; SET STATISTICS TIME OFF;";
-                    cmd.ExecuteNonQuery();
-                }
-
-                MessageBox.Show(statisticsInfo.ToString(), "STATISTICS INFO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (SqlException sqlEx)
-            {
-                MessageBox.Show($"Kesalahan SQL:\n{sqlEx.Message}", "Kesalahan Analisis SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Terjadi kesalahan umum:\n{ex.Message}", "Kesalahan Analisis", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn != null && infoMessageHandler != null)
-                {
-                    conn.InfoMessage -= infoMessageHandler;
-                }
-                if (conn.State == ConnectionState.Open) conn.Close();
-            }
         }
     }
 }
