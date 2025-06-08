@@ -11,6 +11,7 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ClosedXML.Excel;
 using static System.Net.WebRequestMethods;
 
 namespace PABDCAFE
@@ -477,27 +478,45 @@ namespace PABDCAFE
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Excel Workbook (*.xlsx)|*.xlsx", // Filter diubah ke .xlsx
-                Title = "Simpan Data Meja sebagai Excel",  // Judul diubah
-                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx" // Ekstensi file diubah
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                Title = "Simpan Data Meja sebagai Excel",
+                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    StringBuilder sb = new StringBuilder();
-                    IEnumerable<string> columnHeaders = dgvAdminMeja.Columns.Cast<DataGridViewColumn>().Select(column => $"\"{column.HeaderText}\"");
-                    sb.AppendLine(string.Join(",", columnHeaders));
-
-                    foreach (DataGridViewRow row in dgvAdminMeja.Rows)
+                    // Buat Workbook (file Excel) baru
+                    using (var workbook = new XLWorkbook())
                     {
-                        if (row.IsNewRow) continue;
-                        IEnumerable<string> fields = row.Cells.Cast<DataGridViewCell>().Select(cell => $"\"{cell.Value?.ToString()?.Replace("\"", "\"\"") ?? ""}\"");
-                        sb.AppendLine(string.Join(",", fields));
+                        // Buat Worksheet (lembar kerja) baru
+                        var worksheet = workbook.Worksheets.Add("Data Meja");
+
+                        // Tambahkan Header dari DataGridView ke baris pertama worksheet
+                        for (int i = 0; i < dgvAdminMeja.Columns.Count; i++)
+                        {
+                            worksheet.Cell(1, i + 1).Value = dgvAdminMeja.Columns[i].HeaderText;
+                        }
+
+                        // Tambahkan Data dari DataGridView ke baris berikutnya
+                        for (int i = 0; i < dgvAdminMeja.Rows.Count; i++)
+                        {
+                            // Jangan sertakan baris baru yang kosong di akhir
+                            if (dgvAdminMeja.Rows[i].IsNewRow) continue;
+
+                            for (int j = 0; j < dgvAdminMeja.Columns.Count; j++)
+                            {
+                                // Pastikan nilai tidak null sebelum mengambil Value
+                                var cellValue = dgvAdminMeja.Rows[i].Cells[j].Value;
+                                worksheet.Cell(i + 2, j + 1).Value = cellValue != null ? cellValue.ToString() : "";
+                            }
+                        }
+
+                        // Simpan workbook ke file yang dipilih pengguna
+                        workbook.SaveAs(saveFileDialog.FileName);
                     }
 
-                    System.IO.File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
                     MessageBox.Show("Data berhasil diekspor!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
