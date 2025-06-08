@@ -28,7 +28,7 @@ namespace PABDCAFE
 
         private void PreviewDataMeja_Load(object sender, EventArgs e)
         {
-            dgvPreview.AutoResizeColumns();
+            dgvPreview.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
 
         public bool ValidateRow(DataRow row, int lineNumber, out string errorMessage)
@@ -136,7 +136,5 @@ namespace PABDCAFE
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-
-       
     }
 }
