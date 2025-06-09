@@ -38,7 +38,7 @@
             this.lblNomor = new System.Windows.Forms.Label();
             this.lblKapasitas = new System.Windows.Forms.Label();
             this.btnImport = new System.Windows.Forms.Button();
-            this.btnExport = new System.Windows.Forms.Button();
+            this.btnReport = new System.Windows.Forms.Button();
             this.btnAnalisis = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminMeja)).BeginInit();
             this.SuspendLayout();
@@ -139,15 +139,15 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // btnExport
+            // btnReport
             // 
-            this.btnExport.Location = new System.Drawing.Point(550, 142);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(92, 30);
-            this.btnExport.TabIndex = 13;
-            this.btnExport.Text = "Export";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            this.btnReport.Location = new System.Drawing.Point(550, 142);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(92, 30);
+            this.btnReport.TabIndex = 13;
+            this.btnReport.Text = "Report";
+            this.btnReport.UseVisualStyleBackColor = true;
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
             // 
             // btnAnalisis
             // 
@@ -166,7 +166,7 @@
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.btnAnalisis);
-            this.Controls.Add(this.btnExport);
+            this.Controls.Add(this.btnReport);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.lblKapasitas);
             this.Controls.Add(this.lblNomor);
@@ -198,7 +198,7 @@
         private System.Windows.Forms.Label lblNomor;
         private System.Windows.Forms.Label lblKapasitas;
         private System.Windows.Forms.Button btnImport;
-        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Button btnReport;
         private System.Windows.Forms.Button btnAnalisis;
     }
 }

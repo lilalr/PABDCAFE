@@ -1,7 +1,5 @@
-﻿using LoginPage;
-using NPOI.SS.UserModel;
+﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,17 +7,18 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
+using Microsoft.Reporting.WinForms;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static System.Net.WebRequestMethods;
 
+// Namespace disesuaikan dengan nama proyek Anda
 namespace PABDCAFE
 {
     public partial class AdminMeja : Form
     {
+        // Variabel-variabel utama kelas
         private readonly string connectionString;
-        private SqlConnection conn;
         private readonly MemoryCache _cache = MemoryCache.Default;
         private readonly CacheItemPolicy _policy = new CacheItemPolicy
         {
@@ -27,6 +26,7 @@ namespace PABDCAFE
         };
         private const string CacheKey = "AdminMeja";
 
+        // Konstruktor Form
         public AdminMeja(string connStr)
         {
             InitializeComponent();
@@ -36,55 +36,73 @@ namespace PABDCAFE
                 throw new ArgumentNullException(nameof(connStr), "String koneksi tidak boleh null.");
             }
             this.connectionString = connStr;
-            this.conn = new SqlConnection(this.connectionString);
-
-
         }
 
-        void ClearForm()
-        {
-            txtNomor.Clear();
-            txtKapasitas.Clear();
-            dgvAdminMeja.ClearSelection();
-            txtNomor.Focus();
-        }
 
         private void AdminMeja_Load(object sender, EventArgs e)
         {
-            EnsureIndexes();
+            try
+            {
+                SetupDataGridView();
+                EnsureIndexes();
+                LoadAndDisplayData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi error saat memuat form: " + ex.Message, "Kesalahan Form Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        private void SetupDataGridView()
+        {
+            dgvAdminMeja.AutoGenerateColumns = false;
+            dgvAdminMeja.Columns.Clear();
+
+            dgvAdminMeja.Columns.Add("Nomor_Meja", "Nomor Meja");
+            dgvAdminMeja.Columns.Add("Kapasitas", "Kapasitas");
+            dgvAdminMeja.Columns.Add("Status_Meja", "Status");
+
+            dgvAdminMeja.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void LoadAndDisplayData()
+        {
             DataTable dt = _cache.Get(CacheKey) as DataTable;
             if (dt == null)
             {
-                if (this.conn == null)
-                {
-                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
                 try
                 {
-                    string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja ORDER BY Nomor_Meja ASC";
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
                     dt = new DataTable();
-                    da.Fill(dt);
-                    dgvAdminMeja.DataSource = dt;
+                    string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja ORDER BY Nomor_Meja ASC";
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        SqlDataAdapter da = new SqlDataAdapter(query, connection);
+                        da.Fill(dt);
+                    }
                     _cache.Set(CacheKey, dt, _policy);
-
-                    if (dgvAdminMeja.Columns.Contains("Nomor_Meja"))
-                        dgvAdminMeja.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
-                    if (dgvAdminMeja.Columns.Contains("Status_Meja"))
-                        dgvAdminMeja.Columns["Status_Meja"].HeaderText = "Status";
-                    if (dgvAdminMeja.Columns.Contains("Kapasitas"))
-                        dgvAdminMeja.Columns["Kapasitas"].HeaderText = "Kapasitas";
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error memuat data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
-            else
+            TampilkanDataDiGrid(dt);
+        }
+
+        private void TampilkanDataDiGrid(DataTable dt)
+        {
+            dgvAdminMeja.Rows.Clear();
+            if (dt != null)
             {
-                dgvAdminMeja.DataSource = dt;
+                foreach (DataRow barisData in dt.Rows)
+                {
+                    dgvAdminMeja.Rows.Add(
+                        barisData["Nomor_Meja"],
+                        barisData["Kapasitas"],
+                        barisData["Status_Meja"]
+                    );
+                }
             }
         }
 
@@ -95,17 +113,14 @@ namespace PABDCAFE
                 using (var conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     var indexScript = @"
-            IF OBJECT_ID('dbo.Meja', 'U') IS NOT NULL
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Kapasitas')
-                    CREATE NONCLUSTERED INDEX idx_Meja_Kapasitas ON dbo.Meja(Kapasitas);
-
-                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Status_Meja')
-                    CREATE NONCLUSTERED INDEX idx_Meja_Status_Meja ON dbo.Meja(Status_Meja);
-            END";
-
+                    IF OBJECT_ID('dbo.Meja', 'U') IS NOT NULL
+                    BEGIN
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Kapasitas')
+                            CREATE NONCLUSTERED INDEX idx_Meja_Kapasitas ON dbo.Meja(Kapasitas);
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Meja_Status_Meja')
+                            CREATE NONCLUSTERED INDEX idx_Meja_Status_Meja ON dbo.Meja(Status_Meja);
+                    END";
                     using (var cmd = new SqlCommand(indexScript, conn))
                     {
                         cmd.ExecuteNonQuery();
@@ -116,7 +131,6 @@ namespace PABDCAFE
             {
                 MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
 
         private void AnalyzeQuery(string sqlQuery)
@@ -125,19 +139,18 @@ namespace PABDCAFE
             {
                 using (var conn = new SqlConnection(connectionString))
                 {
-                    // Baris ini akan menangkap pesan statistik dari SQL Server
-                    // dan menampilkannya di MessageBox
+              
                     conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
 
                     conn.Open();
 
                     // Membungkus query asli dengan perintah statistik
                     var wrappedQuery = $@"
-                       SET STATISTICS IO ON;
-                       SET STATISTICS TIME ON;
-                       {sqlQuery}
-                       SET STATISTICS TIME OFF;
-                       SET STATISTICS IO OFF;";
+                SET STATISTICS IO ON;
+                SET STATISTICS TIME ON;
+                {sqlQuery}
+                SET STATISTICS TIME OFF;
+                SET STATISTICS IO OFF;";
 
                     using (var cmd = new SqlCommand(wrappedQuery, conn))
                     {
@@ -153,6 +166,8 @@ namespace PABDCAFE
             }
         }
 
+
+
         private void InvalidateAdminMejaCache()
         {
             if (_cache.Contains(CacheKey))
@@ -161,14 +176,12 @@ namespace PABDCAFE
             }
         }
 
-        private bool IsConnectionReady()
+        void ClearForm()
         {
-            if (this.conn == null || string.IsNullOrWhiteSpace(this.conn.ConnectionString))
-            {
-                MessageBox.Show("Koneksi database tidak dikonfigurasi.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            return true;
+            txtNomor.Clear();
+            txtKapasitas.Clear();
+            dgvAdminMeja.ClearSelection();
+            txtNomor.Focus();
         }
 
         bool ValidasiInput(out string nomorMeja, out int kapasitas, out string errorMsg)
@@ -188,71 +201,48 @@ namespace PABDCAFE
             return string.IsNullOrEmpty(errorMsg);
         }
 
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            AdminPage ap = new AdminPage(this.connectionString);
-            ap.Show();
-            this.Close();
-        }
 
-        private void dgvAdminMeja_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.RowIndex < dgvAdminMeja.Rows.Count && !dgvAdminMeja.Rows[e.RowIndex].IsNewRow)
-            {
-                DataGridViewRow row = dgvAdminMeja.Rows[e.RowIndex];
-                txtNomor.Text = row.Cells["Nomor_Meja"].Value?.ToString() ?? "";
-                txtKapasitas.Text = row.Cells["Kapasitas"].Value?.ToString() ?? "";
-            }
-        }
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return;
             if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // C# menangani transaksi
             using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
-                conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
-
+                SqlTransaction transaction = null;
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand("TambahMeja", conn, transaction)) // Kaitkan command dengan transaksi
+                    conn.Open();
+                    transaction = conn.BeginTransaction();
+
+                    using (SqlCommand cmd = new SqlCommand("TambahMeja", conn, transaction))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
                         cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
                         cmd.ExecuteNonQuery();
                     }
-
-                    transaction.Commit(); // Commit jika berhasil
-
+                    transaction.Commit();
                     MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     InvalidateAdminMejaCache();
-                    AdminMeja_Load(null, null);
+                    LoadAndDisplayData();
                     ClearForm();
-                }
-                catch (SqlException sqlEx)
-                {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    transaction?.Rollback();
+                    MessageBox.Show("Error saat menambah data: " + ex.Message, "Transaksi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return;
             if (!ValidasiInput(out string nomorMeja, out int kapasitas, out string errMsg))
             {
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -261,42 +251,35 @@ namespace PABDCAFE
 
             using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
-                conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
-
+                SqlTransaction transaction = null;
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand("EditMeja", conn, transaction)) // Kaitkan command dengan transaksi
+                    conn.Open();
+                    transaction = conn.BeginTransaction();
+                    using (SqlCommand cmd = new SqlCommand("EditMeja", conn, transaction))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
                         cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
                         cmd.ExecuteNonQuery();
                     }
-
-                    transaction.Commit(); // Commit jika berhasil
-
+                    transaction.Commit();
                     MessageBox.Show("Kapasitas meja berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     InvalidateAdminMejaCache();
-                    AdminMeja_Load(null, null);
+                    LoadAndDisplayData();
                     ClearForm();
-                }
-                catch (SqlException sqlEx)
-                {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    transaction?.Rollback();
+                    MessageBox.Show("Error saat mengubah data: " + ex.Message, "Transaksi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
         {
-            if (!IsConnectionReady()) return;
             string nomorMeja = txtNomor.Text.Trim();
             if (string.IsNullOrEmpty(nomorMeja))
             {
@@ -310,147 +293,106 @@ namespace PABDCAFE
 
             using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
-                conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction(); // Memulai transaksi
+                SqlTransaction transaction = null;
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand("HapusMeja", conn, transaction)) // Kaitkan command dengan transaksi
+                    conn.Open();
+                    transaction = conn.BeginTransaction();
+                    int rowsAffected;
+                    using (SqlCommand cmd = new SqlCommand("HapusMeja", conn, transaction))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                        rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
 
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Data tidak ditemukan atau tidak ada data yang dihapus.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Data tidak ditemukan.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
-                    transaction.Commit(); // Commit jika berhasil
-
                     InvalidateAdminMejaCache();
-                    AdminMeja_Load(null, null);
+                    LoadAndDisplayData();
                     ClearForm();
-                }
-                catch (SqlException sqlEx)
-                {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Error Database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback(); // Batalkan (rollback) jika ada error
-                    MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    transaction?.Rollback();
+                    MessageBox.Show("Error saat menghapus data: " + ex.Message, "Transaksi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
         private void btnImport_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                // Filter diatur untuk file Excel (.xlsx), sesuai modul 
-                Filter = "CSV File (*.csv)|*.csv",
-                Title = "Pilih File CSV untuk Impor Data Meja"
+                // Filter diubah untuk mencari file Excel
+                Filter = "Excel Files (*.xlsx)|*.xlsx",
+                Title = "Pilih File Excel untuk Impor Data Meja"
             };
 
-            // Jika pengguna memilih file dan klik OK, panggil metode PreviewData 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string filePath = openFileDialog.FileName;
                 try
                 {
-                    // 2. Baca semua baris dari file CSV
-                    string[] lines = System.IO.File.ReadAllLines(filePath);
-
-                    if (lines.Length == 0)
-                    {
-                        MessageBox.Show("File CSV kosong.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-
-                    // 3. Buat DataTable secara manual dari data CSV
                     DataTable dt = new DataTable();
 
-                    // Ambil header dari baris pertama dan buat kolom
-                    string[] headers = lines[0].Split(',');
-                    foreach (string header in headers)
+                    // Menggunakan NPOI untuk membaca file .xlsx
+                    using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read))
                     {
-                        dt.Columns.Add(header.Trim());
-                    }
+                        IWorkbook workbook = new XSSFWorkbook(fs);
+                        ISheet sheet = workbook.GetSheetAt(0); // Ambil sheet pertama
 
-                    // Isi baris data (mulai dari baris kedua)
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        string[] fields = lines[i].Split(',');
-                        DataRow row = dt.NewRow();
-                        for (int j = 0; j < headers.Length; j++)
+                        // Baca baris header untuk membuat kolom di DataTable
+                        IRow headerRow = sheet.GetRow(0);
+                        if (headerRow == null) throw new Exception("File Excel tidak memiliki baris header.");
+
+                        foreach (ICell cell in headerRow.Cells)
                         {
-                            // Pastikan tidak error jika baris data lebih pendek dari header
-                            if (j < fields.Length)
-                            {
-                                row[j] = fields[j].Trim();
-                            }
+                            dt.Columns.Add(cell.ToString().Trim());
                         }
-                        dt.Rows.Add(row);
+
+                        // Baca sisa baris untuk data
+                        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+                        {
+                            IRow row = sheet.GetRow(i);
+                            if (row == null || row.Cells.All(c => c.CellType == CellType.Blank)) continue;
+
+                            DataRow dataRow = dt.NewRow();
+                            for (int j = 0; j < headerRow.LastCellNum; j++)
+                            {
+                                ICell cell = row.GetCell(j);
+                                dataRow[j] = cell?.ToString() ?? string.Empty;
+                            }
+                            dt.Rows.Add(dataRow);
+                        }
                     }
 
-                    // 4. Kirim DataTable yang sudah jadi ke form preview
-                    // Form PreviewDataMeja tidak perlu tahu datanya dari mana (Excel/CSV)
+                    // Tampilkan form preview dengan data dari Excel
                     PreviewDataMeja previewForm = new PreviewDataMeja(dt, this.connectionString);
-
                     if (previewForm.ShowDialog() == DialogResult.OK && previewForm.ImportConfirmed)
                     {
-                        // Jika import berhasil dari form preview, refresh data di sini
                         InvalidateAdminMejaCache();
-                        AdminMeja_Load(null, null);
+                        LoadAndDisplayData();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error saat membaca file CSV: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error saat membaca file Excel: " + ex.Message, "Error Impor", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        private void btnReport_Click(object sender, EventArgs e)
         {
-             ReportViewerMeja form = new ReportViewerMeja();
+            ReportViewerMeja form = new ReportViewerMeja();
             form.ShowDialog();
-        }
-
-
-
-        private bool ValidateCsvRow(string[] data, int lineNumber, out string nomorMejaCsv, out int kapasitasCsv, ref List<string> errorDetails)
-        {
-            nomorMejaCsv = "";
-            kapasitasCsv = 0;
-            bool isValid = true;
-            if (data.Length < 2)
-            {
-                errorDetails.Add($"Baris {lineNumber}: Format tidak valid. Harusnya 'Nomor_Meja,Kapasitas'.");
-                return false;
-            }
-            string tempNomorMeja = data[0].Trim();
-            string tempKapasitasStr = data[1].Trim();
-            if (!Regex.IsMatch(tempNomorMeja, @"^\d{2}$"))
-            {
-                errorDetails.Add($"Baris {lineNumber}: Nomor Meja '{tempNomorMeja}' tidak valid.");
-                isValid = false;
-            }
-            else
-            {
-                nomorMejaCsv = tempNomorMeja;
-            }
-            if (!int.TryParse(tempKapasitasStr, out kapasitasCsv) || kapasitasCsv < 1 || kapasitasCsv > 99)
-            {
-                errorDetails.Add($"Baris {lineNumber}: Kapasitas '{tempKapasitasStr}' tidak valid.");
-                isValid = false;
-            }
-            return isValid;
         }
 
         private void btnAnalisis_Click(object sender, EventArgs e)
@@ -460,6 +402,29 @@ namespace PABDCAFE
 
         }
 
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AdminPage ap = new AdminPage(this.connectionString);
+                ap.Show();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal kembali ke halaman admin: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dgvAdminMeja_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < dgvAdminMeja.Rows.Count)
+            {
+                DataGridViewRow row = dgvAdminMeja.Rows[e.RowIndex];
+                txtNomor.Text = row.Cells["Nomor_Meja"].Value?.ToString() ?? "";
+                txtKapasitas.Text = row.Cells["Kapasitas"].Value?.ToString() ?? "";
+            }
+        }
 
     }
 }
