@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClosedXML.Excel; // Tambahkan ini di bagian atas file .cs Anda
+using System;
 using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
@@ -42,7 +43,6 @@ namespace PABDCAFE
             this.connectionString = connStr;
             this.conn = new SqlConnection(this.connectionString);
 
-            SetupDateTimePicker();
 
             // Asumsikan cbxNomorMeja adalah nama kontrol ComboBox di designer
             if (this.cbxNomorMeja != null)
@@ -165,16 +165,7 @@ namespace PABDCAFE
             // System.Diagnostics.Debug.WriteLine("Cache AvailableMeja invalidated.");
         }
 
-        private void SetupDateTimePicker()
-        {
-            // Asumsikan dtpWaktuReservasi adalah nama kontrol DateTimePicker di designer
-            if (this.dtpWaktuReservasi != null)
-            {
-                this.dtpWaktuReservasi.Format = DateTimePickerFormat.Custom;
-                this.dtpWaktuReservasi.CustomFormat = "yyyy-MM-dd HH:mm";
-                this.dtpWaktuReservasi.Value = DateTime.Now;
-            }
-        }
+
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
@@ -656,67 +647,129 @@ namespace PABDCAFE
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
-                Title = "Pilih File CSV untuk Impor"
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                Title = "Pilih File Excel untuk Impor"
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openFileDialog.FileName;
-                int successCount = 0;
-                int failCount = 0;
-                List<string> errorDetails = new List<string>();
+                List<string> errorDetails = new List<string>(); // Akumulasi semua error
+                bool hasErrors = false; // Flag untuk menandai apakah ada error
+
+                // 1. Konfirmasi Impor
+                DialogResult confirmResult = MessageBox.Show(
+                    "Yakin ingin mengimpor data dari file Excel ini?\nProses ini akan menambah data baru ke database.",
+                    "Konfirmasi Impor",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (confirmResult == DialogResult.No)
+                {
+                    return; // Batalkan proses jika pengguna memilih 'No'
+                }
+
+                SqlTransaction transaction = null; // Deklarasi transaksi di luar try-catch agar bisa diakses di finally
 
                 try
                 {
-                    string[] lines = File.ReadAllLines(filePath);
-                    if (lines.Length == 0)
+                    using (var workbook = new XLWorkbook(filePath))
                     {
-                        MessageBox.Show("File CSV kosong.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
+                        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(1);
 
-                    if (conn.State == ConnectionState.Closed) conn.Open();
+                        if (worksheet == null || worksheet.FirstRowUsed() == null)
+                        {
+                            MessageBox.Show("File Excel kosong atau tidak memiliki sheet yang dapat dibaca.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
 
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        string line = lines[i];
-                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        var firstRowUsed = worksheet.FirstRowUsed();
+                        var lastRowUsed = worksheet.LastRowUsed();
 
-                        string[] data = line.Split(',');
-                        if (data.Length >= 4) // Nama, Telp, Waktu, Meja
+                        int startDataRow = firstRowUsed.RowNumber();
+                        if (worksheet.Cell(firstRowUsed.RowNumber(), 1).Value.ToString().Trim().ToLower() == "nama costumer" ||
+                            worksheet.Cell(firstRowUsed.RowNumber(), 1).Value.ToString().Trim().ToLower() == "nama customer")
+                        {
+                            startDataRow++;
+                        }
+
+                        if (startDataRow > lastRowUsed.RowNumber())
+                        {
+                            MessageBox.Show("File Excel hanya berisi header atau kosong setelah header.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
+                        if (conn.State == ConnectionState.Closed) conn.Open();
+                        transaction = conn.BeginTransaction(); // Mulai transaksi database
+
+                        for (int i = startDataRow; i <= lastRowUsed.RowNumber(); i++)
                         {
                             try
                             {
-                                string namaCustomer = data[0].Trim();
-                                string noTelp = data[1].Trim();
-                                string waktuReservasiStr = data[2].Trim();
-                                string nomorMeja = data[3].Trim();
+                                string namaCustomer = worksheet.Cell(i, 1).GetValue<string>().Trim();
+                                string noTelp = worksheet.Cell(i, 2).GetValue<string>().Trim();
+                                string waktuReservasiRaw = worksheet.Cell(i, 3).GetValue<string>().Trim();
+                                string nomorMejaRaw = worksheet.Cell(i, 4).GetValue<string>().Trim();
+
+                                if (string.IsNullOrWhiteSpace(namaCustomer) && string.IsNullOrWhiteSpace(noTelp) &&
+                                    string.IsNullOrWhiteSpace(waktuReservasiRaw) && string.IsNullOrWhiteSpace(nomorMejaRaw))
+                                {
+                                    continue;
+                                }
+
                                 DateTime waktuReservasi;
+                                // Tambahkan lebih banyak format untuk TryParseExact jika diperlukan
+                                bool waktuParsed = DateTime.TryParseExact(waktuReservasiRaw, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd,MM,yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) || // Untuk 11,06,2025
+                                                   DateTime.TryParseExact(waktuReservasiRaw, "MM,dd,yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) || // Jika mungkin ada MM,dd,yyyy
+                                                   DateTime.TryParse(waktuReservasiRaw, out waktuReservasi);
 
-                                if (!DateTime.TryParseExact(waktuReservasiStr, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) &&
-                                    !DateTime.TryParse(waktuReservasiStr, out waktuReservasi))
+                                if (!waktuParsed)
                                 {
-                                    failCount++;
-                                    errorDetails.Add($"Baris {i + 1}: Format waktu '{waktuReservasiStr}' tidak valid. Data: {line}");
-                                    continue;
+                                    hasErrors = true;
+                                    errorDetails.Add($"Baris {i}: Format waktu '{waktuReservasiRaw}' tidak valid. Data: {namaCustomer}, {noTelp}, {waktuReservasiRaw}, {nomorMejaRaw}");
+                                    continue; // Lanjutkan ke baris berikutnya untuk mengumpulkan semua error
                                 }
 
-                                string csvRowError = "";
-                                if (string.IsNullOrWhiteSpace(namaCustomer)) csvRowError += "Nama kosong. ";
-                                if (!Regex.IsMatch(noTelp, @"^(\+62\d{8,12}|0\d{9,14})$")) csvRowError += "Format telepon salah. ";
-                                if (waktuReservasi < DateTime.Now.AddMinutes(-1)) csvRowError += "Waktu di masa lalu. ";
-                                if (waktuReservasi.Year != 2025) csvRowError += "Tahun harus 2025. ";
-                                if (string.IsNullOrWhiteSpace(nomorMeja) || !Regex.IsMatch(nomorMeja, @"^\d{2}$")) csvRowError += "Format Nomor Meja salah (harus 2 digit angka). ";
+                                string nomorMeja = nomorMejaRaw.Replace("'", "").Trim();
 
-                                if (!string.IsNullOrEmpty(csvRowError))
+                                // --- Validasi Data ---
+                                string rowError = "";
+                                if (string.IsNullOrWhiteSpace(namaCustomer)) rowError += "Nama kosong. ";
+                                if (!Regex.IsMatch(noTelp, @"^(\+62\d{8,12}|0\d{9,14})$")) rowError += "Format telepon salah. ";
+
+                                if (waktuReservasi.Date < DateTime.Today.Date)
                                 {
-                                    failCount++;
-                                    errorDetails.Add($"Baris {i + 1}: Validasi gagal - {csvRowError.Trim()} Data: {line}");
-                                    continue;
+                                    rowError += "Waktu di masa lalu. ";
+                                }
+                                if (waktuReservasi.Year != 2025) rowError += "Tahun harus 2025. ";
+
+                                if (string.IsNullOrWhiteSpace(nomorMeja) || !Regex.IsMatch(nomorMeja, @"^\d{2}$"))
+                                {
+                                    rowError += "Format Nomor Meja salah (harus 2 digit angka). ";
                                 }
 
-                                using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
+                                if (!string.IsNullOrEmpty(rowError))
+                                {
+                                    hasErrors = true;
+                                    errorDetails.Add($"Baris {i}: Validasi gagal - {rowError.Trim()}. Data: {namaCustomer}, {noTelp}, {waktuReservasi.ToString("yyyy-MM-dd")}, {nomorMejaRaw}");
+                                    continue; // Lanjutkan ke baris berikutnya untuk mengumpulkan semua error
+                                }
+
+                                // Jika tidak ada error di baris ini, tambahkan ke daftar untuk impor
+                                // (Kita tidak langsung ExecuteNonQuery di sini karena ingin "all or nothing")
+                                // Untuk pendekatan ini, kita akan menyimpan data yang valid dalam List<object[]>
+                                // dan baru akan mengimpornya setelah semua baris divalidasi.
+                                // Atau, kita bisa langsung execute dan roll back jika ada error.
+                                // Untuk kesederhanaan, kita akan langsung execute, tetapi melakukan rollback jika hasErrors adalah true.
+
+                                // Langsung execute karena kita akan menggunakan transaksi
+                                using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn, transaction)) // Tambahkan 'transaction'
                                 {
                                     cmd.CommandType = CommandType.StoredProcedure;
                                     cmd.Parameters.AddWithValue("@Nama_Customer", namaCustomer);
@@ -724,56 +777,156 @@ namespace PABDCAFE
                                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                                     cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
                                     cmd.ExecuteNonQuery();
-                                    successCount++;
+                                    // successCount++; // Tidak perlu hitung di sini, kita akan check hasErrors
                                 }
                             }
                             catch (SqlException sqlExInner)
                             {
-                                failCount++;
-                                errorDetails.Add($"Baris {i + 1}: Kesalahan SQL - {sqlExInner.Message.Split('\n')[0]}. Data: {line}");
+                                hasErrors = true;
+                                errorDetails.Add($"Baris {i}: Kesalahan SQL - {sqlExInner.Message.Split('\n')[0]}. Data: {worksheet.Cell(i, 1).GetValue<string>()}, {worksheet.Cell(i, 2).GetValue<string>()}, {worksheet.Cell(i, 3).GetValue<string>()}, {worksheet.Cell(i, 4).GetValue<string>()}");
                             }
                             catch (Exception exInner)
                             {
-                                failCount++;
-                                errorDetails.Add($"Baris {i + 1}: Kesalahan - {exInner.Message}. Data: {line}");
+                                hasErrors = true;
+                                errorDetails.Add($"Baris {i}: Kesalahan - {exInner.Message}. Data: {worksheet.Cell(i, 1).GetValue<string>()}, {worksheet.Cell(i, 2).GetValue<string>()}, {worksheet.Cell(i, 3).GetValue<string>()}, {worksheet.Cell(i, 4).GetValue<string>()}");
                             }
+                        } // end for loop
+
+                        // Tentukan apakah harus Commit atau Rollback transaksi
+                        if (hasErrors)
+                        {
+                            transaction.Rollback(); // Batalkan semua perubahan jika ada satu saja error
+                            MessageBox.Show("Impor dibatalkan karena ditemukan kesalahan pada data. Tidak ada data yang disimpan.", "Impor Gagal Total", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         else
                         {
-                            failCount++;
-                            errorDetails.Add($"Baris {i + 1}: Jumlah kolom tidak cukup. Data: {line}");
+                            transaction.Commit(); // Simpan semua perubahan jika tidak ada error sama sekali
+                            MessageBox.Show("Semua data dari file Excel berhasil diimpor.", "Impor Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
-                    }
+                    } // using XLWorkbook
 
+                }
+                catch (IOException ioEx)
+                {
+                    // Rollback jika ada IOException sebelum memulai iterasi
+                    if (transaction != null) transaction.Rollback();
+                    MessageBox.Show("Gagal membaca file atau file sedang dibuka: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    hasErrors = true; // Tandai ada error untuk pesan ringkasan
+                }
+                catch (Exception ex)
+                {
+                    // Rollback jika ada Exception umum
+                    if (transaction != null) transaction.Rollback();
+                    MessageBox.Show("Terjadi kesalahan saat impor: " + ex.Message, "Kesalahan Impor Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    hasErrors = true; // Tandai ada error untuk pesan ringkasan
+                }
+                finally
+                {
+                    // Pastikan koneksi ditutup
+                    if (conn.State == ConnectionState.Open) conn.Close();
+
+                    // Selalu refresh data dan bersihkan form setelah upaya impor,
+                    // terlepas dari apakah itu berhasil atau gagal total.
                     InvalidateReservasiDataCache();
                     InvalidateAvailableMejaCache();
                     LoadData();
                     ClearForm();
 
-                    string summaryMessage = $"Impor Selesai.\nBerhasil: {successCount}\nGagal: {failCount}";
-                    if (failCount > 0)
+                    // Tampilkan detail error jika ada
+                    if (hasErrors)
                     {
-                        summaryMessage += "\n\nDetail Kegagalan (maks 10 baris pertama):\n" + string.Join("\n", errorDetails.GetRange(0, Math.Min(errorDetails.Count, 10)));
+                        string summaryMessage = "Detail Kegagalan (maks 10 baris pertama):\n" + string.Join("\n", errorDetails.GetRange(0, Math.Min(errorDetails.Count, 10)));
+                        if (errorDetails.Count > 10)
+                        {
+                            summaryMessage += "\n..."; // Tambahkan elipsis jika ada lebih dari 10 error
+                        }
+                        MessageBox.Show(summaryMessage, "Detail Kegagalan Impor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
-                    MessageBox.Show(summaryMessage, "Hasil Impor", MessageBoxButtons.OK, failCount
-                        > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
-
-                }
-                catch (IOException ioEx)
-                {
-                    MessageBox.Show("Gagal membaca file: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Terjadi kesalahan saat impor: " + ex.Message, "Kesalahan Impor Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open) conn.Close();
                 }
             }
         }
 
-        
+        private void dtpWaktuReservasi_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            // Pastikan nama DataGridView adalah 'dgvAdminMeja' atau ganti sesuai nama yang benar
+            if (dgvAdminReservasi.Rows.Count == 0)
+            {
+                MessageBox.Show("Tidak ada data untuk diekspor.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 1. Konfigurasi SaveFileDialog untuk .xlsx
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx", // Filter diubah ke .xlsx
+                Title = "Simpan Data Meja sebagai Excel",  // Judul diubah
+                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx" // Ekstensi file diubah
+            };
+
+            // 2. Tampilkan dialog dan proses jika pengguna mengklik "OK"
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // 3. Buat Workbook Excel baru menggunakan ClosedXML
+                    using (var workbook = new XLWorkbook())
+                    {
+                        // Ganti 'dgvAdminMeja' dengan nama DataGridView Anda
+                        // Nama worksheet: "Data Meja"
+                        var worksheet = workbook.Worksheets.Add("Data Meja");
+
+                        // 4. Tambahkan Header Kolom ke worksheet
+                        // Baris Excel dimulai dari 1
+                        for (int i = 0; i < dgvAdminReservasi.Columns.Count; i++)
+                        {
+                            // Pastikan teks header kolom tidak null
+                            worksheet.Cell(1, i + 1).Value = dgvAdminReservasi.Columns[i].HeaderText ?? "";
+                        }
+
+                        // 5. Tambahkan Data dari setiap baris di DataGridView
+                        // Data dimulai dari baris ke-2 di Excel (setelah header)
+                        // Pastikan untuk tidak mengekspor baris kosong/new row
+                        for (int i = 0; i < dgvAdminReservasi.Rows.Count; i++)
+                        {
+                            // Lewati baris kosong atau baris "new row" di DataGridView
+                            if (dgvAdminReservasi.Rows[i].IsNewRow)
+                            {
+                                continue;
+                            }
+
+                            for (int j = 0; j < dgvAdminReservasi.Columns.Count; j++)
+                            {
+                                // Periksa nilai sel apakah null. Jika null, gunakan string kosong.
+                                // Baris di Excel adalah (i + 2) karena baris 1 adalah header dan DataGridView row index dimulai dari 0
+                                worksheet.Cell(i + 2, j + 1).Value = dgvAdminReservasi.Rows[i].Cells[j].Value?.ToString() ?? "";
+                            }
+                        }
+
+                        // Atur lebar kolom agar sesuai dengan isi konten
+                        worksheet.Columns().AdjustToContents();
+
+                        // 6. Simpan workbook ke path yang dipilih pengguna
+                        workbook.SaveAs(saveFileDialog.FileName);
+                    }
+
+                    MessageBox.Show("Data berhasil diekspor ke file Excel.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    // Tangani error jika terjadi (misal: file sedang dibuka oleh program lain)
+                    MessageBox.Show($"Terjadi kesalahan saat menyimpan file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnAnalisis_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

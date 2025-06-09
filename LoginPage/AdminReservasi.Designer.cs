@@ -34,7 +34,6 @@ namespace PABDCAFE
             this.txtTelepon = new System.Windows.Forms.TextBox();
             this.lblTelepon = new System.Windows.Forms.Label();
             this.lblWaktu = new System.Windows.Forms.Label();
-            this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
             this.lblMeja = new System.Windows.Forms.Label();
             this.btnHapus = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -44,23 +43,26 @@ namespace PABDCAFE
             this.btnImport = new System.Windows.Forms.Button();
             this.dtpWaktuReservasi = new System.Windows.Forms.DateTimePicker();
             this.cbxNomorMeja = new System.Windows.Forms.ComboBox();
+            this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.btnAnalisis = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).BeginInit();
             this.SuspendLayout();
             // 
             // btnTambah
             // 
-            this.btnTambah.Location = new System.Drawing.Point(741, 71);
+            this.btnTambah.Location = new System.Drawing.Point(89, 244);
             this.btnTambah.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnTambah.Name = "btnTambah";
-            this.btnTambah.Size = new System.Drawing.Size(152, 36);
+            this.btnTambah.Size = new System.Drawing.Size(104, 36);
             this.btnTambah.TabIndex = 1;
-            this.btnTambah.Text = "Tambah Reservasi";
+            this.btnTambah.Text = "Tambah";
             this.btnTambah.UseVisualStyleBackColor = true;
             this.btnTambah.Click += new System.EventHandler(this.btnTambah_Click);
             // 
             // txtTelepon
             // 
-            this.txtTelepon.Location = new System.Drawing.Point(246, 110);
+            this.txtTelepon.Location = new System.Drawing.Point(246, 96);
             this.txtTelepon.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTelepon.Name = "txtTelepon";
             this.txtTelepon.Size = new System.Drawing.Size(420, 26);
@@ -70,7 +72,7 @@ namespace PABDCAFE
             // 
             this.lblTelepon.AutoSize = true;
             this.lblTelepon.BackColor = System.Drawing.Color.Transparent;
-            this.lblTelepon.Location = new System.Drawing.Point(76, 112);
+            this.lblTelepon.Location = new System.Drawing.Point(76, 98);
             this.lblTelepon.Name = "lblTelepon";
             this.lblTelepon.Size = new System.Drawing.Size(117, 20);
             this.lblTelepon.TabIndex = 5;
@@ -80,30 +82,17 @@ namespace PABDCAFE
             // 
             this.lblWaktu.AutoSize = true;
             this.lblWaktu.BackColor = System.Drawing.Color.Transparent;
-            this.lblWaktu.Location = new System.Drawing.Point(76, 158);
+            this.lblWaktu.Location = new System.Drawing.Point(76, 144);
             this.lblWaktu.Name = "lblWaktu";
             this.lblWaktu.Size = new System.Drawing.Size(129, 20);
             this.lblWaktu.TabIndex = 6;
             this.lblWaktu.Text = "Waktu Reservasi";
             // 
-            // dgvAdminReservasi
-            // 
-            this.dgvAdminReservasi.BackgroundColor = System.Drawing.Color.LavenderBlush;
-            this.dgvAdminReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvAdminReservasi.Location = new System.Drawing.Point(58, 285);
-            this.dgvAdminReservasi.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.dgvAdminReservasi.Name = "dgvAdminReservasi";
-            this.dgvAdminReservasi.RowHeadersWidth = 51;
-            this.dgvAdminReservasi.RowTemplate.Height = 24;
-            this.dgvAdminReservasi.Size = new System.Drawing.Size(855, 246);
-            this.dgvAdminReservasi.TabIndex = 7;
-            this.dgvAdminReservasi.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminReservasi_CellClick);
-            // 
             // lblMeja
             // 
             this.lblMeja.AutoSize = true;
             this.lblMeja.BackColor = System.Drawing.Color.Transparent;
-            this.lblMeja.Location = new System.Drawing.Point(76, 201);
+            this.lblMeja.Location = new System.Drawing.Point(76, 187);
             this.lblMeja.Name = "lblMeja";
             this.lblMeja.Size = new System.Drawing.Size(94, 20);
             this.lblMeja.TabIndex = 9;
@@ -111,29 +100,29 @@ namespace PABDCAFE
             // 
             // btnHapus
             // 
-            this.btnHapus.Location = new System.Drawing.Point(741, 114);
+            this.btnHapus.Location = new System.Drawing.Point(366, 244);
             this.btnHapus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnHapus.Name = "btnHapus";
-            this.btnHapus.Size = new System.Drawing.Size(152, 36);
+            this.btnHapus.Size = new System.Drawing.Size(104, 36);
             this.btnHapus.TabIndex = 10;
-            this.btnHapus.Text = "Hapus Reservasi";
+            this.btnHapus.Text = "Hapus";
             this.btnHapus.UseVisualStyleBackColor = true;
             this.btnHapus.Click += new System.EventHandler(this.btnHapus_Click);
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(741, 158);
+            this.btnEdit.Location = new System.Drawing.Point(229, 244);
             this.btnEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(152, 36);
+            this.btnEdit.Size = new System.Drawing.Size(104, 36);
             this.btnEdit.TabIndex = 11;
-            this.btnEdit.Text = "Edit Reservasi";
+            this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(868, 556);
+            this.btnBack.Location = new System.Drawing.Point(868, 566);
             this.btnBack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(84, 32);
@@ -146,7 +135,7 @@ namespace PABDCAFE
             // 
             this.lblNama.AutoSize = true;
             this.lblNama.BackColor = System.Drawing.Color.Transparent;
-            this.lblNama.Location = new System.Drawing.Point(76, 71);
+            this.lblNama.Location = new System.Drawing.Point(76, 57);
             this.lblNama.Name = "lblNama";
             this.lblNama.Size = new System.Drawing.Size(124, 20);
             this.lblNama.TabIndex = 16;
@@ -154,7 +143,7 @@ namespace PABDCAFE
             // 
             // txtNama
             // 
-            this.txtNama.Location = new System.Drawing.Point(246, 69);
+            this.txtNama.Location = new System.Drawing.Point(246, 55);
             this.txtNama.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNama.Name = "txtNama";
             this.txtNama.Size = new System.Drawing.Size(420, 26);
@@ -162,10 +151,10 @@ namespace PABDCAFE
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(741, 202);
+            this.btnImport.Location = new System.Drawing.Point(512, 244);
             this.btnImport.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(152, 40);
+            this.btnImport.Size = new System.Drawing.Size(104, 36);
             this.btnImport.TabIndex = 19;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -174,20 +163,52 @@ namespace PABDCAFE
             // dtpWaktuReservasi
             // 
             this.dtpWaktuReservasi.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpWaktuReservasi.Location = new System.Drawing.Point(246, 151);
+            this.dtpWaktuReservasi.Location = new System.Drawing.Point(246, 137);
             this.dtpWaktuReservasi.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dtpWaktuReservasi.Name = "dtpWaktuReservasi";
             this.dtpWaktuReservasi.Size = new System.Drawing.Size(224, 26);
             this.dtpWaktuReservasi.TabIndex = 22;
+            this.dtpWaktuReservasi.ValueChanged += new System.EventHandler(this.dtpWaktuReservasi_ValueChanged);
             // 
             // cbxNomorMeja
             // 
             this.cbxNomorMeja.FormattingEnabled = true;
-            this.cbxNomorMeja.Location = new System.Drawing.Point(246, 201);
+            this.cbxNomorMeja.Location = new System.Drawing.Point(246, 187);
             this.cbxNomorMeja.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbxNomorMeja.Name = "cbxNomorMeja";
             this.cbxNomorMeja.Size = new System.Drawing.Size(136, 28);
             this.cbxNomorMeja.TabIndex = 21;
+            // 
+            // dgvAdminReservasi
+            // 
+            this.dgvAdminReservasi.BackgroundColor = System.Drawing.Color.LavenderBlush;
+            this.dgvAdminReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvAdminReservasi.Location = new System.Drawing.Point(63, 308);
+            this.dgvAdminReservasi.Name = "dgvAdminReservasi";
+            this.dgvAdminReservasi.RowHeadersWidth = 62;
+            this.dgvAdminReservasi.RowTemplate.Height = 28;
+            this.dgvAdminReservasi.Size = new System.Drawing.Size(869, 241);
+            this.dgvAdminReservasi.TabIndex = 23;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(656, 244);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(104, 36);
+            this.btnExport.TabIndex = 24;
+            this.btnExport.Text = "Export";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // btnAnalisis
+            // 
+            this.btnAnalisis.Location = new System.Drawing.Point(797, 244);
+            this.btnAnalisis.Name = "btnAnalisis";
+            this.btnAnalisis.Size = new System.Drawing.Size(104, 36);
+            this.btnAnalisis.TabIndex = 25;
+            this.btnAnalisis.Text = "Analisis";
+            this.btnAnalisis.UseVisualStyleBackColor = true;
+            this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
             // AdminReservasi
             // 
@@ -195,6 +216,9 @@ namespace PABDCAFE
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(993, 626);
+            this.Controls.Add(this.btnAnalisis);
+            this.Controls.Add(this.btnExport);
+            this.Controls.Add(this.dgvAdminReservasi);
             this.Controls.Add(this.cbxNomorMeja);
             this.Controls.Add(this.dtpWaktuReservasi);
             this.Controls.Add(this.btnImport);
@@ -204,7 +228,6 @@ namespace PABDCAFE
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnHapus);
             this.Controls.Add(this.lblMeja);
-            this.Controls.Add(this.dgvAdminReservasi);
             this.Controls.Add(this.lblWaktu);
             this.Controls.Add(this.lblTelepon);
             this.Controls.Add(this.txtTelepon);
@@ -228,7 +251,6 @@ namespace PABDCAFE
         private System.Windows.Forms.TextBox txtTelepon;
         private System.Windows.Forms.Label lblTelepon;
         private System.Windows.Forms.Label lblWaktu;
-        private System.Windows.Forms.DataGridView dgvAdminReservasi;
         private System.Windows.Forms.Label lblMeja;
         private System.Windows.Forms.Button btnHapus;
         private System.Windows.Forms.Button btnEdit;
@@ -238,5 +260,8 @@ namespace PABDCAFE
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.DateTimePicker dtpWaktuReservasi;
         private System.Windows.Forms.ComboBox cbxNomorMeja;
+        private System.Windows.Forms.DataGridView dgvAdminReservasi;
+        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Button btnAnalisis;
     }
 }
