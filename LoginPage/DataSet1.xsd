@@ -9,23 +9,17 @@
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="DataTable1TableAdapter" GeneratorDataComponentClassName="DataTable1TableAdapter" Name="DataTable1" UserDataComponentName="DataTable1TableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="ReservasiCafeConnectionString (Settings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+              <DbSource ConnectionRef="ReservasiCafeConnectionString (Settings)" DbObjectName="ReservasiCafe.dbo.Meja" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
-                    <CommandText>SELECT r.ID_Reservasi, r.Nama_Customer, r.No_Telp, r.Waktu_Reservasi, m.Nomor_Meja, m.Kapasitas, m.Status_Meja
-FROM     Reservasi AS r INNER JOIN
-                  Meja AS m ON r.Nomor_Meja = m.Nomor_Meja
-ORDER BY r.Waktu_Reservasi DESC</CommandText>
+                    <CommandText>SELECT Nomor_Meja, Kapasitas, Status_Meja
+FROM     Meja</CommandText>
                     <Parameters />
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
             </MainSource>
             <Mappings>
-              <Mapping SourceColumn="ID_Reservasi" DataSetColumn="ID_Reservasi" />
-              <Mapping SourceColumn="Nama_Customer" DataSetColumn="Nama_Customer" />
-              <Mapping SourceColumn="No_Telp" DataSetColumn="No_Telp" />
-              <Mapping SourceColumn="Waktu_Reservasi" DataSetColumn="Waktu_Reservasi" />
               <Mapping SourceColumn="Nomor_Meja" DataSetColumn="Nomor_Meja" />
               <Mapping SourceColumn="Kapasitas" DataSetColumn="Kapasitas" />
               <Mapping SourceColumn="Status_Meja" DataSetColumn="Status_Meja" />
@@ -37,37 +31,21 @@ ORDER BY r.Waktu_Reservasi DESC</CommandText>
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DataSet1" msprop:Generator_DataSetName="DataSet1">
+  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DataSet1" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSet1">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableVarName="tableDataTable1" msprop:Generator_UserTableName="DataTable1">
+        <xs:element name="DataTable1" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_UserTableName="DataTable1" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_TableVarName="tableDataTable1">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ID_Reservasi" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnPropNameInRow="ID_Reservasi" msprop:Generator_ColumnPropNameInTable="ID_ReservasiColumn" msprop:Generator_ColumnVarNameInTable="columnID_Reservasi" msprop:Generator_UserColumnName="ID_Reservasi" type="xs:int" />
-              <xs:element name="Nama_Customer" msprop:Generator_ColumnPropNameInRow="Nama_Customer" msprop:Generator_ColumnPropNameInTable="Nama_CustomerColumn" msprop:Generator_ColumnVarNameInTable="columnNama_Customer" msprop:Generator_UserColumnName="Nama_Customer" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="50" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="No_Telp" msprop:Generator_ColumnPropNameInRow="No_Telp" msprop:Generator_ColumnPropNameInTable="No_TelpColumn" msprop:Generator_ColumnVarNameInTable="columnNo_Telp" msprop:Generator_UserColumnName="No_Telp">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="15" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="Waktu_Reservasi" msprop:Generator_ColumnPropNameInRow="Waktu_Reservasi" msprop:Generator_ColumnPropNameInTable="Waktu_ReservasiColumn" msprop:Generator_ColumnVarNameInTable="columnWaktu_Reservasi" msprop:Generator_UserColumnName="Waktu_Reservasi" type="xs:dateTime" />
-              <xs:element name="Nomor_Meja" msprop:Generator_ColumnPropNameInRow="Nomor_Meja" msprop:Generator_ColumnPropNameInTable="Nomor_MejaColumn" msprop:Generator_ColumnVarNameInTable="columnNomor_Meja" msprop:Generator_UserColumnName="Nomor_Meja">
+              <xs:element name="Nomor_Meja" msprop:Generator_UserColumnName="Nomor_Meja" msprop:Generator_ColumnPropNameInTable="Nomor_MejaColumn" msprop:Generator_ColumnPropNameInRow="Nomor_Meja" msprop:Generator_ColumnVarNameInTable="columnNomor_Meja">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="2" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Kapasitas" msprop:Generator_ColumnPropNameInRow="Kapasitas" msprop:Generator_ColumnPropNameInTable="KapasitasColumn" msprop:Generator_ColumnVarNameInTable="columnKapasitas" msprop:Generator_UserColumnName="Kapasitas" type="xs:int" minOccurs="0" />
-              <xs:element name="Status_Meja" msprop:Generator_ColumnPropNameInRow="Status_Meja" msprop:Generator_ColumnPropNameInTable="Status_MejaColumn" msprop:Generator_ColumnVarNameInTable="columnStatus_Meja" msprop:Generator_UserColumnName="Status_Meja" minOccurs="0">
+              <xs:element name="Kapasitas" msprop:Generator_UserColumnName="Kapasitas" msprop:Generator_ColumnPropNameInTable="KapasitasColumn" msprop:Generator_ColumnPropNameInRow="Kapasitas" msprop:Generator_ColumnVarNameInTable="columnKapasitas" type="xs:int" minOccurs="0" />
+              <xs:element name="Status_Meja" msprop:Generator_UserColumnName="Status_Meja" msprop:Generator_ColumnPropNameInTable="Status_MejaColumn" msprop:Generator_ColumnPropNameInRow="Status_Meja" msprop:Generator_ColumnVarNameInTable="columnStatus_Meja" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="10" />
@@ -81,7 +59,6 @@ ORDER BY r.Waktu_Reservasi DESC</CommandText>
     </xs:complexType>
     <xs:unique name="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//mstns:DataTable1" />
-      <xs:field xpath="mstns:ID_Reservasi" />
       <xs:field xpath="mstns:Nomor_Meja" />
     </xs:unique>
   </xs:element>

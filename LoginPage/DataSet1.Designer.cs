@@ -279,14 +279,6 @@ namespace LoginPage {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class DataTable1DataTable : global::System.Data.TypedTableBase<DataTable1Row> {
             
-            private global::System.Data.DataColumn columnID_Reservasi;
-            
-            private global::System.Data.DataColumn columnNama_Customer;
-            
-            private global::System.Data.DataColumn columnNo_Telp;
-            
-            private global::System.Data.DataColumn columnWaktu_Reservasi;
-            
             private global::System.Data.DataColumn columnNomor_Meja;
             
             private global::System.Data.DataColumn columnKapasitas;
@@ -324,38 +316,6 @@ namespace LoginPage {
             protected DataTable1DataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn ID_ReservasiColumn {
-                get {
-                    return this.columnID_Reservasi;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn Nama_CustomerColumn {
-                get {
-                    return this.columnNama_Customer;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn No_TelpColumn {
-                get {
-                    return this.columnNo_Telp;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn Waktu_ReservasiColumn {
-                get {
-                    return this.columnWaktu_Reservasi;
-                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -419,13 +379,9 @@ namespace LoginPage {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DataTable1Row AddDataTable1Row(string Nama_Customer, string No_Telp, System.DateTime Waktu_Reservasi, string Nomor_Meja, int Kapasitas, string Status_Meja) {
+            public DataTable1Row AddDataTable1Row(string Nomor_Meja, int Kapasitas, string Status_Meja) {
                 DataTable1Row rowDataTable1Row = ((DataTable1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        null,
-                        Nama_Customer,
-                        No_Telp,
-                        Waktu_Reservasi,
                         Nomor_Meja,
                         Kapasitas,
                         Status_Meja};
@@ -436,9 +392,8 @@ namespace LoginPage {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DataTable1Row FindByID_ReservasiNomor_Meja(int ID_Reservasi, string Nomor_Meja) {
+            public DataTable1Row FindByNomor_Meja(string Nomor_Meja) {
                 return ((DataTable1Row)(this.Rows.Find(new object[] {
-                            ID_Reservasi,
                             Nomor_Meja})));
             }
             
@@ -459,10 +414,6 @@ namespace LoginPage {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnID_Reservasi = base.Columns["ID_Reservasi"];
-                this.columnNama_Customer = base.Columns["Nama_Customer"];
-                this.columnNo_Telp = base.Columns["No_Telp"];
-                this.columnWaktu_Reservasi = base.Columns["Waktu_Reservasi"];
                 this.columnNomor_Meja = base.Columns["Nomor_Meja"];
                 this.columnKapasitas = base.Columns["Kapasitas"];
                 this.columnStatus_Meja = base.Columns["Status_Meja"];
@@ -471,14 +422,6 @@ namespace LoginPage {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnID_Reservasi = new global::System.Data.DataColumn("ID_Reservasi", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnID_Reservasi);
-                this.columnNama_Customer = new global::System.Data.DataColumn("Nama_Customer", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnNama_Customer);
-                this.columnNo_Telp = new global::System.Data.DataColumn("No_Telp", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnNo_Telp);
-                this.columnWaktu_Reservasi = new global::System.Data.DataColumn("Waktu_Reservasi", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnWaktu_Reservasi);
                 this.columnNomor_Meja = new global::System.Data.DataColumn("Nomor_Meja", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnNomor_Meja);
                 this.columnKapasitas = new global::System.Data.DataColumn("Kapasitas", typeof(int), null, global::System.Data.MappingType.Element);
@@ -486,18 +429,9 @@ namespace LoginPage {
                 this.columnStatus_Meja = new global::System.Data.DataColumn("Status_Meja", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnStatus_Meja);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
-                                this.columnID_Reservasi,
                                 this.columnNomor_Meja}, true));
-                this.columnID_Reservasi.AutoIncrement = true;
-                this.columnID_Reservasi.AutoIncrementSeed = -1;
-                this.columnID_Reservasi.AutoIncrementStep = -1;
-                this.columnID_Reservasi.AllowDBNull = false;
-                this.columnID_Reservasi.ReadOnly = true;
-                this.columnNama_Customer.MaxLength = 50;
-                this.columnNo_Telp.AllowDBNull = false;
-                this.columnNo_Telp.MaxLength = 15;
-                this.columnWaktu_Reservasi.AllowDBNull = false;
                 this.columnNomor_Meja.AllowDBNull = false;
+                this.columnNomor_Meja.Unique = true;
                 this.columnNomor_Meja.MaxLength = 2;
                 this.columnStatus_Meja.MaxLength = 10;
             }
@@ -642,55 +576,6 @@ namespace LoginPage {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int ID_Reservasi {
-                get {
-                    return ((int)(this[this.tableDataTable1.ID_ReservasiColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.ID_ReservasiColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string Nama_Customer {
-                get {
-                    try {
-                        return ((string)(this[this.tableDataTable1.Nama_CustomerColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Nama_Customer\' in table \'DataTable1\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableDataTable1.Nama_CustomerColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string No_Telp {
-                get {
-                    return ((string)(this[this.tableDataTable1.No_TelpColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.No_TelpColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public System.DateTime Waktu_Reservasi {
-                get {
-                    return ((global::System.DateTime)(this[this.tableDataTable1.Waktu_ReservasiColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.Waktu_ReservasiColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public string Nomor_Meja {
                 get {
                     return ((string)(this[this.tableDataTable1.Nomor_MejaColumn]));
@@ -730,18 +615,6 @@ namespace LoginPage {
                 set {
                     this[this.tableDataTable1.Status_MejaColumn] = value;
                 }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsNama_CustomerNull() {
-                return this.IsNull(this.tableDataTable1.Nama_CustomerColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetNama_CustomerNull() {
-                this[this.tableDataTable1.Nama_CustomerColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -928,10 +801,6 @@ namespace LoginPage.DataSet1TableAdapters {
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
             tableMapping.DataSetTable = "DataTable1";
-            tableMapping.ColumnMappings.Add("ID_Reservasi", "ID_Reservasi");
-            tableMapping.ColumnMappings.Add("Nama_Customer", "Nama_Customer");
-            tableMapping.ColumnMappings.Add("No_Telp", "No_Telp");
-            tableMapping.ColumnMappings.Add("Waktu_Reservasi", "Waktu_Reservasi");
             tableMapping.ColumnMappings.Add("Nomor_Meja", "Nomor_Meja");
             tableMapping.ColumnMappings.Add("Kapasitas", "Kapasitas");
             tableMapping.ColumnMappings.Add("Status_Meja", "Status_Meja");
@@ -951,9 +820,7 @@ namespace LoginPage.DataSet1TableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT r.ID_Reservasi, r.Nama_Customer, r.No_Telp, r.Waktu_Reservasi, m.Nomor_Mej" +
-                "a, m.Kapasitas, m.Status_Meja\r\nFROM     Reservasi AS r INNER JOIN\r\n             " +
-                "     Meja AS m ON r.Nomor_Meja = m.Nomor_Meja\r\nORDER BY r.Waktu_Reservasi DESC";
+            this._commandCollection[0].CommandText = "SELECT Nomor_Meja, Kapasitas, Status_Meja\r\nFROM     Meja";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         

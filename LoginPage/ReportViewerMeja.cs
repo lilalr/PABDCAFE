@@ -38,21 +38,7 @@ namespace PABDCAFE
         {
             string connectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;Integrated Security = True;";
 
-            string query = @"
-                        SELECT
-                            r.ID_Reservasi AS 'ID Reservasi',
-                            r.Nama_Customer AS 'Nama Customer',
-                            r.No_Telp AS 'Nomor Telepon',
-                            r.Waktu_Reservasi AS 'Waktu Reservasi',
-                            m.Nomor_Meja AS 'Nomor Meja',
-                            m.Kapasitas,
-                            m.Status_Meja AS 'Status Meja'
-                        FROM
-                            Reservasi r
-                        JOIN
-                            Meja m ON r.Nomor_Meja = m.Nomor_Meja
-                        ORDER BY
-                            r.Waktu_Reservasi DESC;";
+            string query = @"SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja;";
 
             DataTable dt = new DataTable();
 
@@ -72,9 +58,5 @@ namespace PABDCAFE
             this.reportViewer1.RefreshReport();
         }
 
-        private void reportViewer1_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
