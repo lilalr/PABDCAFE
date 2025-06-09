@@ -248,6 +248,11 @@ namespace PABDCAFE
                 MessageBox.Show(errMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (MessageBox.Show($"Apakah Anda yakin ingin mengubah data meja '{nomorMeja}'?", "Konfirmasi Perubahan Data", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            {
+                return; // Keluar dari method jika pengguna memilih 'No'
+            }
+
 
             using (SqlConnection conn = new SqlConnection(this.connectionString))
             {
