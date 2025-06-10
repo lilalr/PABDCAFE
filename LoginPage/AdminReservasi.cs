@@ -748,7 +748,7 @@ namespace PABDCAFE
 
         private void btnReport_Click(object sender, EventArgs e)
         {
-            ReportViewerMeja form = new ReportViewerMeja();
+            ReportViewerReservasi form = new ReportViewerReservasi();
             form.ShowDialog();
         }
 
