@@ -23,34 +23,12 @@ namespace LoginPage
         {
             InitializeComponent();
             this.connectionString = connectionString;
-            // Ganti nama kolom dari file Excel/CSV agar sesuai dengan kolom database
-            NormalizeColumnNames(data);
             dgvPreviewAdminReservasi.DataSource = data;
         }
 
         private void PreviewFormAdminReservasi_Load(object sender, EventArgs e)
         {
             dgvPreviewAdminReservasi.AutoResizeColumns(); // Menyesuaikan ukuran kolom
-        }
-
-        private void NormalizeColumnNames(DataTable dt)
-        {
-            // Mapping dari nama kolom di Excel -> nama kolom di DB
-            var columnMappings = new Dictionary<string, string>
-            {
-                { "Nama Customer", "Nama_Customer" },
-                { "Nomor Telepon", "No_Telp" },
-                { "Waktu Reservasi", "Waktu_Reservasi" },
-                { "Nomor Meja", "Nomor_Meja" }
-            };
-
-            foreach (var mapping in columnMappings)
-            {
-                if (dt.Columns.Contains(mapping.Key))
-                {
-                    dt.Columns[mapping.Key].ColumnName = mapping.Value;
-                }
-            }
         }
 
         public bool ValidateRow(DataRow row, int lineNumber, out string errorMessage)

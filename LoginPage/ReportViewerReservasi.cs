@@ -1,22 +1,13 @@
-﻿using LoginPage;
-using Microsoft.Reporting.WinForms;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Reporting.WinForms;
 
 namespace PABDCAFE
 {
     public partial class ReportViewerReservasi : Form
     {
-        private readonly string connectionString;
         public ReportViewerReservasi()
         {
             InitializeComponent();
@@ -27,6 +18,7 @@ namespace PABDCAFE
             SetupReportViewer();
 
             this.reportViewer1.RefreshReport();
+            this.reportViewer1.RefreshReport();
         }
 
         private void SetupReportViewer()
@@ -35,12 +27,15 @@ namespace PABDCAFE
 
             string query = @"
                  SELECT
-                    Nama_Customer, 
-                    No_Telp, 
-                    Waktu_Reservasi, 
-                    Nomor_Meja 
-                 FROM 
-                    Reservasi;";
+                    Reservasi.ID_Reservasi, 
+                    Reservasi.Nama_Customer, 
+                    Reservasi.No_Telp, 
+                    Reservasi.Waktu_Reservasi, 
+                    Meja.Nomor_Meja
+                FROM   
+                    Reservasi 
+                INNER JOIN
+                    Meja ON Reservasi.Nomor_Meja = Meja.Nomor_Meja;";
 
             DataTable dt = new DataTable();
 
