@@ -54,6 +54,8 @@ namespace PABDCAFE
                 MessageBox.Show("Error: Kontrol ComboBox 'cbxNomorMeja' tidak ditemukan sebagai field.", "Kesalahan Kontrol", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             LoadData();
+
+            this.dgvAdminReservasi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;         
         }
 
         private void InitializePreviewDataTable()

@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LoginPage
+namespace PABDCAFE
 {
     public partial class PreviewDataReservasi : Form
     {
@@ -23,12 +23,12 @@ namespace LoginPage
         {
             InitializeComponent();
             this.connectionString = connectionString;
-            dgvPreviewAdminReservasi.DataSource = data;
+            dgvPreviewReservasi.DataSource = data;
         }
 
         private void PreviewFormAdminReservasi_Load(object sender, EventArgs e)
         {
-            dgvPreviewAdminReservasi.AutoResizeColumns(); // Menyesuaikan ukuran kolom
+            dgvPreviewReservasi.AutoResizeColumns(); // Menyesuaikan ukuran kolom
         }
 
         public bool ValidateRow(DataRow row, int lineNumber, out string errorMessage)
@@ -81,7 +81,7 @@ namespace LoginPage
 
         private void ImportDataToDatabase()
         {
-            DataTable dt = (DataTable)dgvPreviewAdminReservasi.DataSource;
+            DataTable dt = (DataTable)dgvPreviewReservasi.DataSource;
             List<string> errorList = new List<string>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))

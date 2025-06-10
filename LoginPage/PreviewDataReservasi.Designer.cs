@@ -1,4 +1,4 @@
-﻿namespace LoginPage
+﻿namespace PABDCAFE
 {
     partial class PreviewDataReservasi
     {
@@ -30,8 +30,8 @@
         {
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.dgvPreviewAdminReservasi = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPreviewAdminReservasi)).BeginInit();
+            this.dgvPreviewReservasi = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPreviewReservasi)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
@@ -54,29 +54,29 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // dgvPreviewAdminReservasi
+            // dgvPreviewReservasi
             // 
-            this.dgvPreviewAdminReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPreviewAdminReservasi.Location = new System.Drawing.Point(46, 57);
-            this.dgvPreviewAdminReservasi.Name = "dgvPreviewAdminReservasi";
-            this.dgvPreviewAdminReservasi.RowHeadersWidth = 62;
-            this.dgvPreviewAdminReservasi.RowTemplate.Height = 28;
-            this.dgvPreviewAdminReservasi.Size = new System.Drawing.Size(799, 402);
-            this.dgvPreviewAdminReservasi.TabIndex = 5;
+            this.dgvPreviewReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPreviewReservasi.Location = new System.Drawing.Point(46, 57);
+            this.dgvPreviewReservasi.Name = "dgvPreviewReservasi";
+            this.dgvPreviewReservasi.RowHeadersWidth = 62;
+            this.dgvPreviewReservasi.RowTemplate.Height = 28;
+            this.dgvPreviewReservasi.Size = new System.Drawing.Size(799, 402);
+            this.dgvPreviewReservasi.TabIndex = 5;
             // 
             // PreviewDataReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(900, 562);
-            this.Controls.Add(this.dgvPreviewAdminReservasi);
+            this.Controls.Add(this.dgvPreviewReservasi);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "PreviewDataReservasi";
             this.Text = "PreviewDataReservasi";
             this.Load += new System.EventHandler(this.PreviewFormAdminReservasi_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPreviewAdminReservasi)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPreviewReservasi)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -84,6 +84,6 @@
         #endregion
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.DataGridView dgvPreviewAdminReservasi;
+        private System.Windows.Forms.DataGridView dgvPreviewReservasi;
     }
 }
