@@ -41,6 +41,7 @@
             this.cmbCustMeja = new System.Windows.Forms.ComboBox();
             this.dtpCustWaktu = new System.Windows.Forms.DateTimePicker();
             this.btnImport = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,6 +76,7 @@
             this.dgvCustomer.Name = "dgvCustomer";
             this.dgvCustomer.RowHeadersWidth = 62;
             this.dgvCustomer.RowTemplate.Height = 28;
+            this.dgvCustomer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCustomer.Size = new System.Drawing.Size(864, 254);
             this.dgvCustomer.TabIndex = 4;
             this.dgvCustomer.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCustomer_CellClick);
@@ -170,12 +172,23 @@
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(764, 26);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(155, 37);
+            this.btnRefresh.TabIndex = 16;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // CustomerPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(993, 635);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.dtpCustWaktu);
             this.Controls.Add(this.cmbCustMeja);
@@ -214,5 +227,6 @@
         private System.Windows.Forms.ComboBox cmbCustMeja;
         private System.Windows.Forms.DateTimePicker dtpCustWaktu;
         private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

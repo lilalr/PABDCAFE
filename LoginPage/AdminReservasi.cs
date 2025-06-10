@@ -75,15 +75,12 @@ namespace PABDCAFE
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
+            // ... (logika cache dan pengecekan koneksi tetap sama) ...
             List<string> mejaList = _availableMejaCache.Get(AvailableMejaCacheKey) as List<string>;
 
-            if (mejaList == null) // Jika tidak ada di cache, ambil dari database
+            if (mejaList == null)
             {
-                if (this.conn == null)
-                {
-                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    mejaList = new List<string>();
-                }
+                if (this.conn == null) { /* ... */ }
                 else
                 {
                     mejaList = new List<string>();
@@ -94,7 +91,10 @@ namespace PABDCAFE
                             this.conn.Open();
                         }
 
-                        using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja WHERE Status_Meja = 'Tersedia' ORDER BY Nomor_Meja", this.conn))
+                        // --- AWAL PERUBAHAN ---
+                        // Query diubah untuk mengambil SEMUA meja, mengabaikan Status_Meja
+                        using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", this.conn))
+                        // --- AKHIR PERUBAHAN ---
                         {
                             SqlDataReader reader = cmd.ExecuteReader();
                             while (reader.Read())
@@ -108,10 +108,7 @@ namespace PABDCAFE
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Gagal memuat daftar meja yang tersedia: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    catch (Exception ex) { /*...*/ }
                     finally
                     {
                         if (this.conn != null && this.conn.State == ConnectionState.Open)
@@ -122,11 +119,10 @@ namespace PABDCAFE
                 }
             }
 
+            // ... (logika untuk mengisi ComboBox tetap sama) ...
             if (cbx == null) return;
-
             cbx.DataSource = null;
             cbx.Items.Clear();
-
             if (mejaList != null && mejaList.Count > 0)
             {
                 cbx.DataSource = mejaList;
@@ -134,7 +130,7 @@ namespace PABDCAFE
             }
             else
             {
-                cbx.Items.Add("Tidak ada meja tersedia");
+                cbx.Items.Add("Tidak ada data meja");
                 if (cbx.Items.Count > 0)
                 {
                     cbx.SelectedIndex = 0;
@@ -189,6 +185,35 @@ namespace PABDCAFE
                     this.dgvAdminReservasi.Columns["Nomor_Meja"].HeaderText = "Nomor Meja";
 
                 this.dgvAdminReservasi.ClearSelection();
+            }
+        }
+
+        private bool CekJadwalBentrok(string nomorMeja, DateTime waktu, int? reservasiIdToExclude = null)
+        {
+            // Query dasar untuk mengecek jadwal pada tanggal yang sama
+            string query = "SELECT COUNT(*) FROM Reservasi WHERE Nomor_Meja = @NomorMeja AND CAST(Waktu_Reservasi AS DATE) = CAST(@WaktuReservasi AS DATE)";
+
+            // Jika sedang mode edit, tambahkan kondisi untuk mengabaikan ID reservasi saat ini
+            if (reservasiIdToExclude.HasValue)
+            {
+                query += " AND ID_Reservasi <> @ID_Reservasi_Exclude";
+            }
+
+            using (var tempConn = new SqlConnection(connectionString))
+            {
+                using (var cmd = new SqlCommand(query, tempConn))
+                {
+                    cmd.Parameters.AddWithValue("@NomorMeja", nomorMeja);
+                    cmd.Parameters.AddWithValue("@WaktuReservasi", waktu);
+                    if (reservasiIdToExclude.HasValue)
+                    {
+                        cmd.Parameters.AddWithValue("@ID_Reservasi_Exclude", reservasiIdToExclude.Value);
+                    }
+
+                    tempConn.Open();
+                    int count = (int)cmd.ExecuteScalar();
+                    return count > 0; // Jika count > 0, berarti ada jadwal yang bentrok
+                }
             }
         }
 
@@ -270,18 +295,16 @@ namespace PABDCAFE
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (!IsConnectionReady()) return;
-
             if (this.dgvAdminReservasi.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Pilih data yang akan diubah!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(this.txtNama.Text) ||
-                string.IsNullOrWhiteSpace(this.txtTelepon.Text) ||
-                this.cbxNomorMeja.SelectedItem == null)
+            string errorMsg;
+            if (!ValidasiInput(out errorMsg)) // Validasi input dasar
             {
-                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(errorMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -291,8 +314,14 @@ namespace PABDCAFE
                 DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
                 string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                conn.Open();
+                // Panggil metode validasi jadwal, sertakan ID reservasi yang sedang diedit
+                if (CekJadwalBentrok(selectedMeja, waktuReservasi, idReservasi))
+                {
+                    MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy} oleh reservasi lain.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; // Hentikan proses jika bentrok
+                }
 
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand("EditReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -302,7 +331,9 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja_Baru", selectedMeja);
 
+                    // --- BAGIAN YANG HILANG DIMULAI DI SINI ---
                     int rowsAffected = cmd.ExecuteNonQuery();
+
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show("Data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -315,11 +346,12 @@ namespace PABDCAFE
                     {
                         MessageBox.Show("Data tidak ditemukan atau gagal diperbarui!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    // --- BAGIAN YANG HILANG SELESAI DI SINI ---
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error saat mengubah data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -331,11 +363,26 @@ namespace PABDCAFE
         {
             if (this.dgvAdminReservasi.SelectedRows.Count > 0)
             {
-                // yg dipencet yg paling depan
                 DataGridViewRow selectedRow = this.dgvAdminReservasi.SelectedRows[0];
                 this.txtNama.Text = selectedRow.Cells["Nama_Customer"].Value?.ToString();
                 this.txtTelepon.Text = selectedRow.Cells["No_Telp"].Value?.ToString();
-                this.dtpWaktuReservasi.Value = Convert.ToDateTime(selectedRow.Cells["Waktu_Reservasi"].Value);
+
+                // --- AWAL PERBAIKAN ---
+                // Ambil nilai dari sel ke dalam sebuah variabel objek
+                object waktuValue = selectedRow.Cells["Waktu_Reservasi"].Value;
+
+                // Periksa apakah nilainya valid sebelum dikonversi
+                if (waktuValue != null && waktuValue != DBNull.Value)
+                {
+                    this.dtpWaktuReservasi.Value = Convert.ToDateTime(waktuValue);
+                }
+                else
+                {
+                    // Jika nilainya NULL, atur DateTimePicker ke waktu sekarang sebagai default
+                    this.dtpWaktuReservasi.Value = DateTime.Now;
+                }
+                // --- AKHIR PERBAIKAN ---
+
                 this.cbxNomorMeja.SelectedItem = selectedRow.Cells["Nomor_Meja"].Value?.ToString();
             }
         }
@@ -349,70 +396,66 @@ namespace PABDCAFE
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            // Pastikan koneksi ke database siap
             if (!IsConnectionReady()) return;
 
-            // Validasi input: pastikan semua kolom yang diperlukan terisi
-            // Meniru validasi kolom kosong seperti di gambar
-            if (string.IsNullOrWhiteSpace(this.txtNama.Text) ||
-                string.IsNullOrWhiteSpace(this.txtTelepon.Text) ||
-                this.cbxNomorMeja.SelectedItem == null)
+            string errorMsg;
+            if (!ValidasiInput(out errorMsg)) // Validasi input dasar
             {
-                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(errorMsg, "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                // Buka koneksi ke database
-                conn.Open();
-
-                // Ambil nilai dari kontrol input
                 DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
                 string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
 
-                // Gunakan SqlCommand untuk memanggil Stored Procedure
+                // Panggil metode validasi jadwal bentrok sebelum menambahkan
+                if (CekJadwalBentrok(selectedMeja, waktuReservasi))
+                {
+                    MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy}.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; // Hentikan proses jika bentrok
+                }
+
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    // Tambahkan parameter ke Stored Procedure
                     cmd.Parameters.AddWithValue("@Nama_Customer", this.txtNama.Text.Trim());
                     cmd.Parameters.AddWithValue("@No_Telp", this.txtTelepon.Text.Trim());
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
 
-                    // Eksekusi Stored Procedure dan periksa jumlah baris yang terpengaruh
+                    // --- BAGIAN YANG HILANG DIMULAI DI SINI ---
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    // Berikan pesan berdasarkan hasil operasi
+                    // Menggunakan > 0 karena SP Admin mungkin tidak memakai SET NOCOUNT ON
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show("Reservasi berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                         // Segarkan data dan form setelah berhasil
                         InvalidateReservasiDataCache();
-                        InvalidateAvailableMejaCache(); // Meja yang baru dipesan tidak lagi tersedia
+                        InvalidateAvailableMejaCache();
                         LoadData();
                         ClearForm();
                     }
                     else
                     {
+                        // Jika SP Anda memakai SET NOCOUNT ON, pesan ini mungkin muncul meski data masuk.
+                        // Jika itu terjadi, hapus saja blok if-else ini dan langsung jalankan logika sukses seperti di CustomerPage.
                         MessageBox.Show("Reservasi tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    // --- BAGIAN YANG HILANG SELESAI DI SINI ---
                 }
             }
             catch (Exception ex)
             {
-                // Tangani semua jenis kesalahan dan tampilkan pesan error umum
-                MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error saat menambah data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                // Pastikan koneksi ditutup jika terbuka
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 

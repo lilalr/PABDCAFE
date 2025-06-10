@@ -23,7 +23,8 @@ namespace PABDCAFE
 
         private void SetupReportViewer()
         {
-            string connectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;Integrated Security = True;";
+            //string connectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;Integrated Security = True;";  //Lila
+            string connectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;Integrated Security = True;";  //Mesi
 
             string query = @"
                  SELECT
@@ -51,7 +52,8 @@ namespace PABDCAFE
             this.reportViewer1.LocalReport.DataSources.Clear();
             this.reportViewer1.LocalReport.DataSources.Add(rds);
 
-            this.reportViewer1.LocalReport.ReportPath = @"C:\Users\lilaa\source\repos\PROJECT PABD\LoginPage\ReservasiReport.rdlc";
+            //this.reportViewer1.LocalReport.ReportPath = @"C:\Users\lilaa\source\repos\PROJECT PABD\LoginPage\ReservasiReport.rdlc";  //Lila
+            this.reportViewer1.LocalReport.ReportPath = @"C:\Users\User\source\repos\PABDCAFErgbr4tg\LoginPage\ReservasiReport.rdlc";  //Mesi
             this.reportViewer1.RefreshReport();
         }
     }
