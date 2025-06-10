@@ -33,5 +33,16 @@ namespace LoginPage.Properties {
                 return ((string)(this["ReservasiCafeConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;Integrated Security=Tr" +
+            "ue;TrustServerCertificate=True")]
+        public string ReservasiCafeConnectionString1 {
+            get {
+                return ((string)(this["ReservasiCafeConnectionString1"]));
+            }
+        }
     }
 }

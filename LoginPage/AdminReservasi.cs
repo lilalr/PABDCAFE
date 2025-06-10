@@ -28,12 +28,12 @@ namespace PABDCAFE
         private readonly TimeSpan _cacheDuration = TimeSpan.FromMinutes(5);
 
         // DataTable untuk menyimpan data preview
-        private DataTable PreviewDataTable;
+        private DataTable PreviewDataTable; // Ini sudah diinisialisasi di InitializePreviewDataTable()
 
         public AdminReservasi(string connStr)
         {
-            InitializePreviewDataTable();
-            InitializeComponent();
+            InitializeComponent(); // Panggil ini paling awal
+            InitializePreviewDataTable(); // Kemudian inisialisasi DataTable
 
             if (string.IsNullOrWhiteSpace(connStr))
             {
@@ -61,111 +61,15 @@ namespace PABDCAFE
             PreviewDataTable = new DataTable();
         }
 
-        private void PreviewData(string filePath)
-        {
-            try
-            {
-                // Mengosongkan DataTable sebelum memuat data baru
-                PreviewDataTable.Clear();
-
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    // Membuka workbook Excel (mendukung .xlsx)
-                    IWorkbook workbook = new XSSFWorkbook(fs);
-                    // Mendapatkan worksheet pertama
-                    ISheet sheet = workbook.GetSheetAt(0);
-
-                    // Membaca header kolom
-                    IRow headerRow = sheet.GetRow(0);
-                    if (headerRow != null)
-                    {
-                        foreach (var cell in headerRow.Cells)
-                        {
-                            // Menambahkan kolom ke DataTable berdasarkan header Excel
-                            PreviewDataTable.Columns.Add(cell.ToString());
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("File Excel kosong atau tidak memiliki baris header.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-
-                    // Membaca sisa data
-                    // Loop dimulai dari baris ke-1 (indeks 1) untuk melewati baris header
-                    for (int i = 1; i <= sheet.LastRowNum; i++)
-                    {
-                        IRow dataRow = sheet.GetRow(i);
-                        // Lewati baris kosong
-                        if (dataRow == null) continue;
-
-                        DataRow newRow = PreviewDataTable.NewRow();
-                        int cellIndex = 0;
-
-                        // Mengisi DataRow dengan data dari setiap sel
-                        foreach (var cell in dataRow.Cells)
-                        {
-                            if (cellIndex < PreviewDataTable.Columns.Count)
-                            {
-                                // Mengambil nilai sel dan menambahkannya ke DataRow
-                                // Anda mungkin perlu menambahkan logika parsing tipe data di sini
-                                // jika kolom memiliki tipe data spesifik (misalnya DateTime, int)
-                                newRow[cellIndex] = cell.ToString();
-                            }
-                            cellIndex++;
-                        }
-                        PreviewDataTable.Rows.Add(newRow);
-                    }
-                }
-
-                // Tampilkan PreviewForm dengan DataTable yang sudah disiapkan
-                // Ganti PreviewForm dengan nama kelas form preview Anda
-                PreviewFormAdminReservasi previewForm = new PreviewFormAdminReservasi(PreviewDataTable);
-                DialogResult dialogResult = previewForm.ShowDialog(); // Tampilkan sebagai dialog
-
-                // Setelah PreviewForm ditutup
-                if (dialogResult == DialogResult.OK)
-                {
-                    // Jika PreviewForm mengembalikan DialogResult.OK, berarti impor berhasil
-                    MessageBox.Show("Impor data dari Excel selesai.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // Contoh pemanggilan metode setelah impor berhasil
-                    // InvalidateReservasiDataCache();
-                    // InvalidateAvailableMejaCache();
-                    // LoadData(); // Muat ulang data setelah impor
-                    // ClearForm();
-                }
-                else if (dialogResult == DialogResult.Cancel)
-                {
-                    MessageBox.Show("Impor data dibatalkan oleh pengguna.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else if (dialogResult == DialogResult.Abort)
-                {
-                    MessageBox.Show("Impor data dibatalkan karena kesalahan.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-            catch (IOException ioEx)
-            {
-                MessageBox.Show("Gagal membaca file: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Terjadi kesalahan saat menyiapkan data preview: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void InvalidateReservasiDataCache()
         {
             _reservasiDataCache.Remove(ReservasiDataCacheKey);
-            // System.Diagnostics.Debug.WriteLine("Cache ReservasiData invalidated.");
         }
 
         private void InvalidateAvailableMejaCache()
         {
             _availableMejaCache.Remove(AvailableMejaCacheKey);
-            // System.Diagnostics.Debug.WriteLine("Cache AvailableMeja invalidated.");
         }
-
-
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
@@ -176,12 +80,11 @@ namespace PABDCAFE
                 if (this.conn == null)
                 {
                     MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // Inisialisasi mejaList sebagai list kosong agar tidak null di bagian selanjutnya
                     mejaList = new List<string>();
                 }
-                else // Koneksi ada, coba ambil data
+                else
                 {
-                    mejaList = new List<string>(); // Inisialisasi di sini untuk menampung hasil DB
+                    mejaList = new List<string>();
                     try
                     {
                         if (this.conn.State == ConnectionState.Closed)
@@ -197,18 +100,15 @@ namespace PABDCAFE
                                 mejaList.Add(reader["Nomor_Meja"].ToString());
                             }
                             reader.Close();
-                            // Simpan ke cache hanya jika berhasil mengambil data
                             if (mejaList.Count > 0)
                             {
                                 _availableMejaCache.Set(AvailableMejaCacheKey, mejaList, DateTimeOffset.Now.Add(_cacheDuration));
                             }
-                            // System.Diagnostics.Debug.WriteLine("Available Meja loaded from DB and cached.");
                         }
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("Gagal memuat daftar meja yang tersedia: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        // mejaList sudah diinisialisasi sebagai list kosong di atas blok try
                     }
                     finally
                     {
@@ -219,33 +119,23 @@ namespace PABDCAFE
                     }
                 }
             }
-            // else
-            // {
-            //     // System.Diagnostics.Debug.WriteLine("Available Meja loaded from cache.");
-            // }
 
-            // Pastikan cbx merujuk ke kontrol yang valid
             if (cbx == null) return;
 
-            // Reset ComboBox
             cbx.DataSource = null;
             cbx.Items.Clear();
 
-            // Setelah mejaList didapatkan (dari cache atau DB, atau list kosong jika ada error)
             if (mejaList != null && mejaList.Count > 0)
             {
-                // Hanya set DataSource jika ada item di mejaList
                 cbx.DataSource = mejaList;
-                cbx.SelectedIndex = -1; // Tidak ada item yang dipilih secara default
+                cbx.SelectedIndex = -1;
             }
             else
             {
-                // Jika mejaList kosong atau null, DataSource tetap null.
-                // Tambahkan placeholder secara manual ke Items collection.
                 cbx.Items.Add("Tidak ada meja tersedia");
-                if (cbx.Items.Count > 0) // Pastikan item berhasil ditambahkan
+                if (cbx.Items.Count > 0)
                 {
-                    cbx.SelectedIndex = 0; // Pilih item placeholder
+                    cbx.SelectedIndex = 0;
                 }
             }
         }
@@ -269,7 +159,6 @@ namespace PABDCAFE
                         dt = new DataTable();
                         da.Fill(dt);
                         _reservasiDataCache.Set(ReservasiDataCacheKey, dt, DateTimeOffset.Now.Add(_cacheDuration));
-                        // System.Diagnostics.Debug.WriteLine("Reservasi Data loaded from DB and cached.");
                     }
                 }
                 catch (Exception ex)
@@ -278,12 +167,7 @@ namespace PABDCAFE
                     return;
                 }
             }
-            // else
-            // {
-            //    // System.Diagnostics.Debug.WriteLine("Reservasi Data loaded from cache.");
-            // }
 
-            // Asumsikan dgvAdminReservasi adalah nama kontrol DataGridView di designer
             if (this.dgvAdminReservasi != null)
             {
                 this.dgvAdminReservasi.DataSource = dt;
@@ -308,13 +192,11 @@ namespace PABDCAFE
 
         private void AdminReservasi_Load(object sender, EventArgs e)
         {
-            // Setup sudah di konstruktor
             LoadData();
         }
 
         void ClearForm()
         {
-            // Asumsikan txtNama, txtTelepon adalah nama kontrol TextBox di designer
             if (this.txtNama != null) this.txtNama.Clear();
             if (this.txtTelepon != null) this.txtTelepon.Clear();
 
@@ -326,7 +208,7 @@ namespace PABDCAFE
             if (this.cbxNomorMeja != null)
             {
                 this.cbxNomorMeja.SelectedIndex = -1;
-                InvalidateAvailableMejaCache(); // Invalidate cache sebelum load ulang
+                InvalidateAvailableMejaCache();
                 LoadAvailableMeja(this.cbxNomorMeja);
             }
 
@@ -349,10 +231,11 @@ namespace PABDCAFE
                 {
                     err += "Waktu reservasi tidak boleh di masa lalu.\n";
                 }
-                if (this.dtpWaktuReservasi.Value.Year != 2025) // Sesuai constraint di kode asli
-                {
-                    err += "Waktu reservasi hanya diperbolehkan untuk tahun 2025.\n";
-                }
+                // Hati-hati dengan validasi tahun 2025, ini bisa kadaluarsa
+                // if (this.dtpWaktuReservasi.Value.Year != 2025)
+                // {
+                //     err += "Waktu reservasi hanya diperbolehkan untuk tahun 2025.\n";
+                // }
             }
             else
             {
@@ -439,6 +322,19 @@ namespace PABDCAFE
             finally
             {
                 if (conn.State == ConnectionState.Open) conn.Close();
+            }
+        }
+
+        private void dgvAdminReservasi_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dgvAdminReservasi.SelectedRows.Count > 0)
+            {
+                // yg dipencet yg paling depan
+                DataGridViewRow selectedRow = this.dgvAdminReservasi.SelectedRows[0];
+                this.txtNama.Text = selectedRow.Cells["Nama_Customer"].Value?.ToString();
+                this.txtTelepon.Text = selectedRow.Cells["No_Telp"].Value?.ToString();
+                this.dtpWaktuReservasi.Value = Convert.ToDateTime(selectedRow.Cells["Waktu_Reservasi"].Value);
+                this.cbxNomorMeja.SelectedItem = selectedRow.Cells["Nomor_Meja"].Value?.ToString();
             }
         }
 
@@ -648,200 +544,159 @@ namespace PABDCAFE
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Excel Workbook (*.xlsx)|*.xlsx|All files (*.*)|*.*",
-                Title = "Pilih File Excel untuk Impor"
+                Title = "Pilih File Excel untuk Impor Data Reservasi"
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openFileDialog.FileName;
-                List<string> errorDetails = new List<string>(); // Akumulasi semua error
-                bool hasErrors = false; // Flag untuk menandai apakah ada error
-
-                // 1. Konfirmasi Impor
-                DialogResult confirmResult = MessageBox.Show(
-                    "Yakin ingin mengimpor data dari file Excel ini?\nProses ini akan menambah data baru ke database.",
-                    "Konfirmasi Impor",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (confirmResult == DialogResult.No)
-                {
-                    return; // Batalkan proses jika pengguna memilih 'No'
-                }
-
-                SqlTransaction transaction = null; // Deklarasi transaksi di luar try-catch agar bisa diakses di finally
-
                 try
                 {
-                    using (var workbook = new XLWorkbook(filePath))
+                    DataTable dt = new DataTable(); // Buat DataTable baru untuk data dari Excel
+
+                    using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        IXLWorksheet worksheet = workbook.Worksheets.Worksheet(1);
+                        IWorkbook workbook = new XSSFWorkbook(fs);
+                        ISheet sheet = workbook.GetSheetAt(0); // Ambil sheet pertama
 
-                        if (worksheet == null || worksheet.FirstRowUsed() == null)
+                        IRow headerRow = sheet.GetRow(0);
+                        if (headerRow != null)
                         {
-                            MessageBox.Show("File Excel kosong atau tidak memiliki sheet yang dapat dibaca.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return;
-                        }
-
-                        var firstRowUsed = worksheet.FirstRowUsed();
-                        var lastRowUsed = worksheet.LastRowUsed();
-
-                        int startDataRow = firstRowUsed.RowNumber();
-                        if (worksheet.Cell(firstRowUsed.RowNumber(), 1).Value.ToString().Trim().ToLower() == "nama costumer" ||
-                            worksheet.Cell(firstRowUsed.RowNumber(), 1).Value.ToString().Trim().ToLower() == "nama customer")
-                        {
-                            startDataRow++;
-                        }
-
-                        if (startDataRow > lastRowUsed.RowNumber())
-                        {
-                            MessageBox.Show("File Excel hanya berisi header atau kosong setelah header.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return;
-                        }
-
-                        if (conn.State == ConnectionState.Closed) conn.Open();
-                        transaction = conn.BeginTransaction(); // Mulai transaksi database
-
-                        for (int i = startDataRow; i <= lastRowUsed.RowNumber(); i++)
-                        {
-                            try
+                            // === START: Bagian yang diubah/ditambahkan untuk menormalisasi nama kolom ===
+                            // Mendapatkan nama header dari Excel dan menambahkannya ke DataTable
+                            foreach (var cell in headerRow.Cells)
                             {
-                                string namaCustomer = worksheet.Cell(i, 1).GetValue<string>().Trim();
-                                string noTelp = worksheet.Cell(i, 2).GetValue<string>().Trim();
-                                string waktuReservasiRaw = worksheet.Cell(i, 3).GetValue<string>().Trim();
-                                string nomorMejaRaw = worksheet.Cell(i, 4).GetValue<string>().Trim();
-
-                                if (string.IsNullOrWhiteSpace(namaCustomer) && string.IsNullOrWhiteSpace(noTelp) &&
-                                    string.IsNullOrWhiteSpace(waktuReservasiRaw) && string.IsNullOrWhiteSpace(nomorMejaRaw))
-                                {
-                                    continue;
-                                }
-
-                                DateTime waktuReservasi;
-                                // Tambahkan lebih banyak format untuk TryParseExact jika diperlukan
-                                bool waktuParsed = DateTime.TryParseExact(waktuReservasiRaw, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) ||
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "dd,MM,yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) || // Untuk 11,06,2025
-                                                   DateTime.TryParseExact(waktuReservasiRaw, "MM,dd,yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out waktuReservasi) || // Jika mungkin ada MM,dd,yyyy
-                                                   DateTime.TryParse(waktuReservasiRaw, out waktuReservasi);
-
-                                if (!waktuParsed)
-                                {
-                                    hasErrors = true;
-                                    errorDetails.Add($"Baris {i}: Format waktu '{waktuReservasiRaw}' tidak valid. Data: {namaCustomer}, {noTelp}, {waktuReservasiRaw}, {nomorMejaRaw}");
-                                    continue; // Lanjutkan ke baris berikutnya untuk mengumpulkan semua error
-                                }
-
-                                string nomorMeja = nomorMejaRaw.Replace("'", "").Trim();
-
-                                // --- Validasi Data ---
-                                string rowError = "";
-                                if (string.IsNullOrWhiteSpace(namaCustomer)) rowError += "Nama kosong. ";
-                                if (!Regex.IsMatch(noTelp, @"^(\+62\d{8,12}|0\d{9,14})$")) rowError += "Format telepon salah. ";
-
-                                if (waktuReservasi.Date < DateTime.Today.Date)
-                                {
-                                    rowError += "Waktu di masa lalu. ";
-                                }
-                                if (waktuReservasi.Year != 2025) rowError += "Tahun harus 2025. ";
-
-                                if (string.IsNullOrWhiteSpace(nomorMeja) || !Regex.IsMatch(nomorMeja, @"^\d{2}$"))
-                                {
-                                    rowError += "Format Nomor Meja salah (harus 2 digit angka). ";
-                                }
-
-                                if (!string.IsNullOrEmpty(rowError))
-                                {
-                                    hasErrors = true;
-                                    errorDetails.Add($"Baris {i}: Validasi gagal - {rowError.Trim()}. Data: {namaCustomer}, {noTelp}, {waktuReservasi.ToString("yyyy-MM-dd")}, {nomorMejaRaw}");
-                                    continue; // Lanjutkan ke baris berikutnya untuk mengumpulkan semua error
-                                }
-
-                                // Jika tidak ada error di baris ini, tambahkan ke daftar untuk impor
-                                // (Kita tidak langsung ExecuteNonQuery di sini karena ingin "all or nothing")
-                                // Untuk pendekatan ini, kita akan menyimpan data yang valid dalam List<object[]>
-                                // dan baru akan mengimpornya setelah semua baris divalidasi.
-                                // Atau, kita bisa langsung execute dan roll back jika ada error.
-                                // Untuk kesederhanaan, kita akan langsung execute, tetapi melakukan rollback jika hasErrors adalah true.
-
-                                // Langsung execute karena kita akan menggunakan transaksi
-                                using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn, transaction)) // Tambahkan 'transaction'
-                                {
-                                    cmd.CommandType = CommandType.StoredProcedure;
-                                    cmd.Parameters.AddWithValue("@Nama_Customer", namaCustomer);
-                                    cmd.Parameters.AddWithValue("@No_Telp", noTelp);
-                                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
-                                    cmd.Parameters.AddWithValue("@Nomor_Meja", nomorMeja);
-                                    cmd.ExecuteNonQuery();
-                                    // successCount++; // Tidak perlu hitung di sini, kita akan check hasErrors
-                                }
+                                dt.Columns.Add(cell.ToString().Trim()); // Tambahkan kolom dengan nama asli dari Excel
                             }
-                            catch (SqlException sqlExInner)
+
+                            // Menyesuaikan nama kolom DataTable agar sesuai dengan nama kolom di database
+                            // Asumsi: Nama kolom database adalah Nama_Customer, No_Telepon, Waktu_Reservasi, Nomor_Meja
+                            if (dt.Columns.Contains("Nama Customer"))
                             {
-                                hasErrors = true;
-                                errorDetails.Add($"Baris {i}: Kesalahan SQL - {sqlExInner.Message.Split('\n')[0]}. Data: {worksheet.Cell(i, 1).GetValue<string>()}, {worksheet.Cell(i, 2).GetValue<string>()}, {worksheet.Cell(i, 3).GetValue<string>()}, {worksheet.Cell(i, 4).GetValue<string>()}");
+                                dt.Columns["Nama Customer"].ColumnName = "Nama_Customer";
                             }
-                            catch (Exception exInner)
+                            if (dt.Columns.Contains("Nomor Telepon"))
                             {
-                                hasErrors = true;
-                                errorDetails.Add($"Baris {i}: Kesalahan - {exInner.Message}. Data: {worksheet.Cell(i, 1).GetValue<string>()}, {worksheet.Cell(i, 2).GetValue<string>()}, {worksheet.Cell(i, 3).GetValue<string>()}, {worksheet.Cell(i, 4).GetValue<string>()}");
+                                dt.Columns["Nomor Telepon"].ColumnName = "No_Telp";
                             }
-                        } // end for loop
-
-                        // Tentukan apakah harus Commit atau Rollback transaksi
-                        if (hasErrors)
-                        {
-                            transaction.Rollback(); // Batalkan semua perubahan jika ada satu saja error
-                            MessageBox.Show("Impor dibatalkan karena ditemukan kesalahan pada data. Tidak ada data yang disimpan.", "Impor Gagal Total", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            if (dt.Columns.Contains("Waktu Reservasi"))
+                            {
+                                dt.Columns["Waktu Reservasi"].ColumnName = "Waktu_Reservasi";
+                            }
+                            if (dt.Columns.Contains("Nomor Meja"))
+                            {
+                                dt.Columns["Nomor Meja"].ColumnName = "Nomor_Meja";
+                            }
+                            // === END: Bagian yang diubah/ditambahkan ===
                         }
                         else
                         {
-                            transaction.Commit(); // Simpan semua perubahan jika tidak ada error sama sekali
-                            MessageBox.Show("Semua data dari file Excel berhasil diimpor.", "Impor Berhasil", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("File Excel kosong atau tidak memiliki baris header.", "Informasi Impor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
                         }
-                    } // using XLWorkbook
 
+                        // Inisialisasi FormulaEvaluator untuk menangani sel formula
+                        IFormulaEvaluator evaluator = workbook.GetCreationHelper().CreateFormulaEvaluator(); // Tambahkan ini
+
+                        for (int i = 1; i <= sheet.LastRowNum; i++) // Mulai dari baris ke-1 (indeks 1)
+                        {
+                            IRow dataRow = sheet.GetRow(i);
+                            if (dataRow == null) continue; // Lewati baris kosong
+
+                            DataRow newRow = dt.NewRow();
+                            // Pastikan kita tidak melebihi jumlah kolom di DataTable
+                            for (int cellIndex = 0; cellIndex < dt.Columns.Count; cellIndex++)
+                            {
+                                ICell cell = dataRow.GetCell(cellIndex);
+                                if (cell != null)
+                                {
+                                    // Mengambil nilai sel berdasarkan tipe data
+                                    switch (cell.CellType)
+                                    {
+                                        case CellType.String:
+                                            newRow[cellIndex] = cell.StringCellValue;
+                                            break;
+                                        case CellType.Numeric:
+                                            if (DateUtil.IsCellDateFormatted(cell))
+                                            {
+                                                newRow[cellIndex] = cell.DateCellValue;
+                                            }
+                                            else
+                                            {
+                                                newRow[cellIndex] = cell.NumericCellValue;
+                                            }
+                                            break;
+                                        case CellType.Boolean:
+                                            newRow[cellIndex] = cell.BooleanCellValue;
+                                            break;
+                                        case CellType.Formula: // Tangani sel formula
+                                            CellValue cellValue = evaluator.Evaluate(cell); // Evaluasi formula
+                                            switch (cellValue.CellType)
+                                            {
+                                                case CellType.Numeric:
+                                                    if (DateUtil.IsCellDateFormatted(cell))
+                                                    {
+                                                        newRow[cellIndex] = cell.DateCellValue; // Gunakan DateCellValue jika itu tanggal
+                                                    }
+                                                    else
+                                                    {
+                                                        newRow[cellIndex] = cellValue.NumberValue;
+                                                    }
+                                                    break;
+                                                case CellType.String:
+                                                    newRow[cellIndex] = cellValue.StringValue;
+                                                    break;
+                                                case CellType.Boolean:
+                                                    newRow[cellIndex] = cellValue.BooleanValue;
+                                                    break;
+                                                case CellType.Error:
+                                                    newRow[cellIndex] = FormulaError.ForInt(cellValue.ErrorValue).String;
+                                                    break;
+                                                default:
+                                                    newRow[cellIndex] = cell.ToString(); // Fallback
+                                                    break;
+                                            }
+                                            break;
+                                        default:
+                                            newRow[cellIndex] = cell.ToString();
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    newRow[cellIndex] = DBNull.Value; // Jika sel kosong
+                                }
+                            }
+                            dt.Rows.Add(newRow);
+                        }
+                    }
+
+                    // --- Panggil Form PreviewDataReservasi dengan parameter yang benar ---
+                    // Pastikan connectionString ini sudah didefinisikan di kelas AdminReservasi Anda.
+                    // Contoh: private string connectionString = "Your_Connection_String_Here";
+                    PreviewDataReservasi previewForm = new PreviewDataReservasi(dt, this.connectionString);
+
+                    // Tampilkan form preview sebagai dialog modal
+                    if (previewForm.ShowDialog() == DialogResult.OK)
+                    {
+                        MessageBox.Show("Data berhasil diimpor!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        InvalidateReservasiDataCache();
+                        InvalidateAvailableMejaCache();
+                        LoadData();
+                        ClearForm();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Import data dibatalkan.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 catch (IOException ioEx)
                 {
-                    // Rollback jika ada IOException sebelum memulai iterasi
-                    if (transaction != null) transaction.Rollback();
-                    MessageBox.Show("Gagal membaca file atau file sedang dibuka: " + ioEx.Message, "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    hasErrors = true; // Tandai ada error untuk pesan ringkasan
+                    MessageBox.Show("Gagal membaca file: " + ioEx.Message + "\nPastikan file tidak sedang dibuka oleh program lain.", "Kesalahan File IO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    // Rollback jika ada Exception umum
-                    if (transaction != null) transaction.Rollback();
-                    MessageBox.Show("Terjadi kesalahan saat impor: " + ex.Message, "Kesalahan Impor Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    hasErrors = true; // Tandai ada error untuk pesan ringkasan
-                }
-                finally
-                {
-                    // Pastikan koneksi ditutup
-                    if (conn.State == ConnectionState.Open) conn.Close();
-
-                    // Selalu refresh data dan bersihkan form setelah upaya impor,
-                    // terlepas dari apakah itu berhasil atau gagal total.
-                    InvalidateReservasiDataCache();
-                    InvalidateAvailableMejaCache();
-                    LoadData();
-                    ClearForm();
-
-                    // Tampilkan detail error jika ada
-                    if (hasErrors)
-                    {
-                        string summaryMessage = "Detail Kegagalan (maks 10 baris pertama):\n" + string.Join("\n", errorDetails.GetRange(0, Math.Min(errorDetails.Count, 10)));
-                        if (errorDetails.Count > 10)
-                        {
-                            summaryMessage += "\n..."; // Tambahkan elipsis jika ada lebih dari 10 error
-                        }
-                        MessageBox.Show(summaryMessage, "Detail Kegagalan Impor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    MessageBox.Show("Terjadi kesalahan saat mengimpor data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -851,82 +706,52 @@ namespace PABDCAFE
 
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
-        {
-            // Pastikan nama DataGridView adalah 'dgvAdminMeja' atau ganti sesuai nama yang benar
-            if (dgvAdminReservasi.Rows.Count == 0)
-            {
-                MessageBox.Show("Tidak ada data untuk diekspor.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            // 1. Konfigurasi SaveFileDialog untuk .xlsx
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "Excel Workbook (*.xlsx)|*.xlsx", // Filter diubah ke .xlsx
-                Title = "Simpan Data Meja sebagai Excel",  // Judul diubah
-                FileName = $"DataMeja_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx" // Ekstensi file diubah
-            };
-
-            // 2. Tampilkan dialog dan proses jika pengguna mengklik "OK"
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    // 3. Buat Workbook Excel baru menggunakan ClosedXML
-                    using (var workbook = new XLWorkbook())
-                    {
-                        // Ganti 'dgvAdminMeja' dengan nama DataGridView Anda
-                        // Nama worksheet: "Data Meja"
-                        var worksheet = workbook.Worksheets.Add("Data Meja");
-
-                        // 4. Tambahkan Header Kolom ke worksheet
-                        // Baris Excel dimulai dari 1
-                        for (int i = 0; i < dgvAdminReservasi.Columns.Count; i++)
-                        {
-                            // Pastikan teks header kolom tidak null
-                            worksheet.Cell(1, i + 1).Value = dgvAdminReservasi.Columns[i].HeaderText ?? "";
-                        }
-
-                        // 5. Tambahkan Data dari setiap baris di DataGridView
-                        // Data dimulai dari baris ke-2 di Excel (setelah header)
-                        // Pastikan untuk tidak mengekspor baris kosong/new row
-                        for (int i = 0; i < dgvAdminReservasi.Rows.Count; i++)
-                        {
-                            // Lewati baris kosong atau baris "new row" di DataGridView
-                            if (dgvAdminReservasi.Rows[i].IsNewRow)
-                            {
-                                continue;
-                            }
-
-                            for (int j = 0; j < dgvAdminReservasi.Columns.Count; j++)
-                            {
-                                // Periksa nilai sel apakah null. Jika null, gunakan string kosong.
-                                // Baris di Excel adalah (i + 2) karena baris 1 adalah header dan DataGridView row index dimulai dari 0
-                                worksheet.Cell(i + 2, j + 1).Value = dgvAdminReservasi.Rows[i].Cells[j].Value?.ToString() ?? "";
-                            }
-                        }
-
-                        // Atur lebar kolom agar sesuai dengan isi konten
-                        worksheet.Columns().AdjustToContents();
-
-                        // 6. Simpan workbook ke path yang dipilih pengguna
-                        workbook.SaveAs(saveFileDialog.FileName);
-                    }
-
-                    MessageBox.Show("Data berhasil diekspor ke file Excel.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    // Tangani error jika terjadi (misal: file sedang dibuka oleh program lain)
-                    MessageBox.Show($"Terjadi kesalahan saat menyimpan file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
         private void btnAnalisis_Click(object sender, EventArgs e)
         {
-
+            string queryToAnalyze = "SELECT Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Nama_Customer ASC";
+            AnalyzeQuery(queryToAnalyze);
         }
+
+        private void AnalyzeQuery(string sqlQuery)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    // Baris ini akan menangkap pesan statistik dari SQL Server
+                    // dan menampilkannya di MessageBox
+                    conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
+
+                    conn.Open();
+
+                    // Membungkus query asli dengan perintah statistik
+                    var wrappedQuery = $@"
+                       SET STATISTICS IO ON;
+                       SET STATISTICS TIME ON;
+                       {sqlQuery}
+                       SET STATISTICS TIME OFF;
+                       SET STATISTICS IO OFF;";
+
+                    using (var cmd = new SqlCommand(wrappedQuery, conn))
+                    {
+                        // Menggunakan ExecuteNonQuery karena kita tidak mengharapkan data kembali,
+                        // hanya pesan statistik dari InfoMessage.
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal melakukan analisis query: " + ex.Message, "Kesalahan Analisis", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            ReportViewerMeja form = new ReportViewerMeja();
+            form.ShowDialog();
+        }
+
+        
     }
 }

@@ -19,7 +19,7 @@ namespace PABDCAFE
         // Bagian dasar dari string koneksi ke database SQL Server Anda.
         // Pastikan ini sesuai dengan konfigurasi server Anda.
         // Kredensial pengguna (User ID dan Password) akan ditambahkan secara dinamis.
-        private string baseconnectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;Integrated Security = True;";
+        private string baseconnectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;Integrated Security = True;";
 
         private readonly MemoryCache _cache = MemoryCache.Default;
         private readonly CacheItemPolicy _policy = new CacheItemPolicy()

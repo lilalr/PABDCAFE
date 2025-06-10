@@ -44,8 +44,8 @@ namespace PABDCAFE
             this.dtpWaktuReservasi = new System.Windows.Forms.DateTimePicker();
             this.cbxNomorMeja = new System.Windows.Forms.ComboBox();
             this.dgvAdminReservasi = new System.Windows.Forms.DataGridView();
-            this.btnExport = new System.Windows.Forms.Button();
             this.btnAnalisis = new System.Windows.Forms.Button();
+            this.btnReport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminReservasi)).BeginInit();
             this.SuspendLayout();
             // 
@@ -189,16 +189,7 @@ namespace PABDCAFE
             this.dgvAdminReservasi.RowTemplate.Height = 28;
             this.dgvAdminReservasi.Size = new System.Drawing.Size(869, 241);
             this.dgvAdminReservasi.TabIndex = 23;
-            // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(656, 244);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(104, 36);
-            this.btnExport.TabIndex = 24;
-            this.btnExport.Text = "Export";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            this.dgvAdminReservasi.SelectionChanged += new System.EventHandler(this.dgvAdminReservasi_SelectionChanged);
             // 
             // btnAnalisis
             // 
@@ -210,14 +201,24 @@ namespace PABDCAFE
             this.btnAnalisis.UseVisualStyleBackColor = true;
             this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
+            // btnReport
+            // 
+            this.btnReport.Location = new System.Drawing.Point(654, 244);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(104, 36);
+            this.btnReport.TabIndex = 26;
+            this.btnReport.Text = "Report";
+            this.btnReport.UseVisualStyleBackColor = true;
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
+            // 
             // AdminReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(993, 626);
+            this.Controls.Add(this.btnReport);
             this.Controls.Add(this.btnAnalisis);
-            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.dgvAdminReservasi);
             this.Controls.Add(this.cbxNomorMeja);
             this.Controls.Add(this.dtpWaktuReservasi);
@@ -261,7 +262,7 @@ namespace PABDCAFE
         private System.Windows.Forms.DateTimePicker dtpWaktuReservasi;
         private System.Windows.Forms.ComboBox cbxNomorMeja;
         private System.Windows.Forms.DataGridView dgvAdminReservasi;
-        private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnAnalisis;
+        private System.Windows.Forms.Button btnReport;
     }
 }

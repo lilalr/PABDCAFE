@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -198,11 +200,11 @@
     <Compile Include="PreviewDataMeja.Designer.cs">
       <DependentUpon>PreviewDataMeja.cs</DependentUpon>
     </Compile>
-    <Compile Include="PreviewFormAdminReservasi.cs">
+    <Compile Include="PreviewDataReservasi.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PreviewFormAdminReservasi.Designer.cs">
-      <DependentUpon>PreviewFormAdminReservasi.cs</DependentUpon>
+    <Compile Include="PreviewDataReservasi.Designer.cs">
+      <DependentUpon>PreviewDataReservasi.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -217,6 +219,17 @@
     </Compile>
     <Compile Include="ReportViewerMeja.Designer.cs">
       <DependentUpon>ReportViewerMeja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportViewerReservasi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportViewerReservasi.Designer.cs">
+      <DependentUpon>ReportViewerReservasi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReservasiDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReservasiDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <EmbeddedResource Include="AdminMeja.resx">
@@ -238,8 +251,8 @@
     <EmbeddedResource Include="PreviewDataMeja.resx">
       <DependentUpon>PreviewDataMeja.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PreviewFormAdminReservasi.resx">
-      <DependentUpon>PreviewFormAdminReservasi.cs</DependentUpon>
+    <EmbeddedResource Include="PreviewDataReservasi.resx">
+      <DependentUpon>PreviewDataReservasi.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -257,6 +270,10 @@
     <EmbeddedResource Include="ReportViewerMeja.resx">
       <DependentUpon>ReportViewerMeja.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ReportViewerReservasi.resx">
+      <DependentUpon>ReportViewerReservasi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReservasiReport.rdlc" />
     <None Include="DataSet1.xsc">
       <DependentUpon>DataSet1.xsd</DependentUpon>
     </None>
@@ -283,6 +300,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ReservasiDataSet.xsc">
+      <DependentUpon>ReservasiDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ReservasiDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ReservasiDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ReservasiDataSet.xss">
+      <DependentUpon>ReservasiDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Resources\WhatsApp Image 2025-05-19 at 00.38.34_dbdf79d4.jpg" />
   </ItemGroup>
   <ItemGroup>
