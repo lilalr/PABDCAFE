@@ -32,12 +32,14 @@ namespace PABDCAFE
             this.reportViewer1.RefreshReport();
         }
 
+        // Fungsi untuk membuat dan menampilkan laporan data meja.
         private void SetupReportViewer()
         {
             string connectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;Integrated Security = True;";
 
             string query = @"SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja;";
 
+            // 2. Ambil data dari database dan simpan dalam sebuah 'wadah' (DataTable).
             DataTable dt = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -49,9 +51,12 @@ namespace PABDCAFE
 
             ReportDataSource rds = new ReportDataSource("DataSet1", dt);
 
+            // 3. Berikan data dari 'wadah' tadi ke komponen laporan (ReportViewer).
+            // PENTING: Nama "DataSet1" harus sama dengan nama di file desain laporan (.rdlc).
             this.reportViewer1.LocalReport.DataSources.Clear();
             this.reportViewer1.LocalReport.DataSources.Add(rds);
 
+            // 4. Tentukan file desainnya, lalu tampilkan laporan di layar.
             this.reportViewer1.LocalReport.ReportPath = @"C:\Users\User\source\repos\PABDCAFErgbr4tg\LoginPage\MejaReport1.rdlc";
             this.reportViewer1.RefreshReport();
         }
@@ -66,8 +71,7 @@ namespace PABDCAFE
         {
             try
             {
-                // LANGKAH 1: AMBIL KEMBALI DATA DARI DATABASE
-                // Kita membuat DataTable baru di sini agar fungsi ini independen.
+              
                 DataTable dt = new DataTable();
                 string connectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;Integrated Security=True;";
                 string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja;";
