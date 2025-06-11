@@ -216,7 +216,9 @@ namespace PABDCAFE
 
         private void AdminReservasi_Load(object sender, EventArgs e)
         {
+            EnsureIndexes();
             LoadData();
+
         }
 
         void ClearForm()
@@ -283,6 +285,66 @@ namespace PABDCAFE
                 return false;
             }
             return true;
+        }
+
+        private void EnsureIndexes()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    var indexScript = @"
+            -- Memastikan tabel Reservasi ada
+            IF OBJECT_ID('dbo.Reservasi', 'U') IS NOT NULL
+            BEGIN
+                -- Memastikan indeks IX_Reservasi_Nomor_Meja pada tabel Reservasi ada
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nomor_Meja' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                    CREATE NONCLUSTERED INDEX IX_Reservasi_Nomor_Meja ON dbo.Reservasi(Nomor_Meja);
+            END";
+                    using (var cmd = new SqlCommand(indexScript, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    MessageBox.Show("Pengecekan dan pembuatan indeks database selesai.", "Info Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void AnalyzeQuery(string sqlQuery)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
+
+                    conn.Open();
+
+                    // Membungkus query asli dengan perintah statistik
+                    var wrappedQuery = $@"
+                       SET STATISTICS IO ON;
+                       SET STATISTICS TIME ON;
+                       {sqlQuery}
+                       SET STATISTICS TIME OFF;
+                       SET STATISTICS IO OFF;";
+
+                    using (var cmd = new SqlCommand(wrappedQuery, conn))
+                    {
+                        // Menggunakan ExecuteNonQuery karena kita tidak mengharapkan data kembali,
+                        // hanya pesan statistik dari InfoMessage.
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal melakukan analisis query: " + ex.Message, "Kesalahan Analisis", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -745,38 +807,6 @@ namespace PABDCAFE
         {
             string queryToAnalyze = "SELECT Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Nama_Customer ASC";
             AnalyzeQuery(queryToAnalyze);
-        }
-
-        private void AnalyzeQuery(string sqlQuery)
-        {
-            try
-            {
-                using (var conn = new SqlConnection(connectionString))
-                {
-                    conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
-
-                    conn.Open();
-
-                    // Membungkus query asli dengan perintah statistik
-                    var wrappedQuery = $@"
-                       SET STATISTICS IO ON;
-                       SET STATISTICS TIME ON;
-                       {sqlQuery}
-                       SET STATISTICS TIME OFF;
-                       SET STATISTICS IO OFF;";
-
-                    using (var cmd = new SqlCommand(wrappedQuery, conn))
-                    {
-                        // Menggunakan ExecuteNonQuery karena kita tidak mengharapkan data kembali,
-                        // hanya pesan statistik dari InfoMessage.
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal melakukan analisis query: " + ex.Message, "Kesalahan Analisis", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void btnReport_Click(object sender, EventArgs e)
