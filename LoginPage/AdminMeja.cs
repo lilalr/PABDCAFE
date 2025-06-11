@@ -144,7 +144,6 @@ namespace PABDCAFE
 
                     conn.Open();
 
-                    // Membungkus query asli dengan perintah statistik
                     var wrappedQuery = $@"
                 SET STATISTICS IO ON;
                 SET STATISTICS TIME ON;
@@ -154,8 +153,6 @@ namespace PABDCAFE
 
                     using (var cmd = new SqlCommand(wrappedQuery, conn))
                     {
-                        // Menggunakan ExecuteNonQuery karena kita tidak mengharapkan data kembali,
-                        // hanya pesan statistik dari InfoMessage.
                         cmd.ExecuteNonQuery();
                     }
                 }

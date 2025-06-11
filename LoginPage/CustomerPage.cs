@@ -186,7 +186,6 @@ namespace PABDCAFE
             string meja = cmbCustMeja.SelectedItem?.ToString() ?? cmbCustMeja.Text.Trim();
             DateTime waktu = dtpCustWaktu.Value;
 
-            // ... (Validasi nama, telp, waktu, tahun tetap sama) ...
             if (string.IsNullOrWhiteSpace(nama) || nama.Length < 3) { /*...*/ return false; }
             if (!Regex.IsMatch(telp, @"^(\+62\d{8,12}|0\d{9,14})$")) { /*...*/ return false; }
             if (waktu < DateTime.Now.AddMinutes(-1)) { /*...*/ return false; }
@@ -197,13 +196,7 @@ namespace PABDCAFE
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // --- AWAL PERUBAHAN ---
-
-                // Blok 'Cek status meja' DIHAPUS seluruhnya karena tidak relevan lagi.
-
-                // Logika 'Cek jadwal reservasi' DIUBAH menjadi seperti di bawah.
-                // Query ini memeriksa apakah ada reservasi untuk meja yang sama PADA TANGGAL YANG SAMA.
-                // CAST(... AS DATE) digunakan untuk mengabaikan jam, menit, dan detik.
+               
                 string queryCekJadwal = "SELECT COUNT(*) FROM Reservasi WHERE Nomor_Meja = @NomorMeja AND CAST(Waktu_Reservasi AS DATE) = CAST(@WaktuReservasi AS DATE)";
 
                 using (SqlCommand cekJadwalCmd = new SqlCommand(queryCekJadwal, conn))
@@ -214,13 +207,10 @@ namespace PABDCAFE
                     int countReservasi = (int)cekJadwalCmd.ExecuteScalar();
                     if (countReservasi > 0)
                     {
-                        // Pesan error diperbarui agar lebih jelas
                         MessageBox.Show($"Meja '{meja}' sudah direservasi untuk tanggal {waktu:dd-MM-yyyy}. Silakan pilih meja atau tanggal lain.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return false;
                     }
                 }
-
-                // --- AKHIR PERUBAHAN ---
 
                 return true;
             }
@@ -257,21 +247,16 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", dtpCustWaktu.Value);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", cmbCustMeja.Text.Trim());
 
-                    // --- AWAL PERBAIKAN ---
-                    // Eksekusi command. Kita tidak lagi memeriksa nilai kembaliannya.
-                    // Jika ada error database (misal: constraint), catch block akan menanganinya.
+                    
                     cmd.ExecuteNonQuery();
 
-                    // Karena tidak ada exception, kita anggap berhasil.
                     MessageBox.Show("Reservasi berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Jalankan refresh UI
                     InvalidateReservasiCache();
                     InvalidateAvailableMejaCache();
                     LoadReservasi();
                     LoadComboBoxMeja(cmbCustMeja);
                     ClearForm();
-                    // --- AKHIR PERBAIKAN ---
                 }
             }
             catch (SqlException sqlEx)

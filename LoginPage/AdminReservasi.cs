@@ -91,10 +91,8 @@ namespace PABDCAFE
                             this.conn.Open();
                         }
 
-                        // --- AWAL PERUBAHAN ---
-                        // Query diubah untuk mengambil SEMUA meja, mengabaikan Status_Meja
                         using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", this.conn))
-                        // --- AKHIR PERUBAHAN ---
+
                         {
                             SqlDataReader reader = cmd.ExecuteReader();
                             while (reader.Read())
@@ -119,7 +117,6 @@ namespace PABDCAFE
                 }
             }
 
-            // ... (logika untuk mengisi ComboBox tetap sama) ...
             if (cbx == null) return;
             cbx.DataSource = null;
             cbx.Items.Clear();
@@ -258,11 +255,7 @@ namespace PABDCAFE
                 {
                     err += "Waktu reservasi tidak boleh di masa lalu.\n";
                 }
-                // Hati-hati dengan validasi tahun 2025, ini bisa kadaluarsa
-                // if (this.dtpWaktuReservasi.Value.Year != 2025)
-                // {
-                //     err += "Waktu reservasi hanya diperbolehkan untuk tahun 2025.\n";
-                // }
+                
             }
             else
             {
@@ -716,9 +709,6 @@ namespace PABDCAFE
                         }
                     }
 
-                    // --- Panggil Form PreviewDataReservasi dengan parameter yang benar ---
-                    // Pastikan connectionString ini sudah didefinisikan di kelas AdminReservasi Anda.
-                    // Contoh: private string connectionString = "Your_Connection_String_Here";
                     PreviewDataReservasi previewForm = new PreviewDataReservasi(dt, this.connectionString);
 
                     // Tampilkan form preview sebagai dialog modal
@@ -763,8 +753,6 @@ namespace PABDCAFE
             {
                 using (var conn = new SqlConnection(connectionString))
                 {
-                    // Baris ini akan menangkap pesan statistik dari SQL Server
-                    // dan menampilkannya di MessageBox
                     conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "Info Statistik Kinerja");
 
                     conn.Open();
