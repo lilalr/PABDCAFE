@@ -40,6 +40,7 @@
             this.btnImport = new System.Windows.Forms.Button();
             this.btnReport = new System.Windows.Forms.Button();
             this.btnAnalisis = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAdminMeja)).BeginInit();
             this.SuspendLayout();
             // 
@@ -159,12 +160,23 @@
             this.btnAnalisis.UseVisualStyleBackColor = true;
             this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(673, 93);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 15;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // AdminMeja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.btnReport);
             this.Controls.Add(this.btnImport);
@@ -200,5 +212,6 @@
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnReport;
         private System.Windows.Forms.Button btnAnalisis;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

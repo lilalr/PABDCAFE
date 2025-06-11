@@ -490,5 +490,26 @@ namespace PABDCAFE
             }
         }
 
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                InvalidateAdminMejaCache();
+
+               
+                LoadAndDisplayData();
+
+               
+                ClearForm();
+
+                MessageBox.Show("Data berhasil disegarkan dari database.", "Refresh Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi error saat menyegarkan data: " + ex.Message, "Kesalahan Refresh", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
     }
 }
