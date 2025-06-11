@@ -35,6 +35,12 @@ namespace PABDCAFE
             InitializeComponent(); // Panggil ini paling awal
             InitializePreviewDataTable(); // Kemudian inisialisasi DataTable
 
+            dtpWaktuReservasi.Format = DateTimePickerFormat.Custom;
+            dtpWaktuReservasi.CustomFormat = "dd/MM/yyyy HH:mm"; // Format: tanggal/bulan/tahun spasi jam:menit
+
+            // Opsional: Menggunakan tombol panah (spinner) untuk memilih waktu
+            dtpWaktuReservasi.ShowUpDown = true;
+
             if (string.IsNullOrWhiteSpace(connStr))
             {
                 MessageBox.Show("String koneksi tidak ada atau kosong. Tidak dapat terhubung ke database.", "Kesalahan Konfigurasi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -57,6 +63,8 @@ namespace PABDCAFE
 
             this.dgvAdminReservasi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;         
         }
+
+
 
         private void InitializePreviewDataTable()
         {

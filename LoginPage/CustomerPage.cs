@@ -32,6 +32,12 @@ namespace PABDCAFE
         {
             InitializeComponent();
 
+            dtpCustWaktu.Format = DateTimePickerFormat.Custom;
+            dtpCustWaktu.CustomFormat = "dd/MM/yyyy HH:mm"; // Format: tanggal/bulan/tahun spasi jam:menit
+
+            // Opsional: Menggunakan tombol panah (spinner) untuk memilih waktu
+            dtpCustWaktu.ShowUpDown = true;
+
             if (string.IsNullOrWhiteSpace(connStr))
             {
                 MessageBox.Show("String koneksi tidak valid diterima oleh CustomerPage.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -39,6 +45,8 @@ namespace PABDCAFE
             }
             this.connectionString = connStr;
             this.conn = new SqlConnection(this.connectionString);
+
+
         }
 
         public CustomerPage()

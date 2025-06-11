@@ -157,8 +157,11 @@
             // 
             // dtpCustWaktu
             // 
+            this.dtpCustWaktu.CustomFormat = "dd/MM/yyyy HH:mm";
+            this.dtpCustWaktu.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpCustWaktu.Location = new System.Drawing.Point(189, 153);
             this.dtpCustWaktu.Name = "dtpCustWaktu";
+            this.dtpCustWaktu.ShowUpDown = true;
             this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
             this.dtpCustWaktu.TabIndex = 0;
             // 
