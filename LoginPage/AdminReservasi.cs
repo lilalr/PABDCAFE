@@ -295,18 +295,29 @@ namespace PABDCAFE
                 {
                     conn.Open();
                     var indexScript = @"
-            -- Memastikan tabel Reservasi ada
-            IF OBJECT_ID('dbo.Reservasi', 'U') IS NOT NULL
-            BEGIN
-                -- Memastikan indeks IX_Reservasi_Nomor_Meja pada tabel Reservasi ada
-                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nomor_Meja' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                    -- Memastikan tabel Reservasi ada sebelum membuat indeks di atasnya
+                    IF OBJECT_ID('dbo.Reservasi', 'U') IS NOT NULL
+                    BEGIN
+                    -- Indeks untuk Foreign Key Nomor_Meja
+                    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nomor_Meja' AND object_id = OBJECT_ID('dbo.Reservasi'))
                     CREATE NONCLUSTERED INDEX IX_Reservasi_Nomor_Meja ON dbo.Reservasi(Nomor_Meja);
-            END";
+
+                    -- Indeks untuk Waktu_Reservasi
+                    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Waktu' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                    CREATE NONCLUSTERED INDEX IX_Reservasi_Waktu ON dbo.Reservasi(Waktu_Reservasi);
+
+                    -- Indeks untuk pencarian Nama_Customer
+                    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nama_Customer' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                    CREATE NONCLUSTERED INDEX IX_Reservasi_Nama_Customer ON dbo.Reservasi(Nama_Customer);
+
+                    -- Indeks untuk pencarian No_Telp
+                    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_No_Telp' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                    CREATE NONCLUSTERED INDEX IX_Reservasi_No_Telp ON dbo.Reservasi(No_Telp);
+                    END";
                     using (var cmd = new SqlCommand(indexScript, conn))
                     {
                         cmd.ExecuteNonQuery();
                     }
-                    MessageBox.Show("Pengecekan dan pembuatan indeks database selesai.", "Info Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
