@@ -114,7 +114,11 @@ namespace PABDCAFE
                             }
                         }
                     }
-                    catch (Exception ex) { /*...*/ }
+                    catch (Exception ex)
+                    {
+                        // Gunakan ex.Message untuk menampilkan detail error yang sebenarnya
+                        MessageBox.Show("Terjadi kesalahan saat mengekspor: " + ex.Message, "Error Ekspor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     finally
                     {
                         if (this.conn != null && this.conn.State == ConnectionState.Open)

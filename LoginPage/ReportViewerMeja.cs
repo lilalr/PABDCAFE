@@ -17,11 +17,7 @@ namespace PABDCAFE
     public partial class ReportViewerMeja : Form
     {
         private readonly string connectionString;
-        //private SqlConnection conn;
-        // Deklarasi komponen UI
-        //private DataGridView dgvTampilanReservasi;
-        //private Button btnRefresh;
-        //private ReportViewerMeja ReportViewerMeja;
+      
 
         public ReportViewerMeja()
         {
