@@ -492,8 +492,7 @@ namespace PABDCAFE
                 // 3. Bersihkan semua kolom input
                 ClearForm();
 
-                // Beri pesan bahwa proses refresh telah selesai
-                // (Opsional, bisa dihilangkan jika tidak ingin ada pop-up)
+              
                 MessageBox.Show("Data berhasil diperbarui.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)

@@ -36,9 +36,10 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(770, 488);
+            this.btnOK.Location = new System.Drawing.Point(684, 390);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 38);
+            this.btnOK.Size = new System.Drawing.Size(67, 30);
             this.btnOK.TabIndex = 3;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -46,9 +47,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(46, 488);
+            this.btnCancel.Location = new System.Drawing.Point(41, 390);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 38);
+            this.btnCancel.Size = new System.Drawing.Size(67, 30);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -56,23 +58,25 @@
             // 
             // dgvPreviewReservasi
             // 
+            this.dgvPreviewReservasi.BackgroundColor = System.Drawing.Color.LavenderBlush;
             this.dgvPreviewReservasi.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPreviewReservasi.Location = new System.Drawing.Point(46, 57);
+            this.dgvPreviewReservasi.Location = new System.Drawing.Point(41, 46);
+            this.dgvPreviewReservasi.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvPreviewReservasi.Name = "dgvPreviewReservasi";
             this.dgvPreviewReservasi.RowHeadersWidth = 62;
             this.dgvPreviewReservasi.RowTemplate.Height = 28;
-            this.dgvPreviewReservasi.Size = new System.Drawing.Size(799, 402);
+            this.dgvPreviewReservasi.Size = new System.Drawing.Size(710, 322);
             this.dgvPreviewReservasi.TabIndex = 5;
             // 
             // PreviewDataReservasi
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 562);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
+            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.dgvPreviewReservasi);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "PreviewDataReservasi";
             this.Text = "PreviewDataReservasi";
             this.Load += new System.EventHandler(this.PreviewFormAdminReservasi_Load);

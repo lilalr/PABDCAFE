@@ -29,22 +29,50 @@
         private void InitializeComponent()
         {
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.btnExportCSV = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // reportViewer1
             // 
-            this.reportViewer1.Location = new System.Drawing.Point(39, 44);
+            this.reportViewer1.BackColor = System.Drawing.Color.LavenderBlush;
+            this.reportViewer1.Location = new System.Drawing.Point(35, 35);
+            this.reportViewer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.reportViewer1.Name = "reportViewer1";
             this.reportViewer1.ServerReport.BearerToken = null;
-            this.reportViewer1.Size = new System.Drawing.Size(711, 344);
+            this.reportViewer1.Size = new System.Drawing.Size(632, 276);
             this.reportViewer1.TabIndex = 0;
+            // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(592, 333);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 25);
+            this.btnBack.TabIndex = 1;
+            this.btnBack.Text = "Back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // btnExportCSV
+            // 
+            this.btnExportCSV.Location = new System.Drawing.Point(469, 333);
+            this.btnExportCSV.Name = "btnExportCSV";
+            this.btnExportCSV.Size = new System.Drawing.Size(99, 25);
+            this.btnExportCSV.TabIndex = 2;
+            this.btnExportCSV.Text = "Export CSV";
+            this.btnExportCSV.UseVisualStyleBackColor = true;
+            this.btnExportCSV.Click += new System.EventHandler(this.btnExportCSV_Click);
             // 
             // ReportViewerReservasi
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
+            this.ClientSize = new System.Drawing.Size(711, 372);
+            this.Controls.Add(this.btnExportCSV);
+            this.Controls.Add(this.btnBack);
             this.Controls.Add(this.reportViewer1);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "ReportViewerReservasi";
             this.Text = "ReportViewerReservasi";
             this.Load += new System.EventHandler(this.ReportViewerReservasi_Load);
@@ -55,5 +83,7 @@
         #endregion
 
         private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
+        private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnExportCSV;
     }
 }

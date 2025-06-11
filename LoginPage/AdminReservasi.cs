@@ -218,13 +218,15 @@ namespace PABDCAFE
         {
             EnsureIndexes();
             LoadData();
+            ClearForm();
+
 
         }
 
         void ClearForm()
         {
-            if (this.txtNama != null) this.txtNama.Clear();
-            if (this.txtTelepon != null) this.txtTelepon.Clear();
+            txtNama.Clear();
+            txtTelepon.Clear();
 
             if (this.dtpWaktuReservasi != null)
             {
@@ -238,8 +240,8 @@ namespace PABDCAFE
                 LoadAvailableMeja(this.cbxNomorMeja);
             }
 
-            if (this.dgvAdminReservasi != null) this.dgvAdminReservasi.ClearSelection();
-            if (this.txtNama != null) this.txtNama.Focus();
+            this.dgvAdminReservasi.ClearSelection();
+            txtNama.Focus();
         }
 
         bool ValidasiInput(out string err)
@@ -581,72 +583,7 @@ namespace PABDCAFE
             }
         }
 
-        private void dgvAdminReservasi_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (this.dgvAdminReservasi == null || e.RowIndex < 0 || e.RowIndex >= this.dgvAdminReservasi.Rows.Count || this.dgvAdminReservasi.Rows[e.RowIndex].IsNewRow)
-                return;
-
-            DataGridViewRow row = this.dgvAdminReservasi.Rows[e.RowIndex];
-
-            if (this.txtNama != null) this.txtNama.Text = row.Cells["Nama_Customer"].Value?.ToString() ?? string.Empty;
-            if (this.txtTelepon != null) this.txtTelepon.Text = row.Cells["No_Telp"].Value?.ToString() ?? string.Empty;
-
-            if (this.dtpWaktuReservasi != null)
-            {
-                this.dtpWaktuReservasi.MinDate = new DateTime(1753, 1, 1);
-                this.dtpWaktuReservasi.MaxDate = new DateTime(9998, 12, 31);
-
-                if (row.Cells["Waktu_Reservasi"].Value != null && row.Cells["Waktu_Reservasi"].Value != DBNull.Value)
-                {
-                    DateTime nilai = Convert.ToDateTime(row.Cells["Waktu_Reservasi"].Value);
-                    this.dtpWaktuReservasi.Value = (nilai < this.dtpWaktuReservasi.MinDate) ? this.dtpWaktuReservasi.MinDate : (nilai > this.dtpWaktuReservasi.MaxDate ? this.dtpWaktuReservasi.MaxDate : nilai);
-                }
-                else
-                {
-                    this.dtpWaktuReservasi.Value = DateTime.Now;
-                }
-            }
-
-            if (this.cbxNomorMeja != null)
-            {
-                string selectedMejaFromGrid = row.Cells["Nomor_Meja"].Value?.ToString() ?? string.Empty;
-
-                // Dapatkan daftar item saat ini dari ComboBox (bisa dari cache atau yang baru di-load)
-                List<string> currentDisplayItems = new List<string>();
-                if (this.cbxNomorMeja.DataSource is List<string> ds)
-                {
-                    currentDisplayItems.AddRange(ds);
-                }
-                else // Fallback jika DataSource bukan List<string> (misalnya diisi manual atau Items)
-                {
-                    foreach (var item in this.cbxNomorMeja.Items) currentDisplayItems.Add(item.ToString());
-                }
-
-                // Jika meja dari grid tidak ada di daftar, tambahkan sementara untuk display edit
-                if (!string.IsNullOrEmpty(selectedMejaFromGrid) && !currentDisplayItems.Contains(selectedMejaFromGrid))
-                {
-                    List<string> tempItems = new List<string>(currentDisplayItems);
-                    tempItems.Add(selectedMejaFromGrid);
-                    tempItems.Sort(); // Opsional
-
-                    this.cbxNomorMeja.DataSource = null;
-                    this.cbxNomorMeja.Items.Clear();
-                    this.cbxNomorMeja.DataSource = tempItems; // Set DataSource baru dengan item tambahan
-                }
-                // Pilih item yang sesuai
-                this.cbxNomorMeja.SelectedItem = selectedMejaFromGrid;
-                if (this.cbxNomorMeja.SelectedItem == null && !string.IsNullOrEmpty(selectedMejaFromGrid))
-                {
-                    // Jika setelah set DataSource itemnya tidak terpilih (misal karena DataSource tidak langsung update Items), coba via Items
-                    if (!this.cbxNomorMeja.Items.Contains(selectedMejaFromGrid)) this.cbxNomorMeja.Items.Add(selectedMejaFromGrid); // Pastikan ada
-                    this.cbxNomorMeja.SelectedItem = selectedMejaFromGrid;
-                }
-                else if (string.IsNullOrEmpty(selectedMejaFromGrid))
-                {
-                    this.cbxNomorMeja.SelectedIndex = -1;
-                }
-            }
-        }
+        
 
         private void btnImport_Click(object sender, EventArgs e)
         {
