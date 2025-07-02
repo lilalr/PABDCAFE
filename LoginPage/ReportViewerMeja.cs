@@ -16,7 +16,6 @@ namespace PABDCAFE
 {
     public partial class ReportViewerMeja : Form
     {
-        private readonly string connectionString;
       
 
         public ReportViewerMeja()

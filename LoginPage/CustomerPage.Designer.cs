@@ -164,6 +164,7 @@
             this.dtpCustWaktu.ShowUpDown = true;
             this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
             this.dtpCustWaktu.TabIndex = 0;
+            //this.dtpCustWaktu.ValueChanged += new System.EventHandler(this.dtpCustWaktu_ValueChanged);
             // 
             // btnRefresh
             // 

@@ -9,7 +9,7 @@
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="DataTable1TableAdapter" GeneratorDataComponentClassName="DataTable1TableAdapter" Name="DataTable1" UserDataComponentName="DataTable1TableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="ReservasiCafeConnectionString1 (Settings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+              <DbSource ConnectionRef="ReservasiCafeConnectionString1 (Settings)" DbObjectName="" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Reservasi.ID_Reservasi, Reservasi.Nama_Customer, Reservasi.No_Telp, Reservasi.Waktu_Reservasi, Meja.Nomor_Meja
@@ -37,26 +37,26 @@ FROM   Reservasi INNER JOIN
   <xs:element name="ReservasiDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="ReservasiDataSet" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ReservasiDataSet">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableVarName="tableDataTable1" msprop:Generator_UserTableName="DataTable1">
+        <xs:element name="DataTable1" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_UserTableName="DataTable1" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_TableVarName="tableDataTable1">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ID_Reservasi" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnPropNameInRow="ID_Reservasi" msprop:Generator_ColumnPropNameInTable="ID_ReservasiColumn" msprop:Generator_ColumnVarNameInTable="columnID_Reservasi" msprop:Generator_UserColumnName="ID_Reservasi" type="xs:int" />
-              <xs:element name="Nama_Customer" msprop:Generator_ColumnPropNameInRow="Nama_Customer" msprop:Generator_ColumnPropNameInTable="Nama_CustomerColumn" msprop:Generator_ColumnVarNameInTable="columnNama_Customer" msprop:Generator_UserColumnName="Nama_Customer" minOccurs="0">
+              <xs:element name="ID_Reservasi" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="ID_Reservasi" msprop:Generator_ColumnPropNameInTable="ID_ReservasiColumn" msprop:Generator_ColumnPropNameInRow="ID_Reservasi" msprop:Generator_ColumnVarNameInTable="columnID_Reservasi" type="xs:int" />
+              <xs:element name="Nama_Customer" msprop:Generator_UserColumnName="Nama_Customer" msprop:Generator_ColumnPropNameInTable="Nama_CustomerColumn" msprop:Generator_ColumnPropNameInRow="Nama_Customer" msprop:Generator_ColumnVarNameInTable="columnNama_Customer" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="50" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="No_Telp" msprop:Generator_ColumnPropNameInRow="No_Telp" msprop:Generator_ColumnPropNameInTable="No_TelpColumn" msprop:Generator_ColumnVarNameInTable="columnNo_Telp" msprop:Generator_UserColumnName="No_Telp">
+              <xs:element name="No_Telp" msprop:Generator_UserColumnName="No_Telp" msprop:Generator_ColumnPropNameInTable="No_TelpColumn" msprop:Generator_ColumnPropNameInRow="No_Telp" msprop:Generator_ColumnVarNameInTable="columnNo_Telp">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="15" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Waktu_Reservasi" msprop:Generator_ColumnPropNameInRow="Waktu_Reservasi" msprop:Generator_ColumnPropNameInTable="Waktu_ReservasiColumn" msprop:Generator_ColumnVarNameInTable="columnWaktu_Reservasi" msprop:Generator_UserColumnName="Waktu_Reservasi" type="xs:dateTime" />
-              <xs:element name="Nomor_Meja" msprop:Generator_ColumnPropNameInRow="Nomor_Meja" msprop:Generator_ColumnPropNameInTable="Nomor_MejaColumn" msprop:Generator_ColumnVarNameInTable="columnNomor_Meja" msprop:Generator_UserColumnName="Nomor_Meja">
+              <xs:element name="Waktu_Reservasi" msprop:Generator_UserColumnName="Waktu_Reservasi" msprop:Generator_ColumnPropNameInTable="Waktu_ReservasiColumn" msprop:Generator_ColumnPropNameInRow="Waktu_Reservasi" msprop:Generator_ColumnVarNameInTable="columnWaktu_Reservasi" type="xs:dateTime" />
+              <xs:element name="Nomor_Meja" msprop:Generator_UserColumnName="Nomor_Meja" msprop:Generator_ColumnPropNameInTable="Nomor_MejaColumn" msprop:Generator_ColumnPropNameInRow="Nomor_Meja" msprop:Generator_ColumnVarNameInTable="columnNomor_Meja">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="2" />

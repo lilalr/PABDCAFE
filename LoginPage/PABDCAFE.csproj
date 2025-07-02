@@ -245,6 +245,9 @@
     <Compile Include="ReportViewerReservasi.Designer.cs">
       <DependentUpon>ReportViewerReservasi.cs</DependentUpon>
     </Compile>
+    <Compile Include="ReservasiDataSet.cs">
+      <DependentUpon>ReservasiDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="ReservasiDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

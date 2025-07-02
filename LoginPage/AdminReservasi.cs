@@ -771,7 +771,19 @@ namespace PABDCAFE
 
         private void btnReport_Click(object sender, EventArgs e)
         {
-            ReportViewerReservasi form = new ReportViewerReservasi();
+            // 1. Pastikan ada baris yang dipilih di DataGridView
+            if (dgvAdminReservasi.CurrentRow == null)
+            {
+                MessageBox.Show("Silakan pilih salah satu data reservasi terlebih dahulu.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return; // Hentikan proses jika tidak ada baris yang dipilih
+            }
+
+            // 2. Ambil ID Reservasi dari sel di baris yang dipilih
+            //    Ganti "ID_Reservasi" dengan nama kolom ID Anda di DataGridView.
+            string idReservasiDipilih = dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value.ToString();
+
+            // 3. Buat instance form ReportViewerReservasi dengan memberikan ID
+            ReportViewerReservasi form = new ReportViewerReservasi(idReservasiDipilih);
             form.ShowDialog();
         }
 

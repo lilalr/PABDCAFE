@@ -36,9 +36,16 @@ namespace PABDCAFE
             errorMessage = "";
 
             // 1. Validasi Nama Customer
-            if (string.IsNullOrWhiteSpace(row["Nama_Customer"]?.ToString()))
+            string namaCustomer = row["Nama_Customer"]?.ToString() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(namaCustomer))
             {
                 errorMessage = $"Baris {lineNumber}: Nama Customer tidak boleh kosong.";
+                return false;
+            }
+            // New Validation: Ensure name contains only letters and spaces
+            if (!Regex.IsMatch(namaCustomer, @"^[a-zA-Z\s]+$"))
+            {
+                errorMessage = $"Baris {lineNumber}: Nama Customer '{namaCustomer}' hanya boleh berisi huruf dan spasi.";
                 return false;
             }
 
@@ -149,7 +156,7 @@ namespace PABDCAFE
             if (MessageBox.Show("Yakin ingin mengimpor data ini?", "Konfirmasi Impor", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 ImportDataToDatabase();
-            }
+            } 
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

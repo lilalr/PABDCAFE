@@ -11,9 +11,13 @@ namespace PABDCAFE
 {
     public partial class ReportViewerReservasi : Form
     {
-        public ReportViewerReservasi()
+
+        private readonly string _reservasiId;
+
+        public ReportViewerReservasi(string idReservasi)
         {
             InitializeComponent();
+            _reservasiId = idReservasi;
         }
 
         private void ReportViewerReservasi_Load(object sender, EventArgs e)
@@ -39,14 +43,17 @@ namespace PABDCAFE
                 FROM   
                     Reservasi 
                 INNER JOIN
-                    Meja ON Reservasi.Nomor_Meja = Meja.Nomor_Meja;";
+                    Meja ON Reservasi.Nomor_Meja = Meja.Nomor_Meja
+                WHERE Reservasi.ID_Reservasi = @ID_Reservasi;";
 
             DataTable dt = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                // Menggunakan SqlDataAdapter untuk mengisi DataTable
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID_Reservasi", _reservasiId);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }
 

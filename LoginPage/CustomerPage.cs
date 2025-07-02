@@ -74,9 +74,11 @@ namespace PABDCAFE
             LoadReservasi();
             LoadComboBoxMeja(cmbCustMeja);
 
+            dtpCustWaktu.MinDate = DateTime.Now;
+
             dtpCustWaktu.Format = DateTimePickerFormat.Custom;
             dtpCustWaktu.CustomFormat = "yyyy-MM-dd HH:mm";
-            dtpCustWaktu.ShowUpDown = false;
+            dtpCustWaktu.ShowUpDown = true;
         }
 
         private void EnsureIndexes()
@@ -204,7 +206,7 @@ namespace PABDCAFE
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
 
-               
+
                 string queryCekJadwal = "SELECT COUNT(*) FROM Reservasi WHERE Nomor_Meja = @NomorMeja AND CAST(Waktu_Reservasi AS DATE) = CAST(@WaktuReservasi AS DATE)";
 
                 using (SqlCommand cekJadwalCmd = new SqlCommand(queryCekJadwal, conn))
@@ -255,7 +257,7 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", dtpCustWaktu.Value);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", cmbCustMeja.Text.Trim());
 
-                    
+
                     cmd.ExecuteNonQuery();
 
                     MessageBox.Show("Reservasi berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -500,7 +502,7 @@ namespace PABDCAFE
                 // 3. Bersihkan semua kolom input
                 ClearForm();
 
-              
+
                 MessageBox.Show("Data berhasil diperbarui.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -514,5 +516,6 @@ namespace PABDCAFE
                 this.Cursor = Cursors.Default;
             }
         }
+
     }
 }
