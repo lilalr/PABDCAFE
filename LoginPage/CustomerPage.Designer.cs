@@ -106,6 +106,7 @@
             this.txtCustNoTelp.Name = "txtCustNoTelp";
             this.txtCustNoTelp.Size = new System.Drawing.Size(465, 23);
             this.txtCustNoTelp.TabIndex = 7;
+            //this.txtCustNoTelp.TextChanged += new System.EventHandler(this.txtCustNoTelp_TextChanged);
             // 
             // CustNama
             // 
@@ -164,7 +165,6 @@
             this.dtpCustWaktu.ShowUpDown = true;
             this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
             this.dtpCustWaktu.TabIndex = 0;
-            //this.dtpCustWaktu.ValueChanged += new System.EventHandler(this.dtpCustWaktu_ValueChanged);
             // 
             // btnRefresh
             // 

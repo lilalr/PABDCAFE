@@ -214,23 +214,33 @@ namespace PABDCAFE
         // sebelum disimpan ke database. Ini mencegah data sampah masuk.
         bool ValidasiInput(out string nomorMeja, out int kapasitas, out string errorMsg)
         {
-            errorMsg = "";
+            var errorMessages = new List<string>();
             nomorMeja = txtNomor.Text.Trim();
             string kapasitasStr = txtKapasitas.Text.Trim();
             kapasitas = 0;
 
-            // Cek: Nomor Meja harus 2 digit.
-            if (!Regex.IsMatch(nomorMeja, @"^\d{2}$"))
+            // Cek: Nomor Meja
+            if (string.IsNullOrWhiteSpace(nomorMeja))
             {
-                errorMsg += "Nomor Meja harus terdiri dari 2 digit angka.\n";
+                errorMessages.Add("Field Nomer Meja Wajib Diisi.");
+            }
+            else if (!Regex.IsMatch(nomorMeja, @"^\d{2}$"))
+            {
+                errorMessages.Add("Nomor Meja harus terdiri dari 2 digit angka.");
             }
 
-            // Cek: Kapasitas harus angka 1-99.
-            if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 99)
+            // Cek: Kapasitas
+            if (string.IsNullOrWhiteSpace(kapasitasStr))
             {
-                errorMsg += "Kapasitas harus berupa angka antara 1 sampai 99.\n";
+                errorMessages.Add("Field Kapasitas Wajib Diisi.");
             }
-            return string.IsNullOrEmpty(errorMsg);
+            else if (!int.TryParse(kapasitasStr, out kapasitas) || kapasitas < 1 || kapasitas > 99)
+            {
+                errorMessages.Add("Kapasitas harus berupa angka antara 1 sampai 99.");
+            }
+
+            errorMsg = string.Join("\n", errorMessages);
+            return !errorMessages.Any();
         }
 
 
@@ -311,7 +321,7 @@ namespace PABDCAFE
                     }
                     // Jika berhasil, ia melakukan Commit.
                     transaction.Commit();
-                    MessageBox.Show("Kapasitas meja berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("data berhasil diperbarui!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     //invalidate cache
                     InvalidateAdminMejaCache();

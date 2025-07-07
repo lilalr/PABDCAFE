@@ -61,7 +61,7 @@ namespace PABDCAFE
             }
             LoadData();
 
-            this.dgvAdminReservasi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;         
+            this.dgvAdminReservasi.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
 
@@ -256,39 +256,59 @@ namespace PABDCAFE
             txtNama.Focus();
         }
 
+        // --- PERUBAHAN DI SINI ---
         bool ValidasiInput(out string err)
         {
-            err = string.Empty;
-            if (this.txtNama == null || string.IsNullOrWhiteSpace(this.txtNama.Text))
-                err += "Nama customer tidak boleh kosong.\n";
-
-            if (this.txtTelepon == null || !Regex.IsMatch(this.txtTelepon.Text.Trim(), @"^(\+62\d{8,12}|0\d{9,14})$"))
-                err += "Format nomor telepon tidak valid (Contoh: +6281234567890 atau 081234567890).\n";
-
-            if (this.dtpWaktuReservasi != null)
+            if (string.IsNullOrWhiteSpace(this.txtNama.Text) &&
+               string.IsNullOrWhiteSpace(this.txtTelepon.Text) &&
+               string.IsNullOrWhiteSpace(this.cbxNomorMeja.Text))
             {
-                if (this.dtpWaktuReservasi.Value < DateTime.Now.AddMinutes(-1))
-                {
-                    err += "Waktu reservasi tidak boleh di masa lalu.\n";
-                }
-                
-            }
-            else
-            {
-                err += "Kontrol DateTimePicker untuk waktu reservasi tidak ditemukan.\n";
+                err = "Field wajib diisi";
+                return false;
             }
 
-            if (this.cbxNomorMeja != null)
+            var errorMessages = new List<string>();
+
+            // 1. Validasi Nama Customer
+            if (string.IsNullOrWhiteSpace(this.txtNama.Text))
             {
-                if (this.cbxNomorMeja.SelectedItem == null || string.IsNullOrWhiteSpace(this.cbxNomorMeja.SelectedItem.ToString()) || this.cbxNomorMeja.SelectedItem.ToString() == "Tidak ada meja tersedia")
-                    err += "Nomor meja yang valid harus dipilih.\n";
+                errorMessages.Add("Nama customer tidak boleh kosong.");
             }
-            else
+            // Tambahkan validasi ini untuk memeriksa karakter
+            else if (!Regex.IsMatch(this.txtNama.Text, @"^[a-zA-Z\s]+$"))
             {
-                err += "Kontrol ComboBox untuk nomor meja tidak ditemukan.\n";
+                errorMessages.Add("Nama customer tidak boleh mengandung angka dan simbol.");
             }
 
-            return string.IsNullOrEmpty(err);
+            // 2. Validasi Nomor Telepon
+            if (string.IsNullOrWhiteSpace(this.txtTelepon.Text))
+            {
+                errorMessages.Add("Nomor telepon tidak boleh kosong.");
+            }
+            else if (!Regex.IsMatch(this.txtTelepon.Text.Trim(), @"^(\+62\d{8,12}|0\d{9,14})$"))
+            {
+                errorMessages.Add("Format nomor telepon tidak sesuai (Contoh: 081234567890).");
+            }
+
+            // 3. Validasi Waktu Reservasi
+            if (this.dtpWaktuReservasi.Value < DateTime.Now.AddMinutes(-5)) // Memberi sedikit toleransi waktu
+            {
+                errorMessages.Add("Waktu reservasi tidak boleh di masa lalu.");
+            }
+
+            // 4. Validasi Nomor Meja
+            if (string.IsNullOrWhiteSpace(this.cbxNomorMeja.Text))
+            {
+                errorMessages.Add("Nomor meja tidak boleh kosong.");
+            }
+            // Tambahkan validasi ini untuk mencegah input manual
+            else if (!this.cbxNomorMeja.Items.Contains(this.cbxNomorMeja.Text))
+            {
+                errorMessages.Add("Nomer meja yang valid harus dipilih.");
+            }
+
+            err = string.Join("\n", errorMessages);
+            return !errorMessages.Any(); // Return true jika tidak ada error
         }
 
         private bool IsConnectionReady()
@@ -352,11 +372,11 @@ namespace PABDCAFE
 
                     // Membungkus query asli dengan perintah statistik
                     var wrappedQuery = $@"
-                       SET STATISTICS IO ON;
-                       SET STATISTICS TIME ON;
-                       {sqlQuery}
-                       SET STATISTICS TIME OFF;
-                       SET STATISTICS IO OFF;";
+                            SET STATISTICS IO ON;
+                            SET STATISTICS TIME ON;
+                            {sqlQuery}
+                            SET STATISTICS TIME OFF;
+                            SET STATISTICS IO OFF;";
 
                     using (var cmd = new SqlCommand(wrappedQuery, conn))
                     {
@@ -411,7 +431,6 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja_Baru", selectedMeja);
 
-                    // --- BAGIAN YANG HILANG DIMULAI DI SINI ---
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
@@ -426,7 +445,6 @@ namespace PABDCAFE
                     {
                         MessageBox.Show("Data tidak ditemukan atau gagal diperbarui!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    // --- BAGIAN YANG HILANG SELESAI DI SINI ---
                 }
             }
             catch (Exception ex)
@@ -506,7 +524,6 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
 
-                    // --- BAGIAN YANG HILANG DIMULAI DI SINI ---
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     // Menggunakan > 0 karena SP Admin mungkin tidak memakai SET NOCOUNT ON
@@ -526,7 +543,6 @@ namespace PABDCAFE
                         // Jika itu terjadi, hapus saja blok if-else ini dan langsung jalankan logika sukses seperti di CustomerPage.
                         MessageBox.Show("Reservasi tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    // --- BAGIAN YANG HILANG SELESAI DI SINI ---
                 }
             }
             catch (Exception ex)
@@ -595,7 +611,7 @@ namespace PABDCAFE
             }
         }
 
-        
+
 
         private void btnImport_Click(object sender, EventArgs e)
         {
@@ -779,7 +795,7 @@ namespace PABDCAFE
             }
 
             // 2. Ambil ID Reservasi dari sel di baris yang dipilih
-            //    Ganti "ID_Reservasi" dengan nama kolom ID Anda di DataGridView.
+            //   Ganti "ID_Reservasi" dengan nama kolom ID Anda di DataGridView.
             string idReservasiDipilih = dgvAdminReservasi.CurrentRow.Cells["ID_Reservasi"].Value.ToString();
 
             // 3. Buat instance form ReportViewerReservasi dengan memberikan ID
@@ -787,6 +803,6 @@ namespace PABDCAFE
             form.ShowDialog();
         }
 
-        
+
     }
 }
