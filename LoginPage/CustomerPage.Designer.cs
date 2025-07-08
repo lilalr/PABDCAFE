@@ -46,7 +46,7 @@
             // 
             // btnCustTambah
             // 
-            this.btnCustTambah.Location = new System.Drawing.Point(699, 50);
+            this.btnCustTambah.Location = new System.Drawing.Point(553, 50);
             this.btnCustTambah.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustTambah.Name = "btnCustTambah";
             this.btnCustTambah.Size = new System.Drawing.Size(158, 32);
@@ -57,7 +57,7 @@
             // 
             // btnCustHapus
             // 
-            this.btnCustHapus.Location = new System.Drawing.Point(699, 95);
+            this.btnCustHapus.Location = new System.Drawing.Point(553, 95);
             this.btnCustHapus.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCustHapus.Name = "btnCustHapus";
             this.btnCustHapus.Size = new System.Drawing.Size(158, 32);
@@ -68,21 +68,22 @@
             // 
             // dgvCustomer
             // 
-            this.dgvCustomer.BackgroundColor = System.Drawing.Color.LavenderBlush;
+            this.dgvCustomer.BackgroundColor = System.Drawing.Color.SeaShell;
             this.dgvCustomer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCustomer.Location = new System.Drawing.Point(55, 265);
+            this.dgvCustomer.Location = new System.Drawing.Point(55, 226);
             this.dgvCustomer.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvCustomer.Name = "dgvCustomer";
             this.dgvCustomer.RowHeadersWidth = 62;
             this.dgvCustomer.RowTemplate.Height = 28;
             this.dgvCustomer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCustomer.Size = new System.Drawing.Size(775, 244);
+            this.dgvCustomer.Size = new System.Drawing.Size(656, 151);
             this.dgvCustomer.TabIndex = 4;
             this.dgvCustomer.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCustomer_CellClick);
             // 
             // btnLogout
             // 
-            this.btnLogout.Location = new System.Drawing.Point(755, 532);
+            this.btnLogout.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnLogout.Location = new System.Drawing.Point(657, 392);
             this.btnLogout.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnLogout.Name = "btnLogout";
             this.btnLogout.Size = new System.Drawing.Size(75, 34);
@@ -93,26 +94,25 @@
             // 
             // txtCustNama
             // 
-            this.txtCustNama.Location = new System.Drawing.Point(189, 61);
+            this.txtCustNama.Location = new System.Drawing.Point(189, 49);
             this.txtCustNama.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNama.Name = "txtCustNama";
-            this.txtCustNama.Size = new System.Drawing.Size(465, 23);
+            this.txtCustNama.Size = new System.Drawing.Size(338, 23);
             this.txtCustNama.TabIndex = 6;
             // 
             // txtCustNoTelp
             // 
-            this.txtCustNoTelp.Location = new System.Drawing.Point(189, 107);
+            this.txtCustNoTelp.Location = new System.Drawing.Point(189, 91);
             this.txtCustNoTelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtCustNoTelp.Name = "txtCustNoTelp";
-            this.txtCustNoTelp.Size = new System.Drawing.Size(465, 23);
+            this.txtCustNoTelp.Size = new System.Drawing.Size(338, 23);
             this.txtCustNoTelp.TabIndex = 7;
-            //this.txtCustNoTelp.TextChanged += new System.EventHandler(this.txtCustNoTelp_TextChanged);
             // 
             // CustNama
             // 
             this.CustNama.AutoSize = true;
             this.CustNama.BackColor = System.Drawing.Color.Transparent;
-            this.CustNama.Location = new System.Drawing.Point(46, 65);
+            this.CustNama.Location = new System.Drawing.Point(46, 53);
             this.CustNama.Name = "CustNama";
             this.CustNama.Size = new System.Drawing.Size(109, 17);
             this.CustNama.TabIndex = 10;
@@ -122,7 +122,7 @@
             // 
             this.CustTelp.AutoSize = true;
             this.CustTelp.BackColor = System.Drawing.Color.Transparent;
-            this.CustTelp.Location = new System.Drawing.Point(47, 110);
+            this.CustTelp.Location = new System.Drawing.Point(47, 94);
             this.CustTelp.Name = "CustTelp";
             this.CustTelp.Size = new System.Drawing.Size(106, 17);
             this.CustTelp.TabIndex = 11;
@@ -132,7 +132,7 @@
             // 
             this.CustWaktu.AutoSize = true;
             this.CustWaktu.BackColor = System.Drawing.Color.Transparent;
-            this.CustWaktu.Location = new System.Drawing.Point(46, 156);
+            this.CustWaktu.Location = new System.Drawing.Point(46, 138);
             this.CustWaktu.Name = "CustWaktu";
             this.CustWaktu.Size = new System.Drawing.Size(115, 17);
             this.CustWaktu.TabIndex = 12;
@@ -142,7 +142,7 @@
             // 
             this.CustMeja.AutoSize = true;
             this.CustMeja.BackColor = System.Drawing.Color.Transparent;
-            this.CustMeja.Location = new System.Drawing.Point(48, 201);
+            this.CustMeja.Location = new System.Drawing.Point(48, 182);
             this.CustMeja.Name = "CustMeja";
             this.CustMeja.Size = new System.Drawing.Size(84, 17);
             this.CustMeja.TabIndex = 13;
@@ -151,7 +151,7 @@
             // cmbCustMeja
             // 
             this.cmbCustMeja.FormattingEnabled = true;
-            this.cmbCustMeja.Location = new System.Drawing.Point(189, 198);
+            this.cmbCustMeja.Location = new System.Drawing.Point(189, 180);
             this.cmbCustMeja.Name = "cmbCustMeja";
             this.cmbCustMeja.Size = new System.Drawing.Size(200, 24);
             this.cmbCustMeja.TabIndex = 14;
@@ -160,7 +160,7 @@
             // 
             this.dtpCustWaktu.CustomFormat = "dd/MM/yyyy HH:mm";
             this.dtpCustWaktu.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpCustWaktu.Location = new System.Drawing.Point(189, 153);
+            this.dtpCustWaktu.Location = new System.Drawing.Point(189, 136);
             this.dtpCustWaktu.Name = "dtpCustWaktu";
             this.dtpCustWaktu.ShowUpDown = true;
             this.dtpCustWaktu.Size = new System.Drawing.Size(200, 23);
@@ -168,7 +168,7 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(699, 141);
+            this.btnRefresh.Location = new System.Drawing.Point(553, 141);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(158, 32);
             this.btnRefresh.TabIndex = 16;
@@ -180,8 +180,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
-            this.ClientSize = new System.Drawing.Size(889, 584);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.fb982c76a43009ee76f5d24b3e6f05e6;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(756, 440);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.dtpCustWaktu);
             this.Controls.Add(this.cmbCustMeja);

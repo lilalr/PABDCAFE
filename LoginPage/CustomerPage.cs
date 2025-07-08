@@ -57,11 +57,52 @@ namespace PABDCAFE
                 return;
             }
 
+            EnsureIndexes();
+
             LoadAllReservasi();
             LoadComboBoxMeja(cmbCustMeja);
-            dtpCustWaktu.MinDate = DateTime.Now;
             ClearForm();
         }
+
+        private void EnsureIndexes()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    var indexScript = @"
+                    -- Memastikan tabel Reservasi ada sebelum membuat indeks di atasnya
+                    IF OBJECT_ID('dbo.Reservasi', 'U') IS NOT NULL
+                    BEGIN
+                        -- Indeks untuk pencarian berdasarkan Nomor_Meja dan Waktu_Reservasi
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Meja_Waktu' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                            CREATE NONCLUSTERED INDEX IX_Reservasi_Meja_Waktu ON dbo.Reservasi(Nomor_Meja, Waktu_Reservasi);
+
+                        -- Indeks untuk pencarian Nama_Customer
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Reservasi_Nama_Customer' AND object_id = OBJECT_ID('dbo.Reservasi'))
+                            CREATE NONCLUSTERED INDEX IX_Reservasi_Nama_Customer ON dbo.Reservasi(Nama_Customer);
+                    END
+
+                    -- Memastikan tabel Meja ada
+                    IF OBJECT_ID('dbo.Meja', 'U') IS NOT NULL
+                    BEGIN
+                        -- Indeks untuk mempercepat pengambilan Nomor_Meja
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Meja_Nomor_Meja' AND object_id = OBJECT_ID('dbo.Meja'))
+                            CREATE NONCLUSTERED INDEX IX_Meja_Nomor_Meja ON dbo.Meja(Nomor_Meja);
+                    END";
+                    using (var cmd = new SqlCommand(indexScript, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memastikan indeks database: " + ex.Message, "Peringatan Optimasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
 
         private bool IsConnectionReady()
         {
@@ -173,7 +214,7 @@ namespace PABDCAFE
             if (string.IsNullOrWhiteSpace(txtCustNoTelp.Text))
                 errorMessages.Add("Nomor telepon tidak boleh kosong.");
             else if (!Regex.IsMatch(txtCustNoTelp.Text.Trim(), @"^(\+62\d{8,12}|0\d{9,14})$"))
-                errorMessages.Add("Format nomor telepon tidak valid (Contoh: 081234567890).");
+                errorMessages.Add("Format nomor telepon tidak sesuai (Contoh: 081234567890).");
 
             if (dtpCustWaktu.Value < DateTime.Now.AddMinutes(-5))
                 errorMessages.Add("Waktu reservasi tidak boleh di masa lalu.");
@@ -231,7 +272,7 @@ namespace PABDCAFE
                     cmd.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("Reservasi berhasil ditambahkan. Terima kasih!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 InvalidateAllCaches();
                 LoadAllReservasi();
                 ClearForm();

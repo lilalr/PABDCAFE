@@ -63,6 +63,247 @@ namespace LoginPage.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _009bdf9484475b8d6d0767478be8313f {
+            get {
+                object obj = ResourceManager.GetObject("009bdf9484475b8d6d0767478be8313f", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _009bdf9484475b8d6d0767478be8313f1 {
+            get {
+                object obj = ResourceManager.GetObject("009bdf9484475b8d6d0767478be8313f1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _097ab268791a8fa63a36e75943f73423 {
+            get {
+                object obj = ResourceManager.GetObject("097ab268791a8fa63a36e75943f73423", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _2320b3e6fb349c0a85acfbbe2efd159b {
+            get {
+                object obj = ResourceManager.GetObject("2320b3e6fb349c0a85acfbbe2efd159b", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _65b14e34d835582308b86cb208304b9e {
+            get {
+                object obj = ResourceManager.GetObject("65b14e34d835582308b86cb208304b9e", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _88e14c927805f4b72018c3b77e33c2fd {
+            get {
+                object obj = ResourceManager.GetObject("88e14c927805f4b72018c3b77e33c2fd", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Cara_Menghubungkan_Livin_by_Mandiri_dengan_Aplikasi_Dana {
+            get {
+                object obj = ResourceManager.GetObject("Cara Menghubungkan Livin by Mandiri dengan Aplikasi Dana", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap colorful {
+            get {
+                object obj = ResourceManager.GetObject("colorful", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap d523579a52b0e2fa2d486bb741b8a0b7 {
+            get {
+                object obj = ResourceManager.GetObject("d523579a52b0e2fa2d486bb741b8a0b7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap df3765d348fc540b36e7c7feb1be7268 {
+            get {
+                object obj = ResourceManager.GetObject("df3765d348fc540b36e7c7feb1be7268", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download {
+            get {
+                object obj = ResourceManager.GetObject("download", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download__1_ {
+            get {
+                object obj = ResourceManager.GetObject("download (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download__2_ {
+            get {
+                object obj = ResourceManager.GetObject("download (2)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download__3_ {
+            get {
+                object obj = ResourceManager.GetObject("download (3)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap download__4_ {
+            get {
+                object obj = ResourceManager.GetObject("download (4)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap e12adf984a18f9d163e2b52f0a4a4393 {
+            get {
+                object obj = ResourceManager.GetObject("e12adf984a18f9d163e2b52f0a4a4393", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fb982c76a43009ee76f5d24b3e6f05e6 {
+            get {
+                object obj = ResourceManager.GetObject("fb982c76a43009ee76f5d24b3e6f05e6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Gato {
+            get {
+                object obj = ResourceManager.GetObject("Gato", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Peach_Beige_Brown_Boho_Floral_Blank_Notes_A4_Document_Landscape {
+            get {
+                object obj = ResourceManager.GetObject("Peach Beige Brown Boho Floral Blank Notes A4 Document Landscape", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Pink_pastel_Sky {
+            get {
+                object obj = ResourceManager.GetObject("Pink pastel Sky", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pngtree_long_striped_blue_flower_wedding_watercolor_rose_background_picture_image_1444770 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-long-striped-blue-flower-wedding-watercolor-rose-background-picture-image" +
+                        "_1444770", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap shadow {
+            get {
+                object obj = ResourceManager.GetObject("shadow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap star_wallpaper {
+            get {
+                object obj = ResourceManager.GetObject("star wallpaper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap star_wallpaper1 {
+            get {
+                object obj = ResourceManager.GetObject("star wallpaper1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc {
             get {
                 object obj = ResourceManager.GetObject("WhatsApp Image 2025-05-19 at 00.35.42_a1f9dabc", resourceCulture);

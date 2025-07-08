@@ -35,18 +35,18 @@
             // 
             // reportViewer1
             // 
-            this.reportViewer1.BackColor = System.Drawing.Color.LavenderBlush;
-            this.reportViewer1.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_35_42_a1f9dabc;
-            this.reportViewer1.Location = new System.Drawing.Point(12, 75);
+            this.reportViewer1.BackColor = System.Drawing.Color.SeaShell;
+            this.reportViewer1.Location = new System.Drawing.Point(30, 42);
             this.reportViewer1.Name = "reportViewer1";
             this.reportViewer1.ServerReport.BearerToken = null;
-            this.reportViewer1.Size = new System.Drawing.Size(776, 310);
+            this.reportViewer1.Size = new System.Drawing.Size(610, 310);
             this.reportViewer1.TabIndex = 0;
             this.reportViewer1.Load += new System.EventHandler(this.reportViewer1_Load);
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(678, 407);
+            this.btnBack.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnBack.Location = new System.Drawing.Point(559, 368);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(81, 31);
             this.btnBack.TabIndex = 1;
@@ -56,9 +56,10 @@
             // 
             // btnExportCsv
             // 
-            this.btnExportCsv.Location = new System.Drawing.Point(571, 411);
+            this.btnExportCsv.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnExportCsv.Location = new System.Drawing.Point(450, 368);
             this.btnExportCsv.Name = "btnExportCsv";
-            this.btnExportCsv.Size = new System.Drawing.Size(87, 27);
+            this.btnExportCsv.Size = new System.Drawing.Size(87, 31);
             this.btnExportCsv.TabIndex = 2;
             this.btnExportCsv.Text = "Export CSV";
             this.btnExportCsv.UseVisualStyleBackColor = true;
@@ -68,8 +69,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(665, 418);
             this.Controls.Add(this.btnExportCsv);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.reportViewer1);

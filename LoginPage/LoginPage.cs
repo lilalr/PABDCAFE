@@ -22,6 +22,7 @@ namespace PABDCAFE
         //private string baseconnectionString = "LAPTOP-L7KS40NN\\MDEANDWIB;Initial Catalog=ReservasiCafe;";//
         private string baseconnectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;";//
         //private string baseconnectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;";
+        private string connectionString;
 
         private readonly MemoryCache _cache = MemoryCache.Default;
         private readonly CacheItemPolicy _policy = new CacheItemPolicy()
@@ -35,6 +36,28 @@ namespace PABDCAFE
         public LoginPage()
         {
             InitializeComponent(); // Inisialisasi komponen-komponen UI form.
+
+            try
+            {
+                Koneksi kn = new Koneksi();
+                this.connectionString = kn.connectionString();
+
+                // Jika string koneksi tetap kosong setelah semua proses (meski tidak error)
+                // ini adalah lapisan pengaman tambahan.
+                if (string.IsNullOrEmpty(this.connectionString))
+                {
+                    throw new Exception("String koneksi tidak berhasil dibuat.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Jika terjadi error dari class Koneksi, akan ditangkap di sini.
+                MessageBox.Show("Tidak dapat terhubung ke database. \nDetail: " + ex.Message, "Error Koneksi Kritis", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Nonaktifkan tombol login agar pengguna tidak bisa lanjut.
+                // Ganti btnLogin dengan nama tombol login Anda.
+                // btnLogin.Enabled = false; 
+            }
         }
 
         // Event handler yang dipanggil saat form LoginPage dimuat.

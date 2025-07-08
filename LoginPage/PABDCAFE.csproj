@@ -163,6 +163,7 @@
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -207,6 +208,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Koneksi.cs" />
     <Compile Include="LoginPage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -254,6 +256,12 @@
       <DependentUpon>ReservasiDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="StatusReservasiMeja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StatusReservasiMeja.Designer.cs">
+      <DependentUpon>StatusReservasiMeja.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AdminMeja.resx">
       <DependentUpon>AdminMeja.cs</DependentUpon>
     </EmbeddedResource>
@@ -296,6 +304,9 @@
       <DependentUpon>ReportViewerReservasi.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReservasiReport.rdlc" />
+    <EmbeddedResource Include="StatusReservasiMeja.resx">
+      <DependentUpon>StatusReservasiMeja.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="DataSet1.xsc">
       <DependentUpon>DataSet1.xsd</DependentUpon>
     </None>
@@ -339,6 +350,30 @@
     <None Include="Resources\WhatsApp Image 2025-05-19 at 00.35.42_a1f9dabc.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\download.jpeg" />
+    <None Include="Resources\star wallpaper.jpeg" />
+    <None Include="Resources\Cara Menghubungkan Livin by Mandiri dengan Aplikasi Dana.jpeg" />
+    <None Include="Resources\download %281%29.jpeg" />
+    <None Include="Resources\download %282%29.jpeg" />
+    <None Include="Resources\pngtree-long-striped-blue-flower-wedding-watercolor-rose-background-picture-image_1444770.jpg" />
+    <None Include="Resources\colorful.jpg" />
+    <None Include="Resources\shadow.jpg" />
+    <None Include="Resources\star wallpaper1.jpeg" />
+    <None Include="Resources\Pink pastel Sky.jpeg" />
+    <None Include="Resources\download %283%29.jpeg" />
+    <None Include="Resources\009bdf9484475b8d6d0767478be8313f.jpg" />
+    <None Include="Resources\009bdf9484475b8d6d0767478be8313f1.jpg" />
+    <None Include="Resources\2320b3e6fb349c0a85acfbbe2efd159b.jpg" />
+    <None Include="Resources\65b14e34d835582308b86cb208304b9e.jpg" />
+    <None Include="Resources\e12adf984a18f9d163e2b52f0a4a4393.jpg" />
+    <None Include="Resources\df3765d348fc540b36e7c7feb1be7268.jpg" />
+    <None Include="Resources\download %284%29.jpeg" />
+    <None Include="Resources\Gato.jpeg" />
+    <None Include="Resources\d523579a52b0e2fa2d486bb741b8a0b7.jpg" />
+    <None Include="Resources\097ab268791a8fa63a36e75943f73423.jpg" />
+    <None Include="Resources\fb982c76a43009ee76f5d24b3e6f05e6.jpg" />
+    <None Include="Resources\88e14c927805f4b72018c3b77e33c2fd.jpg" />
+    <None Include="Resources\Peach Beige Brown Boho Floral Blank Notes A4 Document Landscape.jpeg" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

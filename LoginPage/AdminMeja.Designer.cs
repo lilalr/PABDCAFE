@@ -46,7 +46,8 @@
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(695, 391);
+            this.btnBack.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnBack.Location = new System.Drawing.Point(667, 373);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 28);
             this.btnBack.TabIndex = 0;
@@ -56,9 +57,9 @@
             // 
             // btnTambah
             // 
-            this.btnTambah.Location = new System.Drawing.Point(52, 142);
+            this.btnTambah.Location = new System.Drawing.Point(41, 129);
             this.btnTambah.Name = "btnTambah";
-            this.btnTambah.Size = new System.Drawing.Size(98, 30);
+            this.btnTambah.Size = new System.Drawing.Size(82, 30);
             this.btnTambah.TabIndex = 1;
             this.btnTambah.Text = "Tambah";
             this.btnTambah.UseVisualStyleBackColor = true;
@@ -66,9 +67,9 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(170, 142);
+            this.btnEdit.Location = new System.Drawing.Point(151, 129);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(98, 30);
+            this.btnEdit.Size = new System.Drawing.Size(82, 30);
             this.btnEdit.TabIndex = 2;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -76,9 +77,9 @@
             // 
             // btnHapus
             // 
-            this.btnHapus.Location = new System.Drawing.Point(292, 142);
+            this.btnHapus.Location = new System.Drawing.Point(273, 129);
             this.btnHapus.Name = "btnHapus";
-            this.btnHapus.Size = new System.Drawing.Size(98, 30);
+            this.btnHapus.Size = new System.Drawing.Size(82, 30);
             this.btnHapus.TabIndex = 3;
             this.btnHapus.Text = "Hapus";
             this.btnHapus.UseVisualStyleBackColor = true;
@@ -86,35 +87,35 @@
             // 
             // dgvAdminMeja
             // 
-            this.dgvAdminMeja.BackgroundColor = System.Drawing.Color.LavenderBlush;
+            this.dgvAdminMeja.BackgroundColor = System.Drawing.Color.SeaShell;
             this.dgvAdminMeja.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvAdminMeja.Location = new System.Drawing.Point(52, 197);
+            this.dgvAdminMeja.Location = new System.Drawing.Point(41, 184);
             this.dgvAdminMeja.Name = "dgvAdminMeja";
             this.dgvAdminMeja.RowHeadersWidth = 51;
             this.dgvAdminMeja.RowTemplate.Height = 24;
-            this.dgvAdminMeja.Size = new System.Drawing.Size(700, 179);
+            this.dgvAdminMeja.Size = new System.Drawing.Size(676, 169);
             this.dgvAdminMeja.TabIndex = 4;
             this.dgvAdminMeja.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAdminMeja_CellClick);
             // 
             // txtNomor
             // 
-            this.txtNomor.Location = new System.Drawing.Point(198, 55);
+            this.txtNomor.Location = new System.Drawing.Point(187, 42);
             this.txtNomor.Name = "txtNomor";
-            this.txtNomor.Size = new System.Drawing.Size(415, 22);
+            this.txtNomor.Size = new System.Drawing.Size(416, 22);
             this.txtNomor.TabIndex = 5;
             // 
             // txtKapasitas
             // 
-            this.txtKapasitas.Location = new System.Drawing.Point(198, 93);
+            this.txtKapasitas.Location = new System.Drawing.Point(187, 80);
             this.txtKapasitas.Name = "txtKapasitas";
-            this.txtKapasitas.Size = new System.Drawing.Size(415, 22);
+            this.txtKapasitas.Size = new System.Drawing.Size(416, 22);
             this.txtKapasitas.TabIndex = 6;
             // 
             // lblNomor
             // 
             this.lblNomor.AutoSize = true;
             this.lblNomor.BackColor = System.Drawing.Color.Transparent;
-            this.lblNomor.Location = new System.Drawing.Point(56, 57);
+            this.lblNomor.Location = new System.Drawing.Point(45, 44);
             this.lblNomor.Name = "lblNomor";
             this.lblNomor.Size = new System.Drawing.Size(81, 16);
             this.lblNomor.TabIndex = 10;
@@ -124,7 +125,7 @@
             // 
             this.lblKapasitas.AutoSize = true;
             this.lblKapasitas.BackColor = System.Drawing.Color.Transparent;
-            this.lblKapasitas.Location = new System.Drawing.Point(56, 94);
+            this.lblKapasitas.Location = new System.Drawing.Point(45, 81);
             this.lblKapasitas.Name = "lblKapasitas";
             this.lblKapasitas.Size = new System.Drawing.Size(100, 16);
             this.lblKapasitas.TabIndex = 11;
@@ -132,9 +133,9 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(418, 142);
+            this.btnImport.Location = new System.Drawing.Point(399, 129);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(102, 30);
+            this.btnImport.Size = new System.Drawing.Size(86, 30);
             this.btnImport.TabIndex = 12;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -142,9 +143,9 @@
             // 
             // btnReport
             // 
-            this.btnReport.Location = new System.Drawing.Point(550, 142);
+            this.btnReport.Location = new System.Drawing.Point(531, 129);
             this.btnReport.Name = "btnReport";
-            this.btnReport.Size = new System.Drawing.Size(92, 30);
+            this.btnReport.Size = new System.Drawing.Size(76, 30);
             this.btnReport.TabIndex = 13;
             this.btnReport.Text = "Report";
             this.btnReport.UseVisualStyleBackColor = true;
@@ -152,9 +153,9 @@
             // 
             // btnAnalisis
             // 
-            this.btnAnalisis.Location = new System.Drawing.Point(673, 142);
+            this.btnAnalisis.Location = new System.Drawing.Point(654, 129);
             this.btnAnalisis.Name = "btnAnalisis";
-            this.btnAnalisis.Size = new System.Drawing.Size(79, 29);
+            this.btnAnalisis.Size = new System.Drawing.Size(63, 29);
             this.btnAnalisis.TabIndex = 14;
             this.btnAnalisis.Text = "Analisis";
             this.btnAnalisis.UseVisualStyleBackColor = true;
@@ -162,7 +163,7 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(673, 93);
+            this.btnRefresh.Location = new System.Drawing.Point(653, 80);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(75, 23);
             this.btnRefresh.TabIndex = 15;
@@ -174,8 +175,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(757, 421);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.btnReport);

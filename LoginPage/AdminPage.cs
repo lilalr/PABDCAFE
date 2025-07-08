@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoginPage;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -105,6 +106,13 @@ namespace PABDCAFE
             {
                 // Jika pengguna mengklik "No", tidak ada tindakan yang diambil (proses logout dibatalkan).
             }
+        }
+
+        private void btnGrafik_Click(object sender, EventArgs e)
+        {
+            StatusReservasiMeja sr = new StatusReservasiMeja(this.pageConnectionString);
+            sr.Show();
+            this.Close();
         }
     }
 }

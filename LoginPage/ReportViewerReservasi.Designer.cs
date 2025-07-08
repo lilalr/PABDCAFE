@@ -35,19 +35,20 @@
             // 
             // reportViewer1
             // 
-            this.reportViewer1.BackColor = System.Drawing.Color.LavenderBlush;
+            this.reportViewer1.BackColor = System.Drawing.Color.SeaShell;
             this.reportViewer1.Location = new System.Drawing.Point(35, 35);
             this.reportViewer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.reportViewer1.Name = "reportViewer1";
             this.reportViewer1.ServerReport.BearerToken = null;
-            this.reportViewer1.Size = new System.Drawing.Size(632, 276);
+            this.reportViewer1.Size = new System.Drawing.Size(548, 276);
             this.reportViewer1.TabIndex = 0;
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(592, 333);
+            this.btnBack.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnBack.Location = new System.Drawing.Point(508, 328);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 25);
+            this.btnBack.Size = new System.Drawing.Size(75, 30);
             this.btnBack.TabIndex = 1;
             this.btnBack.Text = "Back";
             this.btnBack.UseVisualStyleBackColor = true;
@@ -55,9 +56,10 @@
             // 
             // btnExportCSV
             // 
-            this.btnExportCSV.Location = new System.Drawing.Point(469, 333);
+            this.btnExportCSV.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.btnExportCSV.Location = new System.Drawing.Point(398, 328);
             this.btnExportCSV.Name = "btnExportCSV";
-            this.btnExportCSV.Size = new System.Drawing.Size(99, 25);
+            this.btnExportCSV.Size = new System.Drawing.Size(99, 30);
             this.btnExportCSV.TabIndex = 2;
             this.btnExportCSV.Text = "Export CSV";
             this.btnExportCSV.UseVisualStyleBackColor = true;
@@ -67,8 +69,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::LoginPage.Properties.Resources.WhatsApp_Image_2025_05_19_at_00_38_34_dbdf79d4;
-            this.ClientSize = new System.Drawing.Size(711, 372);
+            this.BackgroundImage = global::LoginPage.Properties.Resources.df3765d348fc540b36e7c7feb1be7268;
+            this.ClientSize = new System.Drawing.Size(616, 372);
             this.Controls.Add(this.btnExportCSV);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.reportViewer1);
