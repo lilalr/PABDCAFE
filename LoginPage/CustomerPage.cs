@@ -10,13 +10,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.Caching;
+using DocumentFormat.OpenXml.Office.Word;
 
 namespace PABDCAFE
 {
     public partial class CustomerPage : Form
     {
         private readonly string connectionString;
-        private SqlConnection conn;
 
         // Caching fields
         private readonly MemoryCache _reservasiCache = MemoryCache.Default;
@@ -29,17 +29,16 @@ namespace PABDCAFE
         {
             InitializeComponent();
 
-            dtpCustWaktu.Format = DateTimePickerFormat.Custom;
-            dtpCustWaktu.CustomFormat = "dd/MM/yyyy HH:mm";
-            dtpCustWaktu.ShowUpDown = true;
-
             if (string.IsNullOrWhiteSpace(connStr))
             {
                 MessageBox.Show("String koneksi tidak valid.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ArgumentNullException(nameof(connStr));
             }
             this.connectionString = connStr;
-            this.conn = new SqlConnection(this.connectionString);
+
+            dtpCustWaktu.Format = DateTimePickerFormat.Custom;
+            dtpCustWaktu.CustomFormat = "dd/MM/yyyy HH:mm";
+            dtpCustWaktu.ShowUpDown = true;
         }
 
         public CustomerPage()
@@ -58,7 +57,6 @@ namespace PABDCAFE
             }
 
             EnsureIndexes();
-
             LoadAllReservasi();
             LoadComboBoxMeja(cmbCustMeja);
             ClearForm();
@@ -106,7 +104,7 @@ namespace PABDCAFE
 
         private bool IsConnectionReady()
         {
-            if (this.conn == null || string.IsNullOrWhiteSpace(this.connectionString))
+            if (string.IsNullOrWhiteSpace(this.connectionString))
             {
                 MessageBox.Show("Koneksi database tidak diinisialisasi.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -132,7 +130,7 @@ namespace PABDCAFE
                 try
                 {
                     string query = "SELECT ID_Reservasi, Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Waktu_Reservasi DESC";
-                    using (SqlDataAdapter da = new SqlDataAdapter(query, conn))
+                    using (SqlDataAdapter da = new SqlDataAdapter(query, this.connectionString))
                     {
                         da.Fill(dt);
                     }
@@ -170,13 +168,16 @@ namespace PABDCAFE
                 mejaList = new List<string>();
                 try
                 {
-                    if (conn.State == ConnectionState.Closed) conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (var conn = new SqlConnection(this.connectionString))
+                    using (var cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", conn))
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            mejaList.Add(reader["Nomor_Meja"].ToString());
+                            while (reader.Read())
+                            {
+                                mejaList.Add(reader["Nomor_Meja"].ToString());
+                            }
                         }
                     }
                     _availableMejaCache.Set(AvailableMejaCacheKey, mejaList, DateTimeOffset.Now.Add(_cacheDuration));
@@ -184,10 +185,6 @@ namespace PABDCAFE
                 catch (Exception ex)
                 {
                     MessageBox.Show("Gagal memuat daftar meja: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open) conn.Close();
                 }
             }
             cmb.DataSource = mejaList;
@@ -230,14 +227,27 @@ namespace PABDCAFE
 
         private bool CekJadwalBentrok(string nomorMeja, DateTime waktu)
         {
-            string query = "SELECT COUNT(*) FROM Reservasi WHERE Nomor_Meja = @NomorMeja AND CAST(Waktu_Reservasi AS DATE) = CAST(@WaktuReservasi AS DATE)";
-            using (var tempConn = new SqlConnection(connectionString))
+            // Query untuk memeriksa reservasi pada rentang satu hari penuh (dari jam 00:00 hingga 23:59)
+            string query = "SELECT COUNT(*) FROM Reservasi WHERE Nomor_Meja = @NomorMeja AND Waktu_Reservasi BETWEEN @StartOfDay AND @EndOfDay";
+
+            using (var tempConn = new SqlConnection(this.connectionString))
             using (var cmd = new SqlCommand(query, tempConn))
             {
+                // Mendefinisikan awal hari (contoh: 09/11/2025 00:00:00)
+                DateTime startOfDay = waktu.Date;
+
+                // Mendefinisikan akhir hari (contoh: 09/11/2025 23:59:59)
+                DateTime endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+
+                // Menambahkan parameter ke query
                 cmd.Parameters.AddWithValue("@NomorMeja", nomorMeja);
-                cmd.Parameters.AddWithValue("@WaktuReservasi", waktu);
+                cmd.Parameters.AddWithValue("@StartOfDay", startOfDay);
+                cmd.Parameters.AddWithValue("@EndOfDay", endOfDay);
+
                 tempConn.Open();
                 int count = (int)cmd.ExecuteScalar();
+
+                // Jika count > 0, berarti sudah ada reservasi di tanggal tersebut.
                 return count > 0;
             }
         }
@@ -250,40 +260,45 @@ namespace PABDCAFE
                 return;
             }
 
+            DateTime waktuReservasi = dtpCustWaktu.Value;
+            string selectedMeja = cmbCustMeja.Text;
+
+            /*
+            if (CekJadwalBentrok(selectedMeja, waktuReservasi))
+            {
+                MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy}.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            */
+
             try
             {
-                DateTime waktuReservasi = dtpCustWaktu.Value;
-                string selectedMeja = cmbCustMeja.Text;
-
-                if (CekJadwalBentrok(selectedMeja, waktuReservasi))
-                {
-                    MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy}.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
+                using (var conn = new SqlConnection(this.connectionString))
+                using (var cmd = new SqlCommand("TambahReservasiCustomer", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nama_Customer", txtCustNama.Text.Trim());
                     cmd.Parameters.AddWithValue("@No_Telp", txtCustNoTelp.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
-                    cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
+                    cmd.Parameters.AddWithValue("@Waktu_Reservasi", dtpCustWaktu.Value);
+                    cmd.Parameters.AddWithValue("@Nomor_Meja", cmbCustMeja.Text);
+
+                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Reservasi berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 InvalidateAllCaches();
                 LoadAllReservasi();
                 ClearForm();
             }
+            catch (SqlException sqlEx)
+            {
+                MessageBox.Show("Terjadi error database: " + sqlEx.Message, "Kesalahan SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            // Tangkap error umum lainnya
             catch (Exception ex)
             {
-                MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
+                MessageBox.Show("Terjadi kesalahan umum: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -319,8 +334,8 @@ namespace PABDCAFE
             {
                 try
                 {
-                    if (conn.State == ConnectionState.Closed) conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("HapusReservasi", conn))
+                    using (var conn = new SqlConnection(this.connectionString))
+                    using (var cmd = new SqlCommand("HapusReservasi", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
@@ -334,10 +349,6 @@ namespace PABDCAFE
                 catch (Exception ex)
                 {
                     MessageBox.Show("Gagal membatalkan reservasi: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open) conn.Close();
                 }
             }
         }

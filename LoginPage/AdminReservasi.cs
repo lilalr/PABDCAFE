@@ -17,7 +17,6 @@ namespace PABDCAFE
     public partial class AdminReservasi : Form
     {
         private readonly string connectionString;
-        private SqlConnection conn;
 
         // Caching fields
         private readonly MemoryCache _reservasiDataCache = MemoryCache.Default;
@@ -47,7 +46,6 @@ namespace PABDCAFE
                 throw new ArgumentNullException(nameof(connStr), "String koneksi database (connStr) tidak boleh null atau kosong.");
             }
             this.connectionString = connStr;
-            this.conn = new SqlConnection(this.connectionString);
 
 
             // Asumsikan cbxNomorMeja adalah nama kontrol ComboBox di designer
@@ -83,68 +81,46 @@ namespace PABDCAFE
 
         private void LoadAvailableMeja(ComboBox cbx)
         {
-            // ... (logika cache dan pengecekan koneksi tetap sama) ...
+            // Coba ambil daftar meja dari cache terlebih dahulu.
             List<string> mejaList = _availableMejaCache.Get(AvailableMejaCacheKey) as List<string>;
 
+            // Jika daftar tidak ada di cache (null), maka ambil dari database.
             if (mejaList == null)
             {
-                if (this.conn == null) { /* ... */ }
-                else
+                mejaList = new List<string>();
+                try
                 {
-                    mejaList = new List<string>();
-                    try
+                    // Buat koneksi baru yang aman di dalam 'using' block.
+                    // Koneksi akan otomatis ditutup setelah selesai.
+                    using (var conn = new SqlConnection(this.connectionString))
+                    using (var cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", conn))
                     {
-                        if (this.conn.State == ConnectionState.Closed)
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            this.conn.Open();
-                        }
-
-                        using (SqlCommand cmd = new SqlCommand("SELECT Nomor_Meja FROM Meja ORDER BY Nomor_Meja", this.conn))
-
-                        {
-                            SqlDataReader reader = cmd.ExecuteReader();
                             while (reader.Read())
                             {
                                 mejaList.Add(reader["Nomor_Meja"].ToString());
                             }
-                            reader.Close();
-                            if (mejaList.Count > 0)
-                            {
-                                _availableMejaCache.Set(AvailableMejaCacheKey, mejaList, DateTimeOffset.Now.Add(_cacheDuration));
-                            }
                         }
                     }
-                    catch (Exception ex)
+
+                    // Jika berhasil mendapatkan data, simpan ke cache untuk 5 menit ke depan.
+                    if (mejaList.Any())
                     {
-                        // Gunakan ex.Message untuk menampilkan detail error yang sebenarnya
-                        MessageBox.Show("Terjadi kesalahan saat mengekspor: " + ex.Message, "Error Ekspor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _availableMejaCache.Set(AvailableMejaCacheKey, mejaList, DateTimeOffset.Now.Add(_cacheDuration));
                     }
-                    finally
-                    {
-                        if (this.conn != null && this.conn.State == ConnectionState.Open)
-                        {
-                            this.conn.Close();
-                        }
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memuat daftar meja: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
-            if (cbx == null) return;
-            cbx.DataSource = null;
-            cbx.Items.Clear();
-            if (mejaList != null && mejaList.Count > 0)
-            {
-                cbx.DataSource = mejaList;
-                cbx.SelectedIndex = -1;
-            }
-            else
-            {
-                cbx.Items.Add("Tidak ada data meja");
-                if (cbx.Items.Count > 0)
-                {
-                    cbx.SelectedIndex = 0;
-                }
-            }
+            // Tampilkan data ke ComboBox.
+            cbxNomorMeja.DataSource = null; // Kosongkan dulu untuk memastikan refresh
+            cbxNomorMeja.DataSource = mejaList;
+            cbxNomorMeja.SelectedIndex = -1; // Kosongkan pilihan awal
         }
 
         void LoadData()
@@ -153,20 +129,16 @@ namespace PABDCAFE
 
             if (dt == null)
             {
-                if (this.conn == null)
-                {
-                    MessageBox.Show("Koneksi database belum diinisialisasi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
                 try
                 {
-                    using (var da = new SqlDataAdapter(
-                        "SELECT ID_Reservasi, Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Waktu_Reservasi DESC", this.conn))
+                    dt = new DataTable();
+                    string query = "SELECT ID_Reservasi, Nama_Customer, No_Telp, Waktu_Reservasi, Nomor_Meja FROM Reservasi ORDER BY Waktu_Reservasi DESC";
+                    
+                    using (var da = new SqlDataAdapter(query, this.connectionString))
                     {
-                        dt = new DataTable();
                         da.Fill(dt);
-                        _reservasiDataCache.Set(ReservasiDataCacheKey, dt, DateTimeOffset.Now.Add(_cacheDuration));
                     }
+                    _reservasiDataCache.Set(ReservasiDataCacheKey, dt, DateTimeOffset.Now.Add(_cacheDuration));
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +285,7 @@ namespace PABDCAFE
 
         private bool IsConnectionReady()
         {
-            if (this.conn == null || string.IsNullOrWhiteSpace(this.conn.ConnectionString))
+            if (string.IsNullOrWhiteSpace(this.connectionString))
             {
                 MessageBox.Show("Koneksi database tidak dikonfigurasi atau hilang.", "Error Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -408,21 +380,21 @@ namespace PABDCAFE
                 return;
             }
 
+            int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
+            DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
+            string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
+
+            // Panggil metode validasi jadwal, sertakan ID reservasi yang sedang diedit
+            if (CekJadwalBentrok(selectedMeja, waktuReservasi, idReservasi))
+            {
+                MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy} oleh reservasi lain.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Hentikan proses jika bentrok
+            }
+
             try
             {
-                int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
-                DateTime waktuReservasi = this.dtpWaktuReservasi.Value;
-                string selectedMeja = this.cbxNomorMeja.SelectedItem.ToString();
-
-                // Panggil metode validasi jadwal, sertakan ID reservasi yang sedang diedit
-                if (CekJadwalBentrok(selectedMeja, waktuReservasi, idReservasi))
-                {
-                    MessageBox.Show($"Meja '{selectedMeja}' sudah dipesan untuk tanggal {waktuReservasi:dd-MM-yyyy} oleh reservasi lain.", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return; // Hentikan proses jika bentrok
-                }
-
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand("EditReservasi", conn))
+                using (var conn = new SqlConnection(this.connectionString))
+                using (var cmd = new SqlCommand("EditReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
@@ -431,6 +403,7 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja_Baru", selectedMeja);
 
+                    conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
@@ -450,10 +423,6 @@ namespace PABDCAFE
             catch (Exception ex)
             {
                 MessageBox.Show("Error saat mengubah data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
             }
         }
 
@@ -515,8 +484,8 @@ namespace PABDCAFE
                     return; // Hentikan proses jika bentrok
                 }
 
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand("TambahReservasi", conn))
+                using (var conn = new SqlConnection(this.connectionString))
+                using (var cmd = new SqlCommand("TambahReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nama_Customer", this.txtNama.Text.Trim());
@@ -524,6 +493,7 @@ namespace PABDCAFE
                     cmd.Parameters.AddWithValue("@Waktu_Reservasi", waktuReservasi);
                     cmd.Parameters.AddWithValue("@Nomor_Meja", selectedMeja);
 
+                    conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     // Menggunakan > 0 karena SP Admin mungkin tidak memakai SET NOCOUNT ON
@@ -549,10 +519,6 @@ namespace PABDCAFE
             {
                 MessageBox.Show("Error saat menambah data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
-            }
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
@@ -574,14 +540,14 @@ namespace PABDCAFE
             try
             {
                 int idReservasi = Convert.ToInt32(this.dgvAdminReservasi.SelectedRows[0].Cells["ID_Reservasi"].Value);
-
-                conn.Open();
-
+                
+                using (var conn = new SqlConnection(this.connectionString))
                 using (SqlCommand cmd = new SqlCommand("HapusReservasi", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_Reservasi", idReservasi);
 
+                    conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
@@ -601,13 +567,6 @@ namespace PABDCAFE
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
             }
         }
 

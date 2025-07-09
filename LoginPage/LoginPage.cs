@@ -16,12 +16,6 @@ namespace PABDCAFE
     // Form LoginPage adalah halaman awal tempat pengguna (admin/customer) melakukan login.
     public partial class LoginPage : Form
     {
-        // Bagian dasar dari string koneksi ke database SQL Server Anda.
-        // Pastikan ini sesuai dengan konfigurasi server Anda.
-        // Kredensial pengguna (User ID dan Password) akan ditambahkan secara dinamis.
-        //private string baseconnectionString = "LAPTOP-L7KS40NN\\MDEANDWIB;Initial Catalog=ReservasiCafe;";//
-        private string baseconnectionString = "Data Source=LAPTOP-4FJGLBGI\\NANDA;Initial Catalog=ReservasiCafe;";//
-        //private string baseconnectionString = "Data Source=IDEAPAD5PRO\\LILA;Initial Catalog=ReservasiCafe;";
         private string connectionString;
 
         private readonly MemoryCache _cache = MemoryCache.Default;
@@ -40,23 +34,21 @@ namespace PABDCAFE
             try
             {
                 Koneksi kn = new Koneksi();
-                this.connectionString = kn.connectionString();
+                this.connectionString = kn.connectionString(); // Memanggil method dari class Koneksi. [cite: 16]
 
-                // Jika string koneksi tetap kosong setelah semua proses (meski tidak error)
-                // ini adalah lapisan pengaman tambahan.
+                // Jika string koneksi gagal dibuat, lemparkan error.
                 if (string.IsNullOrEmpty(this.connectionString))
                 {
-                    throw new Exception("String koneksi tidak berhasil dibuat.");
+                    throw new Exception("String koneksi tidak berhasil dibuat dari class Koneksi.");
                 }
             }
             catch (Exception ex)
             {
-                // Jika terjadi error dari class Koneksi, akan ditangkap di sini.
-                MessageBox.Show("Tidak dapat terhubung ke database. \nDetail: " + ex.Message, "Error Koneksi Kritis", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Menampilkan pesan jika koneksi awal gagal (misalnya, tidak menemukan IP).
+                MessageBox.Show("Tidak dapat terhubung ke database. Aplikasi akan tertutup. \nDetail: " + ex.Message, "Error Koneksi Kritis", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                // Nonaktifkan tombol login agar pengguna tidak bisa lanjut.
-                // Ganti btnLogin dengan nama tombol login Anda.
-                // btnLogin.Enabled = false; 
+                // Menonaktifkan form jika koneksi gagal total.
+                this.Load += (s, e) => this.Close();
             }
         }
 
@@ -64,8 +56,6 @@ namespace PABDCAFE
         // Biasanya digunakan untuk inisialisasi tambahan jika diperlukan.
         private void LoginAdmin_Load(object sender, EventArgs e)
         {
-            // Saat ini tidak ada logika khusus yang dijalankan saat form load.
-            // Anda bisa menambahkan kode di sini jika perlu, misalnya mengatur fokus awal.
             txtUsername.Focus(); // Contoh: Mengatur fokus ke textbox Username saat form load.
         }
 
@@ -84,15 +74,11 @@ namespace PABDCAFE
                 return; // Menghentikan proses login jika input tidak lengkap.
             }
 
-            // String koneksi dinamis yang dibangun dengan menambahkan User ID dan Password.
-            // Ini adalah metode autentikasi SQL Server.
-            string dynamicConnectionString = baseconnectionString + $"User ID={Username};Password={Password};";
-
             try
             {
                 // Blok 'using' memastikan objek SqlConnection ('conn') akan di-dispose dengan benar
                 // setelah selesai digunakan, termasuk menutup koneksi jika masih terbuka.
-                using (SqlConnection conn = new SqlConnection(dynamicConnectionString))
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     // Mencoba membuka koneksi ke database.
                     // Jika username atau password SQL Server salah, atau server tidak terjangkau,
@@ -112,7 +98,7 @@ namespace PABDCAFE
                         MessageBox.Show("Login berhasil sebagai admin.", "Login Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         // Membuat instance AdminPage dan meneruskan string koneksi yang berhasil digunakan.
-                        AdminPage adminForm = new AdminPage(dynamicConnectionString);
+                        AdminPage adminForm = new AdminPage(this.connectionString);
                         adminForm.Show(); // Menampilkan form AdminPage.
                         this.Hide();     // Menyembunyikan form LoginPage saat ini.
                     }
@@ -124,7 +110,7 @@ namespace PABDCAFE
                         // Membuat instance CustomerPage.
                         // PENTING: CustomerPage juga perlu dimodifikasi untuk menerima string koneksi
                         // jika ia akan berinteraksi dengan database.
-                        CustomerPage customerForm = new CustomerPage(dynamicConnectionString); // Asumsi CustomerPage telah diadaptasi.
+                        CustomerPage customerForm = new CustomerPage(this.connectionString); // Asumsi CustomerPage telah diadaptasi.
                         customerForm.Show(); // Menampilkan form CustomerPage.
                         this.Hide();      // Menyembunyikan form LoginPage saat ini.
                     }

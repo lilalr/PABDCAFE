@@ -19,8 +19,8 @@ namespace PABDCAFE
     public partial class AdminMeja : Form
     {
         // Variabel-variabel utama kelas
-        private readonly string connectionString;
-
+        //private readonly string connectionString;
+        private readonly string activeConnectionString;
         // Objek 'cache' untuk menyimpan data sementara. Ini seperti catatan contekan
         // agar tidak perlu bertanya ke database terus-menerus, sehingga aplikasi lebih cepat.
         private readonly MemoryCache _cache = MemoryCache.Default;
@@ -35,13 +35,7 @@ namespace PABDCAFE
         public AdminMeja(string connStr)
         {
             InitializeComponent();
-            // Saat form dibuat, string koneksi harus ada. Kalau tidak, aplikasi tidak bisa jalan.
-            if (string.IsNullOrWhiteSpace(connStr))
-            {
-                MessageBox.Show("String koneksi tidak ada atau kosong.", "Kesalahan Konfigurasi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ArgumentNullException(nameof(connStr), "String koneksi tidak boleh null.");
-            }
-            this.connectionString = connStr;
+            this.activeConnectionString = connStr;
         }
 
         // Method ini berjalan otomatis saat form pertama kali ditampilkan.
@@ -86,9 +80,9 @@ namespace PABDCAFE
                     // ...baru kita ambil data dari database.
                     dt = new DataTable();
                     string query = "SELECT Nomor_Meja, Kapasitas, Status_Meja FROM Meja ORDER BY Nomor_Meja ASC";
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    using (var conn = new SqlConnection(this.activeConnectionString))
                     {
-                        SqlDataAdapter da = new SqlDataAdapter(query, connection);
+                        SqlDataAdapter da = new SqlDataAdapter(query, conn);
                         da.Fill(dt);
                     }
                     // 3. Simpan data yang baru diambil ke cache agar load berikutnya lebih cepat.
@@ -128,7 +122,7 @@ namespace PABDCAFE
 
             try
             {
-                using (var conn = new SqlConnection(connectionString))
+                using (var conn = new SqlConnection(this.activeConnectionString))
                 {
                     conn.Open();
                     var indexScript = @"
@@ -155,7 +149,7 @@ namespace PABDCAFE
         {
             try
             {
-                using (var conn = new SqlConnection(connectionString))
+                using (var conn = new SqlConnection(this.activeConnectionString))
                 {
                     // Ini bagian terpenting:
                     // Baris ini menyuruh program untuk 'mendengarkan' semua pesan informasi
@@ -254,7 +248,7 @@ namespace PABDCAFE
                 return;
             }
             // Membuka koneksi ke database.
-            using (SqlConnection conn = new SqlConnection(this.connectionString))
+            using (var conn = new SqlConnection(this.activeConnectionString))
             {
                 //Memulai SqlTransaction.
                 SqlTransaction transaction = null;
@@ -303,7 +297,7 @@ namespace PABDCAFE
             }
 
             // Membuka koneksi ke database.
-            using (SqlConnection conn = new SqlConnection(this.connectionString))
+            using (var conn = new SqlConnection(this.activeConnectionString))
             {
                 //Memulai SqlTransaction.
                 SqlTransaction transaction = null;
@@ -352,7 +346,7 @@ namespace PABDCAFE
             }
 
 
-            using (SqlConnection conn = new SqlConnection(this.connectionString))
+            using (var conn = new SqlConnection(this.activeConnectionString))
             {
                 //Memulai SqlTransaction.
                 SqlTransaction transaction = null;
@@ -443,7 +437,8 @@ namespace PABDCAFE
 
                     // 3. Tampilkan form 'Preview' agar user bisa cek data sebelum disimpan.
                     // Ini mencegah salah impor data.
-                    PreviewDataMeja previewForm = new PreviewDataMeja(dt, this.connectionString);
+                    PreviewDataMeja previewForm = new PreviewDataMeja(dt, this.activeConnectionString);
+
                     if (previewForm.ShowDialog() == DialogResult.OK && previewForm.ImportConfirmed)
                     {
                         // Jika user menekan OK di form preview, baru datanya di-refresh.
@@ -477,7 +472,7 @@ namespace PABDCAFE
             // Kembali ke halaman admin utama.
             try
             {
-                AdminPage ap = new AdminPage(this.connectionString);
+                AdminPage ap = new AdminPage(this.activeConnectionString);
                 ap.Show();
                 this.Close();
             }
