@@ -12,7 +12,7 @@ namespace PABDCAFE
             try
             {
                 string localIP = GetLocalIPAddress();
-                connectStr = $"Server={localIP}; Initial Catalog=ReservasiCafe;" + $"Integrated Security=True";
+                connectStr = $"Server={localIP}; Initial Catalog=ReservasiCafe;";
                 return connectStr;
             }
             catch (Exception ex)
