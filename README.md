@@ -1,3 +1,21 @@
+Aplikasi desktop sederhana untuk sistem reservasi cafe, dibangun menggunakan C# (Windows Forms) dengan SQL Server sebagai sistem manajemen basis datanya. Proyek ini dirancang untuk memudahkan proses reservasi, pengelolaan data pelanggan, dan ketersediaan meja di sebuah cafe.
+
+## Fitur Utama
+
+* **Manajemen Reservasi:** Memungkinkan penambahan, pengeditan, dan penghapusan data reservasi.
+* **Validasi Data:** Implementasi validasi input data untuk memastikan integritas data.
+* **Koneksi Database:** Penanganan koneksi ke SQL Server dan transaksi basis data yang efisien.
+* **Error Handling:** Mekanisme penanganan kesalahan yang robust untuk operasional yang lancar.
+* **Stored Procedure:** Pemanfaatan stored procedure untuk operasi CRUD (Create, Read, Update, Delete) data yang aman dan terstruktur.
+
+## Teknologi yang Digunakan
+
+* **Bahasa Pemrograman:** C#
+* **Framework:** .NET Framework (Windows Forms)
+* **Database:** SQL Server
+* **IDE:** Visual Studio
+
+
 Login Page
 
 <img width="756" height="443" alt="image" src="https://github.com/user-attachments/assets/a32e24dc-abfb-460f-89fb-738478f1116e" />
